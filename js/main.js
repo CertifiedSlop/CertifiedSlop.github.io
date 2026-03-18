@@ -10,6 +10,10 @@ function repoApp() {
         error: false,
         selectedRepo: null,
 
+        // Keyboard navigation
+        focusedCardIndex: -1,
+        showShortcutsModal: false,
+
         // Hero section
         typedText: '',
         taglines: [
@@ -65,6 +69,72 @@ function repoApp() {
             this.updateLastUpdated();
             this.startTypingEffect();
             this.initParticles();
+            this.initKeyboardShortcuts();
+        },
+
+        // Keyboard shortcuts
+        initKeyboardShortcuts() {
+            document.addEventListener('keydown', (e) => {
+                // Don't trigger shortcuts when typing in input
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+                // '/' to focus search
+                if (e.key === '/' && !e.ctrlKey && !e.metaKey) {
+                    e.preventDefault();
+                    const searchInput = document.querySelector('input[x-model="search"]');
+                    if (searchInput) searchInput.focus();
+                }
+
+                // '?' to show keyboard shortcuts modal
+                if (e.key === '?' && !e.ctrlKey && !e.metaKey) {
+                    e.preventDefault();
+                    this.showShortcutsModal = true;
+                }
+
+                // Arrow keys to navigate cards (when not in modal)
+                if (!this.selectedRepo && ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                    e.preventDefault();
+                    this.navigateCards(e.key);
+                }
+
+                // Enter to open selected card
+                if (e.key === 'Enter' && this.focusedCardIndex >= 0 && !this.selectedRepo) {
+                    const cards = document.querySelectorAll('article[role="button"]');
+                    if (cards[this.focusedCardIndex]) {
+                        this.selectedRepo = this.filteredRepos[this.focusedCardIndex];
+                    }
+                }
+            });
+        },
+
+        // Navigate cards with arrow keys
+        navigateCards(key) {
+            const cards = document.querySelectorAll('article[role="button"]');
+            if (cards.length === 0) return;
+
+            const cols = window.innerWidth >= 1024 ? 3 : window.innerWidth >= 768 ? 2 : 1;
+
+            switch (key) {
+                case 'ArrowRight':
+                case 'ArrowDown':
+                    this.focusedCardIndex = Math.min(this.focusedCardIndex + 1, cards.length - 1);
+                    break;
+                case 'ArrowLeft':
+                case 'ArrowUp':
+                    this.focusedCardIndex = Math.max(this.focusedCardIndex - 1, 0);
+                    break;
+            }
+
+            // Update focus
+            cards.forEach((card, i) => {
+                if (i === this.focusedCardIndex) {
+                    card.focus();
+                    card.classList.add('ring-2', 'ring-purple-500');
+                    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                } else {
+                    card.classList.remove('ring-2', 'ring-purple-500');
+                }
+            });
         },
 
         // Typing effect for hero tagline

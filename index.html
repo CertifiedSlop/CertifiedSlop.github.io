@@ -337,7 +337,10 @@
         <section x-show="!loading && !error && filteredRepos.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <template x-for="repo in filteredRepos" :key="repo.id">
                 <article @click="selectedRepo = repo"
-                         class="group bg-card hover:bg-card-hover rounded-2xl border border-white/10 p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-purple-500/20 animate-slide-up cursor-pointer card-shine relative overflow-hidden"
+                         @keydown.enter="selectedRepo = repo"
+                         role="button"
+                         tabindex="0"
+                         class="group bg-card hover:bg-card-hover rounded-2xl border border-white/10 p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-purple-500/20 animate-slide-up cursor-pointer card-shine relative overflow-hidden focus:outline-none focus:ring-2 focus:ring-purple-500"
                          :style="'animation-delay: ' + (filteredRepos.indexOf(repo) * 50) + 'ms'">
 
                     <!-- Recently updated badge -->
@@ -645,6 +648,81 @@
                         </div>
                     </div>
                 </template>
+            </div>
+        </div>
+    </div>
+
+    <!-- Keyboard Shortcuts Modal -->
+    <div x-show="showShortcutsModal"
+         x-cloak
+         @click.self="showShortcutsModal = false"
+         @keydown.escape.window="showShortcutsModal = false"
+         class="fixed inset-0 z-50 overflow-y-auto"
+         style="display: none;">
+        <!-- Backdrop -->
+        <div class="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity"
+             x-show="showShortcutsModal"
+             x-transition:enter="ease-out duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="ease-in duration-200"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"></div>
+
+        <!-- Modal Content -->
+        <div class="relative min-h-screen flex items-center justify-center p-4">
+            <div class="relative bg-card rounded-2xl border border-white/10 shadow-2xl max-w-lg w-full"
+                 x-show="showShortcutsModal"
+                 x-transition:enter="ease-out duration-300"
+                 x-transition:enter-start="opacity-0 scale-95 translate-y-4"
+                 x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                 x-transition:leave="ease-in duration-200"
+                 x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                 x-transition:leave-end="opacity-0 scale-95 translate-y-4"
+                 @click.stop>
+
+                <!-- Header -->
+                <div class="border-b border-white/10 p-6 flex items-center justify-between">
+                    <h2 class="text-xl font-bold text-white">Keyboard Shortcuts</h2>
+                    <button @click="showShortcutsModal = false"
+                            class="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16"><path d="M4.646 4.646a.5.5 0 01.708 0L8 7.293l2.646-2.647a.5.5 0 01.708.708L8.707 8l2.647 2.646a.5.5 0 01-.708.708L8 8.707l-2.646 2.647a.5.5 0 01-.708-.708L7.293 8 4.646 5.354a.5.5 0 010-.708z"/></svg>
+                    </button>
+                </div>
+
+                <!-- Body -->
+                <div class="p-6 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="text-gray-300">Focus search</span>
+                        <kbd class="px-3 py-1.5 bg-white/10 border border-white/20 rounded-lg text-sm font-mono text-purple-400">/</kbd>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-gray-300">Show shortcuts</span>
+                        <kbd class="px-3 py-1.5 bg-white/10 border border-white/20 rounded-lg text-sm font-mono text-purple-400">?</kbd>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-gray-300">Navigate cards</span>
+                        <div class="flex gap-1">
+                            <kbd class="px-3 py-1.5 bg-white/10 border border-white/20 rounded-lg text-sm font-mono text-purple-400">↑</kbd>
+                            <kbd class="px-3 py-1.5 bg-white/10 border border-white/20 rounded-lg text-sm font-mono text-purple-400">↓</kbd>
+                            <kbd class="px-3 py-1.5 bg-white/10 border border-white/20 rounded-lg text-sm font-mono text-purple-400">←</kbd>
+                            <kbd class="px-3 py-1.5 bg-white/10 border border-white/20 rounded-lg text-sm font-mono text-purple-400">→</kbd>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-gray-300">Open repo</span>
+                        <kbd class="px-3 py-1.5 bg-white/10 border border-white/20 rounded-lg text-sm font-mono text-purple-400">Enter</kbd>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-gray-300">Close modal</span>
+                        <kbd class="px-3 py-1.5 bg-white/10 border border-white/20 rounded-lg text-sm font-mono text-purple-400">Esc</kbd>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="border-t border-white/10 p-4 text-center">
+                    <p class="text-gray-500 text-sm">Press <kbd class="px-2 py-0.5 bg-white/10 rounded text-xs">?</kbd> anytime to view this help</p>
+                </div>
             </div>
         </div>
     </div>
