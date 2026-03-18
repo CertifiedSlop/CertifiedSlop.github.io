@@ -9,6 +9,9 @@ function repoApp() {
         error: false,
         selectedRepo: null,
 
+        // Manual wiki allowlist - GitHub API's has_wiki is unreliable
+        wikiAllowlist: ['websAIte', 'calculAItor', 'SQuAiL'],
+
         // Filters
         search: '',
         languageFilter: 'all',
@@ -139,7 +142,7 @@ function repoApp() {
             
             // Wiki filter
             if (this.wikiFilter) {
-                result = result.filter(repo => repo.has_wiki);
+                result = result.filter(repo => this.hasWiki(repo));
             }
             
             // Sort
@@ -194,6 +197,11 @@ function repoApp() {
                 'ISC License': 'ISC'
             };
             return abbreviations[license] || license.replace(' License', '');
+        },
+
+        // Check if repo has wiki (using allowlist since GitHub API is unreliable)
+        hasWiki(repo) {
+            return this.wikiAllowlist.includes(repo.name);
         },
         
         // Get language dot color
