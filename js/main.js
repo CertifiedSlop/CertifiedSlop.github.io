@@ -9,6 +9,19 @@ function repoApp() {
         error: false,
         selectedRepo: null,
 
+        // Hero section
+        typedText: '',
+        taglines: [
+            'We make slop. That\'s it.',
+            'AI-powered tools & libraries',
+            'Building the future, one repo at a time',
+            'Open source • Czech Republic'
+        ],
+        currentTaglineIndex: 0,
+        isTyping: true,
+        typingTimeout: null,
+        pauseTimeout: null,
+
         // Manual wiki allowlist - GitHub API's has_wiki is unreliable
         wikiAllowlist: ['websAIte', 'SQuAiL', 'AIuth', 'Slopix', 'Slop-Package-manager', 'MooAId', 'MooAIdroid', 'CalcAIdroid', 'WikAI', 'CertifiedSlop.github.io'],
 
@@ -18,7 +31,7 @@ function repoApp() {
         licenseFilter: 'all',
         wikiFilter: false,
         sortOption: 'stars',
-        
+
         // Cache
         CACHE_KEY: 'certifiedslop_repos_cache_v3',
         CACHE_DURATION: 5 * 60 * 1000, // 5 minutes
@@ -48,6 +61,120 @@ function repoApp() {
             console.log('Initializing repo app...');
             await this.fetchRepos();
             this.updateLastUpdated();
+            this.startTypingEffect();
+            this.initParticles();
+        },
+
+        // Typing effect for hero tagline
+        startTypingEffect() {
+            const type = () => {
+                const currentTagline = this.taglines[this.currentTaglineIndex];
+                if (this.typedText.length < currentTagline.length) {
+                    this.typedText = currentTagline.slice(0, this.typedText.length + 1);
+                    this.typingTimeout = setTimeout(type, 50 + Math.random() * 50);
+                } else {
+                    this.isTyping = false;
+                    this.pauseTimeout = setTimeout(() => {
+                        this.pauseTimeout = setTimeout(() => {
+                            this.typedText = '';
+                            this.currentTaglineIndex = (this.currentTaglineIndex + 1) % this.taglines.length;
+                            this.isTyping = true;
+                            type();
+                        }, 500);
+                    }, 2000);
+                }
+            };
+            type();
+        },
+
+        // Particle animation for hero background
+        initParticles() {
+            const canvas = document.getElementById('particle-canvas');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            let animationId;
+
+            const resize = () => {
+                canvas.width = window.innerWidth;
+                canvas.height = document.querySelector('header')?.offsetHeight || 600;
+            };
+            resize();
+            window.addEventListener('resize', resize);
+
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.vx = (Math.random() - 0.5) * 0.3;
+                    this.vy = (Math.random() - 0.5) * 0.3;
+                    this.size = Math.random() * 2 + 1;
+                    this.color = `rgba(${168 + Math.random() * 50}, ${85 + Math.random() * 50}, ${247 + Math.random() * 50}, ${0.3 + Math.random() * 0.3})`;
+                }
+
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+
+                    if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                    if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+                }
+
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fillStyle = this.color;
+                    ctx.fill();
+                }
+            }
+
+            const init = () => {
+                particles = [];
+                const particleCount = Math.min(80, Math.floor((canvas.width * canvas.height) / 15000));
+                for (let i = 0; i < particleCount; i++) {
+                    particles.push(new Particle());
+                }
+            };
+
+            const connect = () => {
+                for (let a = 0; a < particles.length; a++) {
+                    for (let b = a; b < particles.length; b++) {
+                        const dx = particles[a].x - particles[b].x;
+                        const dy = particles[a].y - particles[b].y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+
+                        if (distance < 120) {
+                            ctx.strokeStyle = `rgba(168, 85, 247, ${0.15 - distance / 800})`;
+                            ctx.lineWidth = 0.5;
+                            ctx.beginPath();
+                            ctx.moveTo(particles[a].x, particles[a].y);
+                            ctx.lineTo(particles[b].x, particles[b].y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+            };
+
+            const animate = () => {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                particles.forEach(particle => {
+                    particle.update();
+                    particle.draw();
+                });
+                connect();
+
+                animationId = requestAnimationFrame(animate);
+            };
+
+            init();
+            animate();
+
+            // Cleanup on page hide
+            window.addEventListener('beforeunload', () => {
+                cancelAnimationFrame(animationId);
+            });
         },
         
         // Fetch repositories
