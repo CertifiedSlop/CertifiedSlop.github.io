@@ -316,8 +316,14 @@
         <section x-show="!loading && !error && filteredRepos.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <template x-for="repo in filteredRepos" :key="repo.id">
                 <article @click="selectedRepo = repo"
-                         class="group bg-card hover:bg-card-hover rounded-2xl border border-white/10 p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-purple-500/10 animate-slide-up cursor-pointer"
+                         class="group bg-card hover:bg-card-hover rounded-2xl border border-white/10 p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-purple-500/20 animate-slide-up cursor-pointer card-shine relative overflow-hidden"
                          :style="'animation-delay: ' + (filteredRepos.indexOf(repo) * 50) + 'ms'">
+
+                    <!-- Recently updated badge -->
+                    <div x-show="isRecentlyUpdated(repo.updated_at)"
+                         class="absolute top-3 right-3 px-2 py-1 bg-green-500/20 border border-green-500/40 rounded-md text-xs text-green-400 font-medium z-10">
+                        New
+                    </div>
 
                     <!-- Header -->
                     <div class="flex items-start justify-between gap-3 mb-4" @click.stop>

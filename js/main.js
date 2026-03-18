@@ -330,7 +330,16 @@ function repoApp() {
         hasWiki(repo) {
             return this.wikiAllowlist.includes(repo.name);
         },
-        
+
+        // Check if repo was updated within 7 days
+        isRecentlyUpdated(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+            return diffDays <= 7;
+        },
+
         // Get language dot color
         getLanguageDotColor(language) {
             const colors = {
