@@ -7,7 +7,8 @@ function repoApp() {
         languages: [],
         loading: true,
         error: false,
-        
+        selectedRepo: null,
+
         // Filters
         search: '',
         languageFilter: 'all',

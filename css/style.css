@@ -1,6 +1,11 @@
 /* Custom CSS for Certified Slop GitHub Pages */
 /* Used alongside Tailwind CSS for specific animations and effects */
 
+/* x-cloak for Alpine.js - prevents FOUC */
+[x-cloak] {
+    display: none !important;
+}
+
 /* Smooth scrolling */
 html {
     scroll-behavior: smooth;
