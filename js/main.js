@@ -16,7 +16,7 @@ function repoApp() {
         sortOption: 'stars',
         
         // Cache
-        CACHE_KEY: 'certifiedslop_repos_cache_v2',
+        CACHE_KEY: 'certifiedslop_repos_cache_v3',
         CACHE_DURATION: 5 * 60 * 1000, // 5 minutes
         
         // Computed stats
@@ -41,18 +41,21 @@ function repoApp() {
         
         // Initialize
         async init() {
+            console.log('Initializing repo app...');
             await this.fetchRepos();
             this.updateLastUpdated();
         },
         
         // Fetch repositories
         async fetchRepos() {
+            console.log('Fetching repos...');
             this.loading = true;
             this.error = false;
             
             // Check cache
             const cached = this.getCachedData();
             if (cached) {
+                console.log('Using cached data, count:', cached.length);
                 this.repos = cached;
                 this.processRepos();
                 this.loading = false;
@@ -67,12 +70,15 @@ function repoApp() {
                 }
                 
                 const data = await response.json();
+                console.log('Raw repos from API:', data.length);
                 
                 // Filter out false positives
                 this.repos = data.filter(repo => 
                     !repo.name.startsWith('GNU') && 
                     !repo.name.startsWith('MIT')
                 );
+                
+                console.log('Filtered repos:', this.repos.length);
                 
                 // Cache results
                 this.cacheData(this.repos);
@@ -94,6 +100,7 @@ function repoApp() {
                 if (repo.language) langSet.add(repo.language);
             });
             this.languages = Array.from(langSet);
+            console.log('Languages:', this.languages);
             
             // Initial filter
             this.filterRepos();
@@ -147,6 +154,7 @@ function repoApp() {
             });
             
             this.filteredRepos = result;
+            console.log('Filtered repos count:', this.filteredRepos.length);
         },
         
         // Clear search
@@ -285,4 +293,11 @@ function repoApp() {
             }
         }
     }
+}
+
+// Register with Alpine when available
+if (typeof document !== 'undefined') {
+    document.addEventListener('alpine:init', () => {
+        console.log('Alpine initialized');
+    });
 }
