@@ -10,7 +10,7 @@ function repoApp() {
         selectedRepo: null,
 
         // Manual wiki allowlist - GitHub API's has_wiki is unreliable
-        wikiAllowlist: ['websAIte', 'calculAItor', 'SQuAiL'],
+        wikiAllowlist: ['websAIte', 'SQuAiL', 'AIuth', 'Slopix', 'Slop-Package-manager', 'MooAId', 'MooAIdroid', 'CalcAIdroid', 'WikAI', 'CertifiedSlop.github.io'],
 
         // Filters
         search: '',
