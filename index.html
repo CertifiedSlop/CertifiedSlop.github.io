@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certified Slop - We make slop. That's it.</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="org-header">
+        <div class="header-content">
+            <img src="https://avatars.githubusercontent.com/u/265597819?v=4" alt="Certified Slop" class="org-avatar">
+            <div class="org-info">
+                <h1>Certified Slop</h1>
+                <p class="tagline">We make slop. That's it.</p>
+                <p class="location">📍 Czech Republic</p>
+                <div class="org-stats">
+                    <a href="https://github.com/CertifiedSlop" class="github-link">View on GitHub</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="repos-section">
+            <h2>Repositories</h2>
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <p>Loading repositories...</p>
+            </div>
+            <div id="error" class="error" style="display: none;">
+                <p>Failed to load repositories. Please try again later.</p>
+            </div>
+            <div id="repos-grid" class="repos-grid"></div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 Certified Slop. All rights reserved.</p>
+        <p>Powered by <a href="https://github.com">GitHub</a></p>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
