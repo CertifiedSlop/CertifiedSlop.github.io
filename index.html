@@ -187,20 +187,29 @@
                     <svg class="absolute left-5 w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                     </svg>
-                    <input 
-                        type="text" 
+                    <input
+                        type="text"
                         x-model="search"
                         @input="filterRepos()"
                         placeholder="Search repositories, descriptions, or topics..."
                         class="w-full pl-14 pr-12 py-4 bg-secondary/80 backdrop-blur-xl border border-white/10 rounded-2xl text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition-all text-lg"
                     >
-                    <button 
-                        x-show="search.length > 0"
-                        @click="clearSearch()"
-                        class="absolute right-4 p-2 text-gray-400 hover:text-white transition-colors"
-                    >
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
-                    </button>
+                    <div class="absolute right-4 flex items-center gap-2">
+                        <button
+                            @click="copyShareLink()"
+                            class="p-2 text-purple-400 hover:text-purple-300 transition-colors"
+                            title="Copy shareable link with current filters"
+                        >
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16"><path d="M4 2a2 2 0 012-2h8a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V2zm0 2v10h8V4H6z"/><path d="M0 6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H2a2 2 0 01-2-2V6z"/></svg>
+                        </button>
+                        <button
+                            x-show="search.length > 0"
+                            @click="clearSearch()"
+                            class="p-2 text-gray-400 hover:text-white transition-colors"
+                        >
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                        </button>
+                    </div>
                 </div>
             </div>
 

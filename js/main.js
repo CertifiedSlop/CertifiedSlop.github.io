@@ -65,11 +65,65 @@ function repoApp() {
         // Initialize
         async init() {
             console.log('Initializing repo app...');
+            this.parseURLParams();
             await this.fetchRepos();
             this.updateLastUpdated();
             this.startTypingEffect();
             this.initParticles();
             this.initKeyboardShortcuts();
+        },
+
+        // Parse URL parameters for filters
+        parseURLParams() {
+            const params = new URLSearchParams(window.location.search);
+
+            // Search
+            const search = params.get('q');
+            if (search) this.search = search;
+
+            // Languages (comma-separated)
+            const langs = params.get('lang');
+            if (langs) {
+                this.selectedLanguages = langs.split(',').map(l => l.toLowerCase());
+            }
+
+            // Topics (comma-separated)
+            const topics = params.get('topics');
+            if (topics) {
+                this.selectedTopics = topics.split(',').map(t => t.toLowerCase());
+            }
+
+            // License
+            const license = params.get('license');
+            if (license) this.licenseFilter = license;
+
+            // Wiki
+            const wiki = params.get('wiki');
+            if (wiki === 'true') this.wikiFilter = true;
+
+            // Sort
+            const sort = params.get('sort');
+            if (sort && ['stars', 'forks', 'updated', 'created', 'name'].includes(sort)) {
+                this.sortOption = sort;
+            }
+        },
+
+        // Update URL with current filters
+        updateURL() {
+            const params = new URLSearchParams();
+
+            if (this.search) params.set('q', this.search);
+            if (this.selectedLanguages.length > 0) params.set('lang', this.selectedLanguages.join(','));
+            if (this.selectedTopics.length > 0) params.set('topics', this.selectedTopics.join(','));
+            if (this.licenseFilter !== 'all') params.set('license', this.licenseFilter);
+            if (this.wikiFilter) params.set('wiki', 'true');
+            if (this.sortOption !== 'stars') params.set('sort', this.sortOption);
+
+            const newURL = params.toString()
+                ? `${window.location.pathname}?${params.toString()}`
+                : window.location.pathname;
+
+            window.history.replaceState({}, '', newURL);
         },
 
         // Keyboard shortcuts
@@ -376,6 +430,8 @@ function repoApp() {
             this.filteredRepos = result;
             console.log('Filtered repos count:', this.filteredRepos.length);
 
+            // Update URL with current filters
+            this.updateURL();
         },
         
         // Clear search
@@ -507,6 +563,24 @@ function repoApp() {
                 document.execCommand('copy');
                 document.body.removeChild(textarea);
                 this.showToast('URL copied to clipboard!');
+            }
+        },
+
+        // Copy shareable link with current filters
+        async copyShareLink() {
+            this.updateURL();
+            const shareUrl = window.location.href;
+            try {
+                await navigator.clipboard.writeText(shareUrl);
+                this.showToast('Share link copied!');
+            } catch (err) {
+                const textarea = document.createElement('textarea');
+                textarea.value = shareUrl;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                this.showToast('Share link copied!');
             }
         },
         
