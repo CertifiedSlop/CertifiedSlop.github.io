@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,7 +15,7 @@
     <meta property="og:image" content="https://avatars.githubusercontent.com/u/265597819?v=4">
     
     <!-- Twitter -->
-    <meta property="twitter:card" content="summary">
+    <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://certifiedslop.github.io/">
     <meta property="twitter:title" content="Certified Slop - We make slop. That's it.">
     <meta property="twitter:description" content="Explore our AI-powered projects including websAIte, calculAItor, SQuAiL, and more.">
@@ -23,141 +23,375 @@
     
     <title>Certified Slop - We make slop. That's it.</title>
     <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/265597819?v=4">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0f0f11',
+                        secondary: '#18181b',
+                        card: '#202025',
+                        'card-hover': '#2a2a30',
+                    },
+                    animation: {
+                        'gradient': 'gradient 15s ease infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
+                        'slide-up': 'slideUp 0.3s ease-out',
+                    },
+                    keyframes: {
+                        gradient: {
+                            '0%, 100%': { backgroundPosition: '0% 50%' },
+                            '50%': { backgroundPosition: '100% 50%' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        pulseGlow: {
+                            '0%, 100%': { opacity: '1' },
+                            '50%': { opacity: '0.5' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                    },
+                    backdropBlur: {
+                        xs: '2px',
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
-    <a href="#main-content" class="skip-link">Skip to main content</a>
+<body class="bg-primary text-white min-h-screen flex flex-col" x-data="repoApp()" x-init="init()">
     
-    <header class="org-header">
-        <div class="header-content">
-            <img src="https://avatars.githubusercontent.com/u/265597819?v=4" alt="Certified Slop" class="org-avatar">
-            <div class="org-info">
-                <h1>Certified Slop</h1>
-                <p class="tagline">We make slop. That's it.</p>
-                <p class="location">📍 Czech Republic</p>
-                <div class="org-stats" id="org-stats" aria-live="polite">
-                    <!-- Stats will be populated by JS -->
+    <!-- Hero Section -->
+    <header class="relative overflow-hidden">
+        <!-- Animated gradient background -->
+        <div class="absolute inset-0 bg-gradient-to-br from-purple-900/40 via-primary to-blue-900/40 bg-[length:200%_200%] animate-gradient"></div>
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-900/20 via-transparent to-transparent"></div>
+        
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+            <div class="flex flex-col items-center text-center">
+                <!-- Avatar -->
+                <div class="relative mb-6">
+                    <div class="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full blur-xl opacity-50 animate-pulse"></div>
+                    <img 
+                        src="https://avatars.githubusercontent.com/u/265597819?v=4" 
+                        alt="Certified Slop" 
+                        class="relative w-28 h-28 sm:w-36 sm:h-36 rounded-full border-4 border-white/10 shadow-2xl animate-float"
+                    >
                 </div>
-                <div class="header-actions">
-                    <a href="https://github.com/CertifiedSlop" class="github-link" target="_blank" rel="noopener noreferrer">
-                        View on GitHub
-                    </a>
+                
+                <!-- Title & Tagline -->
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold mb-3">
+                    <span class="bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">
+                        Certified Slop
+                    </span>
+                </h1>
+                <p class="text-xl sm:text-2xl text-gray-400 italic mb-2">We make slop. That's it.</p>
+                <p class="text-gray-500 mb-8 flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg>
+                    Czech Republic
+                </p>
+                
+                <!-- Stats -->
+                <div class="flex flex-wrap justify-center gap-3 sm:gap-4 mb-8">
+                    <template x-if="repos.length > 0">
+                        <>
+                            <div class="flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-sm rounded-full border border-white/10">
+                                <svg class="w-5 h-5 text-purple-400" fill="currentColor" viewBox="0 0 16 16"><path d="M2 2.5A2.5 2.5 0 014.5 0h8.75a.75.75 0 01.75.75v12.5a.75.75 0 01-.75.75h-2.5a.75.75 0 110-1.5h1.75v-2h-8a1 1 0 00-.714 1.7.75.75 0 01-1.072 1.05A2.495 2.495 0 012 11.5v-9zm10.5-1V9h-8c-.356 0-.694.074-1 .208V2.5a1 1 0 011-1h8zM5 12.25v3.25a.25.25 0 00.4.2l1.45-1.087a.25.25 0 01.3 0L8.6 15.7a.25.25 0 00.4-.2v-3.25a.25.25 0 00-.25-.25h-3.5a.25.25 0 00-.25.25z"/></svg>
+                                <span class="text-white font-semibold" x-text="repos.length"></span>
+                                <span class="text-gray-400 text-sm">repos</span>
+                            </div>
+                            <div class="flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-sm rounded-full border border-white/10">
+                                <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 16 16"><path d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/></svg>
+                                <span class="text-white font-semibold" x-text="formatNumber(totalStars)"></span>
+                                <span class="text-gray-400 text-sm">stars</span>
+                            </div>
+                            <div class="flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-sm rounded-full border border-white/10">
+                                <svg class="w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 16 16"><path d="M5 3.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm0 2.122a2.25 2.25 0 10-1.5 0v.878A2.25 2.25 0 005.75 8.5h1.5v2.128a2.251 2.251 0 101.5 0V8.5h1.5a2.25 2.25 0 002.25-2.25v-.878a2.25 2.25 0 10-1.5 0v.878a.75.75 0 01-.75.75h-4.5A.75.75 0 015 6.25v-.878zm3.75 7.378a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm3-8.75a.75.75 0 100-1.5.75.75 0 000 1.5z"/></svg>
+                                <span class="text-white font-semibold" x-text="formatNumber(totalForks)"></span>
+                                <span class="text-gray-400 text-sm">forks</span>
+                            </div>
+                            <div class="flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-sm rounded-full border border-white/10">
+                                <span class="text-purple-400 font-semibold" x-text="topLanguage"></span>
+                                <span class="text-gray-400 text-sm">top lang</span>
+                            </div>
+                        </>
+                    </template>
                 </div>
+                
+                <!-- CTA Button -->
+                <a href="https://github.com/CertifiedSlop" target="_blank" rel="noopener noreferrer"
+                   class="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-500 hover:to-green-400 text-white font-semibold rounded-xl shadow-lg shadow-green-500/30 transition-all duration-300 hover:scale-105 hover:shadow-green-500/50">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+                    View on GitHub
+                </a>
             </div>
         </div>
     </header>
 
-    <main class="container" id="main-content">
-        <section class="about-section">
-            <h2>About</h2>
-            <p class="about-text">
-                Certified Slop is a software organization focused on creating innovative AI-powered tools and libraries. 
-                From runtime-generated websites to LLM-powered databases and Android applications, we're pushing the boundaries 
-                of what's possible with artificial intelligence.
-            </p>
+    <!-- Main Content -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        
+        <!-- About Section -->
+        <section class="mb-12">
+            <div class="bg-gradient-to-r from-purple-500/10 to-blue-500/10 backdrop-blur-sm rounded-2xl border border-white/10 p-6 sm:p-8">
+                <h2 class="text-2xl font-bold mb-3 text-white">About</h2>
+                <p class="text-gray-300 leading-relaxed">
+                    Certified Slop is a software organization focused on creating innovative AI-powered tools and libraries. 
+                    From runtime-generated websites to LLM-powered databases and Android applications, we're pushing the boundaries 
+                    of what's possible with artificial intelligence.
+                </p>
+            </div>
         </section>
 
-        <section class="repos-section">
-            <div class="repos-header">
-                <h2>Repositories</h2>
+        <!-- Search & Filters -->
+        <section class="mb-10">
+            <!-- Search Bar -->
+            <div class="relative max-w-3xl mx-auto mb-6">
+                <div class="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl blur opacity-30"></div>
+                <div class="relative flex items-center">
+                    <svg class="absolute left-5 w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                    <input 
+                        type="text" 
+                        x-model="search"
+                        @input="filterRepos()"
+                        placeholder="Search repositories, descriptions, or topics..."
+                        class="w-full pl-14 pr-12 py-4 bg-secondary/80 backdrop-blur-xl border border-white/10 rounded-2xl text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition-all text-lg"
+                    >
+                    <button 
+                        x-show="search.length > 0"
+                        @click="clearSearch()"
+                        class="absolute right-4 p-2 text-gray-400 hover:text-white transition-colors"
+                    >
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Filter Pills -->
+            <div class="flex flex-wrap justify-center gap-3">
+                <!-- Language Filter -->
+                <div class="relative">
+                    <select 
+                        x-model="languageFilter"
+                        @change="filterRepos()"
+                        class="appearance-none px-4 py-2.5 pr-10 bg-secondary/80 backdrop-blur-sm border border-white/10 rounded-xl text-gray-300 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 cursor-pointer hover:border-white/20 transition-all"
+                    >
+                        <option value="all">All Languages</option>
+                        <template x-for="lang in languages" :key="lang">
+                            <option :value="lang.toLowerCase()" x-text="lang"></option>
+                        </template>
+                    </select>
+                    <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                </div>
                 
-                <div class="controls-container">
-                    <!-- Search -->
-                    <div class="search-container">
-                        <label for="search-input" class="visually-hidden">Search repositories</label>
-                        <input 
-                            type="text" 
-                            id="search-input" 
-                            class="search-input" 
-                            placeholder="Search repositories..."
-                            aria-label="Search repositories"
-                        >
-                        <button id="clear-search" class="clear-btn" aria-label="Clear search" style="display: none;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                                <path d="M3.72 3.72a.75.75 0 011.06 0L8 6.94l3.22-3.22a.75.75 0 111.06 1.06L9.06 8l3.22 3.22a.75.75 0 11-1.06 1.06L8 9.06l-3.22 3.22a.75.75 0 01-1.06-1.06L6.94 8 3.72 4.78a.75.75 0 010-1.06z"/>
-                            </svg>
-                        </button>
+                <!-- License Filter -->
+                <div class="relative">
+                    <select 
+                        x-model="licenseFilter"
+                        @change="filterRepos()"
+                        class="appearance-none px-4 py-2.5 pr-10 bg-secondary/80 backdrop-blur-sm border border-white/10 rounded-xl text-gray-300 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 cursor-pointer hover:border-white/20 transition-all"
+                    >
+                        <option value="all">All Licenses</option>
+                        <option value="mit">MIT</option>
+                        <option value="agpl">AGPL</option>
+                        <option value="gpl">GPL</option>
+                        <option value="none">No License</option>
+                    </select>
+                    <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                </div>
+                
+                <!-- Wiki Toggle -->
+                <label class="inline-flex items-center gap-2 px-4 py-2.5 bg-secondary/80 backdrop-blur-sm border border-white/10 rounded-xl cursor-pointer hover:border-white/20 transition-all">
+                    <input type="checkbox" x-model="wikiFilter" @change="filterRepos()" class="sr-only peer">
+                    <div class="w-5 h-3 bg-gray-600 rounded-full peer-checked:bg-green-500 transition-colors relative">
+                        <div class="absolute w-5 h-5 bg-white rounded-full shadow-md -top-1 left-0 peer-checked:left-auto peer-checked:-right-1 transition-all"></div>
                     </div>
-
-                    <!-- Filters -->
-                    <div class="filters-container">
-                        <div class="filter-group">
-                            <label for="language-filter" class="filter-label">Language:</label>
-                            <select id="language-filter" class="filter-select" aria-label="Filter by language">
-                                <option value="all">All Languages</option>
-                            </select>
-                        </div>
-
-                        <div class="filter-group">
-                            <label for="license-filter" class="filter-label">License:</label>
-                            <select id="license-filter" class="filter-select" aria-label="Filter by license">
-                                <option value="all">All Licenses</option>
-                                <option value="mit">MIT</option>
-                                <option value="agpl">AGPL</option>
-                                <option value="gpl">GPL</option>
-                                <option value="none">No License</option>
-                            </select>
-                        </div>
-
-                        <div class="filter-group checkbox-group">
-                            <label class="checkbox-label">
-                                <input type="checkbox" id="wiki-filter" aria-label="Show only repos with wiki">
-                                <span>Has Wiki</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- Sort -->
-                    <div class="sort-container">
-                        <label for="sort-select" class="sort-label">Sort by:</label>
-                        <select id="sort-select" class="sort-select" aria-label="Sort repositories">
-                            <option value="stars">Most Stars</option>
-                            <option value="forks">Most Forks</option>
-                            <option value="updated">Recently Updated</option>
-                            <option value="created">Recently Created</option>
-                            <option value="name">Name (A-Z)</option>
-                            <option value="name-desc">Name (Z-A)</option>
-                        </select>
-                    </div>
+                    <span class="text-gray-300 text-sm font-medium">Has Wiki</span>
+                </label>
+                
+                <!-- Sort -->
+                <div class="relative">
+                    <select 
+                        x-model="sortOption"
+                        @change="filterRepos()"
+                        class="appearance-none px-4 py-2.5 pr-10 bg-secondary/80 backdrop-blur-sm border border-white/10 rounded-xl text-gray-300 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 cursor-pointer hover:border-white/20 transition-all"
+                    >
+                        <option value="stars">Most Stars</option>
+                        <option value="forks">Most Forks</option>
+                        <option value="updated">Recently Updated</option>
+                        <option value="created">Recently Created</option>
+                        <option value="name">Name (A-Z)</option>
+                    </select>
+                    <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
                 </div>
             </div>
+        </section>
 
-            <div id="loading" class="loading" aria-live="polite">
-                <div class="skeleton-grid">
-                    <div class="skeleton-card"></div>
-                    <div class="skeleton-card"></div>
-                    <div class="skeleton-card"></div>
-                    <div class="skeleton-card"></div>
-                    <div class="skeleton-card"></div>
-                    <div class="skeleton-card"></div>
+        <!-- Loading State -->
+        <section x-show="loading" class="py-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <template x-for="i in 6">
+                    <div class="bg-card rounded-2xl border border-white/10 p-6 h-56 animate-pulse">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-8 h-8 bg-gray-700 rounded-lg"></div>
+                            <div class="h-5 bg-gray-700 rounded w-32"></div>
+                        </div>
+                        <div class="space-y-2 mb-4">
+                            <div class="h-4 bg-gray-700 rounded w-full"></div>
+                            <div class="h-4 bg-gray-700 rounded w-2/3"></div>
+                        </div>
+                        <div class="flex gap-2">
+                            <div class="h-6 bg-gray-700 rounded-full w-20"></div>
+                            <div class="h-6 bg-gray-700 rounded-full w-16"></div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </section>
+
+        <!-- Error State -->
+        <section x-show="error && !loading" class="py-12">
+            <div class="text-center">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-red-500/20 rounded-full mb-4">
+                    <svg class="w-8 h-8 text-red-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></svg>
                 </div>
+                <h3 class="text-xl font-semibold text-white mb-2">Failed to load repositories</h3>
+                <p class="text-gray-400 mb-6">Please check your connection and try again.</p>
+                <button @click="fetchRepos()" class="px-6 py-3 bg-red-600 hover:bg-red-500 text-white font-semibold rounded-xl transition-colors">
+                    Retry
+                </button>
             </div>
+        </section>
 
-            <div id="error" class="error" style="display: none;" role="alert">
-                <p>Failed to load repositories. Please try again later.</p>
-                <button id="retry-btn" class="retry-btn">Retry</button>
+        <!-- No Results -->
+        <section x-show="!loading && !error && filteredRepos.length === 0" class="py-12 text-center">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-gray-700/50 rounded-full mb-4">
+                <svg class="w-8 h-8 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
             </div>
+            <h3 class="text-xl font-semibold text-white mb-2">No repositories found</h3>
+            <p class="text-gray-400 mb-6">Try adjusting your search or filters.</p>
+            <button @click="clearFilters()" class="px-6 py-3 bg-purple-600 hover:bg-purple-500 text-white font-semibold rounded-xl transition-colors">
+                Clear all filters
+            </button>
+        </section>
 
-            <div id="no-results" class="no-results" style="display: none;">
-                <p>No repositories match your search criteria.</p>
-                <button id="clear-filters-btn" class="clear-filters-btn">Clear all filters</button>
-            </div>
-
-            <div id="repos-grid" class="repos-grid" role="list" aria-label="Repository list"></div>
+        <!-- Repos Grid -->
+        <section x-show="!loading && !error && filteredRepos.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <template x-for="repo in filteredRepos" :key="repo.id">
+                <article class="group bg-card hover:bg-card-hover rounded-2xl border border-white/10 p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-purple-500/10 animate-slide-up"
+                         :style="'animation-delay: ' + (filteredRepos.indexOf(repo) * 50) + 'ms'">
+                    
+                    <!-- Header -->
+                    <div class="flex items-start justify-between gap-3 mb-4">
+                        <a :href="repo.html_url" target="_blank" rel="noopener noreferrer"
+                           class="flex items-center gap-2.5 text-purple-400 hover:text-purple-300 transition-colors group">
+                            <svg class="w-6 h-6 flex-shrink-0 text-gray-400" fill="currentColor" viewBox="0 0 16 16"><path d="M2 2.5A2.5 2.5 0 014.5 0h8.75a.75.75 0 01.75.75v12.5a.75.75 0 01-.75.75h-2.5a.75.75 0 110-1.5h1.75v-2h-8a1 1 0 00-.714 1.7.75.75 0 01-1.072 1.05A2.495 2.495 0 012 11.5v-9zm10.5-1V9h-8c-.356 0-.694.074-1 .208V2.5a1 1 0 011-1h8zM5 12.25v3.25a.25.25 0 00.4.2l1.45-1.087a.25.25 0 01.3 0L8.6 15.7a.25.25 0 00.4-.2v-3.25a.25.25 0 00-.25-.25h-3.5a.25.25 0 00-.25.25z"/></svg>
+                            <span class="font-semibold text-lg" x-text="repo.name"></span>
+                        </a>
+                    </div>
+                    
+                    <!-- Description -->
+                    <p class="text-gray-400 text-sm leading-relaxed mb-4 min-h-[3rem]" x-text="repo.description || 'No description provided'"></p>
+                    
+                    <!-- Topics -->
+                    <div class="flex flex-wrap gap-2 mb-4" x-show="repo.topics && repo.topics.length > 0">
+                        <template x-for="topic in repo.topics.slice(0, 4)" :key="topic">
+                            <span class="px-2.5 py-1 bg-purple-500/10 text-purple-400 text-xs rounded-lg border border-purple-500/20" x-text="topic"></span>
+                        </template>
+                    </div>
+                    
+                    <!-- Wiki Button (Prominent) -->
+                    <a x-show="repo.has_wiki"
+                       :href="repo.html_url + '/wiki'"
+                       target="_blank" rel="noopener noreferrer"
+                       class="flex items-center justify-center gap-2 w-full py-2.5 mb-4 bg-gradient-to-r from-green-600/20 to-green-500/20 hover:from-green-600/30 hover:to-green-500/30 border border-green-500/30 hover:border-green-500/50 rounded-xl text-green-400 hover:text-green-300 font-medium text-sm transition-all">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16"><path d="M0 2a2 2 0 012-2h8a2 2 0 012 2v12a2 2 0 01-2 2H2a2 2 0 01-2-2V2zm10 1H2a1 1 0 00-1 1v10a1 1 0 001 1h8a1 1 0 001-1V4a1 1 0 00-1-1z"/><path d="M3 4a1 1 0 011-1h1a1 1 0 011 1v1H3V4zm0 3a1 1 0 011-1h1a1 1 0 011 1v1H3V7zm0 3a1 1 0 011-1h1a1 1 0 011 1v1H3v-1z"/></svg>
+                        View Wiki
+                    </a>
+                    
+                    <!-- Meta -->
+                    <div class="flex flex-wrap items-center gap-2 mb-3">
+                        <!-- Language -->
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-blue-500/10 text-blue-400 text-xs rounded-full border border-blue-500/20"
+                              x-show="repo.language">
+                            <span class="w-2 h-2 rounded-full" :class="getLanguageDotColor(repo.language)"></span>
+                            <span x-text="repo.language"></span>
+                        </span>
+                        
+                        <!-- License -->
+                        <span class="px-2.5 py-1 bg-gray-500/10 text-gray-400 text-xs rounded-full border border-gray-500/20"
+                              x-show="repo.license"
+                              x-text="getLicenseShort(repo.license.name)"></span>
+                    </div>
+                    
+                    <!-- Stats -->
+                    <div class="flex items-center gap-4 text-xs text-gray-500">
+                        <span class="flex items-center gap-1">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16"><path d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/></svg>
+                            <span x-text="formatNumber(repo.stargazers_count)"></span>
+                        </span>
+                        <span class="flex items-center gap-1">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16"><path d="M5 3.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm0 2.122a2.25 2.25 0 10-1.5 0v.878A2.25 2.25 0 005.75 8.5h1.5v2.128a2.251 2.251 0 101.5 0V8.5h1.5a2.25 2.25 0 002.25-2.25v-.878a2.25 2.25 0 10-1.5 0v.878a.75.75 0 01-.75.75h-4.5A.75.75 0 015 6.25v-.878zm3.75 7.378a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm3-8.75a.75.75 0 100-1.5.75.75 0 000 1.5z"/></svg>
+                            <span x-text="formatNumber(repo.forks_count)"></span>
+                        </span>
+                        <span class="flex items-center gap-1 ml-auto" :title="'Updated: ' + new Date(repo.updated_at).toLocaleDateString()">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16"><path d="M7.75 2a.75.75 0 01.75.75V3h2.25a2.25 2.25 0 012.25 2.25v1.942c.365.049.75.058 1.125.058h.378a.75.75 0 010 1.5h-.378a12.144 12.144 0 01-2.25-.172v5.172a2.25 2.25 0 01-2.25 2.25H4.5a2.25 2.25 0 01-2.25-2.25V5.25A2.25 2.25 0 014.5 3h2.25V2.75A.75.75 0 017.75 2zm3 9.75a.75.75 0 00-1.5 0 .75.75 0 001.5 0zM4.5 4.5a.75.75 0 00-.75.75v8.5c0 .414.336.75.75.75h7.5a.75.75 0 00.75-.75v-5.278a12.042 12.042 0 01-2.25.228V10a.75.75 0 01-1.5 0V7.25a.75.75 0 01.75-.75h3V5.25a.75.75 0 00-.75-.75h-7.5z"/></svg>
+                            <span x-text="getRelativeTime(repo.updated_at)"></span>
+                        </span>
+                    </div>
+                    
+                    <!-- Copy URL Button -->
+                    <button @click="copyUrl(repo.html_url)" 
+                            class="absolute top-4 right-4 p-2 text-gray-500 hover:text-white opacity-0 group-hover:opacity-100 transition-all bg-gray-800/80 hover:bg-gray-700 rounded-lg">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16"><path d="M4 2a2 2 0 012-2h8a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V2zm0 2v10h8V4H6z"/><path d="M0 6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H2a2 2 0 01-2-2V6z"/></svg>
+                    </button>
+                </article>
+            </template>
         </section>
     </main>
 
-    <footer class="footer">
-        <div class="footer-content">
-            <p>&copy; 2026 Certified Slop. All rights reserved.</p>
-            <p>Powered by <a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub</a></p>
-            <p class="last-updated" id="last-updated"></p>
-            <a href="#main-content" class="back-to-top">↑ Back to top</a>
+    <!-- Footer -->
+    <footer class="bg-secondary/50 backdrop-blur-sm border-t border-white/10 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col items-center gap-4">
+                <p class="text-gray-500 text-sm">
+                    &copy; <span x-text="new Date().getFullYear()"></span> Certified Slop. All rights reserved.
+                </p>
+                <p class="text-gray-600 text-xs" id="last-updated"></p>
+                <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">↑ Back to top</a>
+            </div>
         </div>
     </footer>
 
-    <!-- Toast notification container -->
-    <div id="toast-container" class="toast-container" aria-live="assertive" aria-atomic="true"></div>
+    <!-- Toast Container -->
+    <div class="fixed bottom-6 right-6 z-50 flex flex-col gap-2" x-data="{ toasts: [] }" @toast.window="toasts.push($event.detail); setTimeout(() => toasts = toasts.filter(t => t.id !== $event.detail.id), 3000)">
+        <template x-for="toast in toasts" :key="toast.id">
+            <div class="flex items-center gap-3 px-4 py-3 bg-card border border-white/10 rounded-xl shadow-xl animate-slide-up">
+                <svg class="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                <span class="text-sm text-gray-300" x-text="toast.message"></span>
+                <button @click="toasts = toasts.filter(t => t.id !== toast.id)" class="text-gray-500 hover:text-white">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                </button>
+            </div>
+        </template>
+    </div>
 
     <script src="js/main.js"></script>
 </body>
