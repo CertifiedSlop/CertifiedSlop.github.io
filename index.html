@@ -3,10 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Certified Slop - We make slop. That's it. Explore our AI-powered projects including websAIte, calculAItor, SQuAiL, and more.">
+    <meta name="keywords" content="Certified Slop, AI, Python, Kotlin, Rust, open source, GitHub">
+    <meta name="author" content="Certified Slop">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://certifiedslop.github.io/">
+    <meta property="og:title" content="Certified Slop - We make slop. That's it.">
+    <meta property="og:description" content="Explore our AI-powered projects including websAIte, calculAItor, SQuAiL, and more.">
+    <meta property="og:image" content="https://avatars.githubusercontent.com/u/265597819?v=4">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary">
+    <meta property="twitter:url" content="https://certifiedslop.github.io/">
+    <meta property="twitter:title" content="Certified Slop - We make slop. That's it.">
+    <meta property="twitter:description" content="Explore our AI-powered projects including websAIte, calculAItor, SQuAiL, and more.">
+    <meta property="twitter:image" content="https://avatars.githubusercontent.com/u/265597819?v=4">
+    
     <title>Certified Slop - We make slop. That's it.</title>
+    <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/265597819?v=4">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
     <header class="org-header">
         <div class="header-content">
             <img src="https://avatars.githubusercontent.com/u/265597819?v=4" alt="Certified Slop" class="org-avatar">
@@ -14,31 +35,129 @@
                 <h1>Certified Slop</h1>
                 <p class="tagline">We make slop. That's it.</p>
                 <p class="location">📍 Czech Republic</p>
-                <div class="org-stats">
-                    <a href="https://github.com/CertifiedSlop" class="github-link">View on GitHub</a>
+                <div class="org-stats" id="org-stats" aria-live="polite">
+                    <!-- Stats will be populated by JS -->
+                </div>
+                <div class="header-actions">
+                    <a href="https://github.com/CertifiedSlop" class="github-link" target="_blank" rel="noopener noreferrer">
+                        View on GitHub
+                    </a>
                 </div>
             </div>
         </div>
     </header>
 
-    <main class="container">
+    <main class="container" id="main-content">
+        <section class="about-section">
+            <h2>About</h2>
+            <p class="about-text">
+                Certified Slop is a software organization focused on creating innovative AI-powered tools and libraries. 
+                From runtime-generated websites to LLM-powered databases and Android applications, we're pushing the boundaries 
+                of what's possible with artificial intelligence.
+            </p>
+        </section>
+
         <section class="repos-section">
-            <h2>Repositories</h2>
-            <div id="loading" class="loading">
-                <div class="spinner"></div>
-                <p>Loading repositories...</p>
+            <div class="repos-header">
+                <h2>Repositories</h2>
+                
+                <div class="controls-container">
+                    <!-- Search -->
+                    <div class="search-container">
+                        <label for="search-input" class="visually-hidden">Search repositories</label>
+                        <input 
+                            type="text" 
+                            id="search-input" 
+                            class="search-input" 
+                            placeholder="Search repositories..."
+                            aria-label="Search repositories"
+                        >
+                        <button id="clear-search" class="clear-btn" aria-label="Clear search" style="display: none;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                                <path d="M3.72 3.72a.75.75 0 011.06 0L8 6.94l3.22-3.22a.75.75 0 111.06 1.06L9.06 8l3.22 3.22a.75.75 0 11-1.06 1.06L8 9.06l-3.22 3.22a.75.75 0 01-1.06-1.06L6.94 8 3.72 4.78a.75.75 0 010-1.06z"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Filters -->
+                    <div class="filters-container">
+                        <div class="filter-group">
+                            <label for="language-filter" class="filter-label">Language:</label>
+                            <select id="language-filter" class="filter-select" aria-label="Filter by language">
+                                <option value="all">All Languages</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="license-filter" class="filter-label">License:</label>
+                            <select id="license-filter" class="filter-select" aria-label="Filter by license">
+                                <option value="all">All Licenses</option>
+                                <option value="mit">MIT</option>
+                                <option value="agpl">AGPL</option>
+                                <option value="gpl">GPL</option>
+                                <option value="none">No License</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="wiki-filter" aria-label="Show only repos with wiki">
+                                <span>Has Wiki</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Sort -->
+                    <div class="sort-container">
+                        <label for="sort-select" class="sort-label">Sort by:</label>
+                        <select id="sort-select" class="sort-select" aria-label="Sort repositories">
+                            <option value="stars">Most Stars</option>
+                            <option value="forks">Most Forks</option>
+                            <option value="updated">Recently Updated</option>
+                            <option value="created">Recently Created</option>
+                            <option value="name">Name (A-Z)</option>
+                            <option value="name-desc">Name (Z-A)</option>
+                        </select>
+                    </div>
+                </div>
             </div>
-            <div id="error" class="error" style="display: none;">
+
+            <div id="loading" class="loading" aria-live="polite">
+                <div class="skeleton-grid">
+                    <div class="skeleton-card"></div>
+                    <div class="skeleton-card"></div>
+                    <div class="skeleton-card"></div>
+                    <div class="skeleton-card"></div>
+                    <div class="skeleton-card"></div>
+                    <div class="skeleton-card"></div>
+                </div>
+            </div>
+
+            <div id="error" class="error" style="display: none;" role="alert">
                 <p>Failed to load repositories. Please try again later.</p>
+                <button id="retry-btn" class="retry-btn">Retry</button>
             </div>
-            <div id="repos-grid" class="repos-grid"></div>
+
+            <div id="no-results" class="no-results" style="display: none;">
+                <p>No repositories match your search criteria.</p>
+                <button id="clear-filters-btn" class="clear-filters-btn">Clear all filters</button>
+            </div>
+
+            <div id="repos-grid" class="repos-grid" role="list" aria-label="Repository list"></div>
         </section>
     </main>
 
     <footer class="footer">
-        <p>&copy; 2026 Certified Slop. All rights reserved.</p>
-        <p>Powered by <a href="https://github.com">GitHub</a></p>
+        <div class="footer-content">
+            <p>&copy; 2026 Certified Slop. All rights reserved.</p>
+            <p>Powered by <a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub</a></p>
+            <p class="last-updated" id="last-updated"></p>
+            <a href="#main-content" class="back-to-top">↑ Back to top</a>
+        </div>
     </footer>
+
+    <!-- Toast notification container -->
+    <div id="toast-container" class="toast-container" aria-live="assertive" aria-atomic="true"></div>
 
     <script src="js/main.js"></script>
 </body>
