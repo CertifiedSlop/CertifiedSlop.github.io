@@ -5,6 +5,7 @@ function repoApp() {
         repos: [],
         filteredRepos: [],
         languages: [],
+        allTopics: [],
         loading: true,
         error: false,
         selectedRepo: null,
@@ -27,7 +28,8 @@ function repoApp() {
 
         // Filters
         search: '',
-        languageFilter: 'all',
+        selectedLanguages: [],
+        selectedTopics: [],
         licenseFilter: 'all',
         wikiFilter: false,
         sortOption: 'stars',
@@ -232,32 +234,49 @@ function repoApp() {
             });
             this.languages = Array.from(langSet);
             console.log('Languages:', this.languages);
-            
+
+            // Extract unique topics
+            const topicSet = new Set();
+            this.repos.forEach(repo => {
+                if (repo.topics && repo.topics.length > 0) {
+                    repo.topics.forEach(topic => topicSet.add(topic.toLowerCase()));
+                }
+            });
+            this.allTopics = Array.from(topicSet).sort();
+            console.log('Topics:', this.allTopics);
+
             // Initial filter
             this.filterRepos();
         },
-        
+
         // Filter and sort
         filterRepos() {
             let result = [...this.repos];
-            
+
             // Search filter
             if (this.search.trim()) {
                 const searchLower = this.search.toLowerCase().trim();
-                result = result.filter(repo => 
+                result = result.filter(repo =>
                     repo.name.toLowerCase().includes(searchLower) ||
                     (repo.description && repo.description.toLowerCase().includes(searchLower)) ||
                     (repo.topics && repo.topics.some(t => t.toLowerCase().includes(searchLower)))
                 );
             }
-            
-            // Language filter
-            if (this.languageFilter !== 'all') {
-                result = result.filter(repo => 
-                    repo.language && repo.language.toLowerCase() === this.languageFilter.toLowerCase()
+
+            // Language filter (multi-select)
+            if (this.selectedLanguages.length > 0) {
+                result = result.filter(repo =>
+                    repo.language && this.selectedLanguages.includes(repo.language.toLowerCase())
                 );
             }
-            
+
+            // Topic filter (multi-select)
+            if (this.selectedTopics.length > 0) {
+                result = result.filter(repo =>
+                    repo.topics && repo.topics.some(t => this.selectedTopics.includes(t.toLowerCase()))
+                );
+            }
+
             // License filter
             if (this.licenseFilter !== 'all') {
                 result = result.filter(repo => {
@@ -266,12 +285,12 @@ function repoApp() {
                     return licenseType === this.licenseFilter;
                 });
             }
-            
+
             // Wiki filter
             if (this.wikiFilter) {
                 result = result.filter(repo => this.hasWiki(repo));
             }
-            
+
             // Sort
             result.sort((a, b) => {
                 switch (this.sortOption) {
@@ -283,9 +302,10 @@ function repoApp() {
                     default: return b.stargazers_count - a.stargazers_count;
                 }
             });
-            
+
             this.filteredRepos = result;
             console.log('Filtered repos count:', this.filteredRepos.length);
+
         },
         
         // Clear search
@@ -293,11 +313,36 @@ function repoApp() {
             this.search = '';
             this.filterRepos();
         },
-        
+
+        // Toggle language selection
+        toggleLanguage(lang) {
+            const lower = lang.toLowerCase();
+            const index = this.selectedLanguages.indexOf(lower);
+            if (index > -1) {
+                this.selectedLanguages.splice(index, 1);
+            } else {
+                this.selectedLanguages.push(lower);
+            }
+            this.filterRepos();
+        },
+
+        // Toggle topic selection
+        toggleTopic(topic) {
+            const lower = topic.toLowerCase();
+            const index = this.selectedTopics.indexOf(lower);
+            if (index > -1) {
+                this.selectedTopics.splice(index, 1);
+            } else {
+                this.selectedTopics.push(lower);
+            }
+            this.filterRepos();
+        },
+
         // Clear all filters
         clearFilters() {
             this.search = '';
-            this.languageFilter = 'all';
+            this.selectedLanguages = [];
+            this.selectedTopics = [];
             this.licenseFilter = 'all';
             this.wikiFilter = false;
             this.sortOption = 'stars';
