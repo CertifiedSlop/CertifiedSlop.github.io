@@ -415,15 +415,53 @@
         </section>
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-secondary/50 backdrop-blur-sm border-t border-white/10 py-8">
+    <!-- Enhanced Footer -->
+    <footer class="bg-secondary/50 backdrop-blur-sm border-t border-white/10 py-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col items-center gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <!-- Brand -->
+                <div class="md:col-span-2">
+                    <h3 class="text-lg font-bold text-white mb-3">
+                        <span class="bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">Certified Slop</span>
+                    </h3>
+                    <p class="text-gray-400 text-sm mb-4 max-w-md">
+                        We make slop. That's it. Building innovative AI-powered tools and libraries from the Czech Republic.
+                    </p>
+                    <div class="flex gap-3">
+                        <a href="https://github.com/CertifiedSlop" target="_blank" rel="noopener noreferrer"
+                           class="p-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-colors"
+                           title="GitHub">
+                            <svg class="w-5 h-5 text-gray-400 hover:text-white" fill="currentColor" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div>
+                    <h4 class="text-sm font-semibold text-white mb-3">Quick Links</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Home</a></li>
+                        <li><a href="https://github.com/CertifiedSlop" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition-colors">GitHub</a></li>
+                        <li><a href="#repos" @click="$event.preventDefault(); document.querySelector('main').scrollIntoView({behavior: 'smooth'})" class="text-gray-400 hover:text-white transition-colors">Repositories</a></li>
+                    </ul>
+                </div>
+
+                <!-- Back to Top -->
+                <div>
+                    <button @click="window.scrollTo({top: 0, behavior: 'smooth'})"
+                            class="flex items-center gap-2 px-4 py-2 bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 hover:border-purple-500/50 rounded-lg text-purple-400 hover:text-purple-300 transition-all">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16"><path d="M8 12a.5.5 0 00.5-.5V5.707l2.646 2.647a.5.5 0 00.708-.708l-3.5-3.5a.5.5 0 00-.708 0l-3.5 3.5a.5.5 0 10.708.708L7.5 5.707V11.5a.5.5 0 00.5.5z"/><path d="M8 0a8 8 0 100 16A8 8 0 008 0z"/></svg>
+                        <span class="text-sm">Back to Top</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Bottom Bar -->
+            <div class="pt-8 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-4">
                 <p class="text-gray-500 text-sm">
                     &copy; <span x-text="new Date().getFullYear()"></span> Certified Slop. All rights reserved.
                 </p>
                 <p class="text-gray-600 text-xs" id="last-updated"></p>
-                <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">↑ Back to top</a>
             </div>
         </div>
     </footer>
