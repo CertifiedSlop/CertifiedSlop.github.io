@@ -303,49 +303,88 @@ function repoApp() {
             });
         },
         
+        // Rate limit state
+        rateLimitRemaining: null,
+        rateLimitReset: null,
+        rateLimitExceeded: false,
+
         // Fetch repositories
         async fetchRepos() {
             console.log('Fetching repos...');
             this.loading = true;
             this.error = false;
-            
-            // Check cache
+            this.rateLimitExceeded = false;
+
+            // Check cache first
             const cached = this.getCachedData();
             if (cached) {
                 console.log('Using cached data, count:', cached.length);
                 this.repos = cached;
                 this.processRepos();
                 this.loading = false;
+                this.checkRateLimitStatus();
                 return;
             }
-            
+
             try {
                 const response = await fetch(`https://api.github.com/orgs/CertifiedSlop/repos?per_page=100&type=all`);
-                
+
+                // Extract rate limit info from headers
+                this.rateLimitRemaining = parseInt(response.headers.get('X-RateLimit-Remaining') || '0');
+                this.rateLimitReset = parseInt(response.headers.get('X-RateLimit-Reset') || '0');
+
                 if (!response.ok) {
+                    if (response.status === 403) {
+                        // Rate limited
+                        this.rateLimitExceeded = true;
+                        const resetTime = new Date(this.rateLimitReset * 1000);
+                        const waitMinutes = Math.ceil((resetTime - new Date()) / 60000);
+                        throw new Error(`Rate limit exceeded. Please wait ${waitMinutes} minutes or use cached data.`);
+                    }
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                
+
                 const data = await response.json();
                 console.log('Raw repos from API:', data.length);
-                
+
                 // Filter out false positives
-                this.repos = data.filter(repo => 
-                    !repo.name.startsWith('GNU') && 
+                this.repos = data.filter(repo =>
+                    !repo.name.startsWith('GNU') &&
                     !repo.name.startsWith('MIT')
                 );
-                
+
                 console.log('Filtered repos:', this.repos.length);
-                
+
                 // Cache results
                 this.cacheData(this.repos);
-                
+
                 this.processRepos();
+                this.checkRateLimitStatus();
             } catch (err) {
                 console.error('Error fetching repos:', err);
                 this.error = true;
+                // If rate limited, try to use stale cache
+                const staleCache = this.getCachedData();
+                if (staleCache && this.rateLimitExceeded) {
+                    this.repos = staleCache;
+                    this.processRepos();
+                    this.error = false;
+                    this.showToast('Using cached data (API rate limit exceeded)');
+                }
             } finally {
                 this.loading = false;
+            }
+        },
+
+        // Check and display rate limit status
+        checkRateLimitStatus() {
+            if (this.rateLimitRemaining !== null && this.rateLimitRemaining < 10) {
+                console.warn(`Low API rate limit remaining: ${this.rateLimitRemaining}`);
+                if (this.rateLimitReset) {
+                    const resetTime = new Date(this.rateLimitReset * 1000);
+                    const waitMinutes = Math.ceil((resetTime - new Date()) / 60000);
+                    console.warn(`Rate limit resets in approximately ${waitMinutes} minutes`);
+                }
             }
         },
         
