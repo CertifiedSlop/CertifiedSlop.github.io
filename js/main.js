@@ -782,6 +782,7 @@ function repoApp() {
                 this.checkRateLimitStatus();
 
                 this.processRepos();
+                this.loading = false;
             } catch (error) {
                 console.error('[API] Error:', error);
 
