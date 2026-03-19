@@ -684,6 +684,8 @@ function repoApp() {
         // Initialize
         async init() {
             console.log('[App] Initializing...');
+            console.log('[App] this.repos before fetch:', this.repos);
+            console.log('[App] this.loading before fetch:', this.loading);
 
             // Initialize debounced filter function with correct context
             this.filterRepos = Utils.debounce(() => this.doFilterRepos(), CONFIG.DEBOUNCE_DELAY);
@@ -713,6 +715,10 @@ function repoApp() {
             this.updateLastUpdated();
 
             console.log('[App] Initialization complete');
+            console.log('[App] this.repos after fetch:', this.repos.length);
+            console.log('[App] this.filteredRepos after fetch:', this.filteredRepos.length);
+            console.log('[App] this.loading after fetch:', this.loading);
+            console.log('[App] this.error after fetch:', this.error);
         },
 
         // Search management
@@ -750,7 +756,8 @@ function repoApp() {
 
         // Repository fetching
         async fetchRepos() {
-            console.log('[App] Fetching repositories...');
+            console.log('[Fetch] Starting fetch...');
+            console.log('[Fetch] this.loading = true');
             this.loading = true;
             this.error = false;
 
@@ -761,21 +768,26 @@ function repoApp() {
                 this.repos = cached;
                 this.processRepos();
                 this.loading = false;
+                console.log('[Fetch] Cache hit - loading = false, repos =', this.repos.length);
                 return;
             }
+            console.log('[Cache] Miss - fetching from API');
 
             try {
+                console.log('[API] Fetching from GitHub API...');
                 const { data, rateLimit } = await API.fetchRepos(CONFIG.ORG_NAME);
+                console.log('[API] Response received:', data.length, 'repos');
 
                 // Filter out excluded repos
                 this.repos = data.filter(repo =>
                     !CONFIG.EXCLUDED_REPO_PREFIXES.some(prefix => repo.name.startsWith(prefix))
                 );
 
-                console.log(`[API] Fetched: ${this.repos.length} repos`);
+                console.log(`[API] Filtered to: ${this.repos.length} repos`);
 
                 // Cache results
                 Cache.set(CONFIG.CACHE_KEY, this.repos);
+                console.log('[Cache] Data cached');
 
                 // Store rate limit info
                 this.rateLimitInfo = rateLimit;
@@ -783,6 +795,7 @@ function repoApp() {
 
                 this.processRepos();
                 this.loading = false;
+                console.log('[Fetch] Success - loading = false, repos =', this.repos.length, ', filtered =', this.filteredRepos.length);
             } catch (error) {
                 console.error('[API] Error:', error);
 
@@ -797,14 +810,17 @@ function repoApp() {
                         this.processRepos();
                         this.error = false;
                         this.showToast('Using cached data (API rate limit exceeded)');
+                        console.log('[Fetch] Rate limited - using cache');
                         return;
                     }
                 }
 
                 this.error = true;
                 this.errorMessage = error.message || 'Failed to load repositories';
+                console.log('[Fetch] Error state - error = true');
             } finally {
                 this.loading = false;
+                console.log('[Fetch] Finally block - loading = false');
             }
         },
 
@@ -976,8 +992,15 @@ function repoApp() {
 // ============================================================================
 // INITIALIZATION
 // ============================================================================
+
+// Expose repoApp globally for Alpine.js x-data="repoApp()"
+if (typeof window !== 'undefined') {
+    window.repoApp = repoApp;
+}
+
 if (typeof document !== 'undefined') {
     document.addEventListener('alpine:init', () => {
         console.log('[Alpine] Initialized');
+        console.log('[Alpine] repoApp available:', typeof window.repoApp === 'function');
     });
 }
