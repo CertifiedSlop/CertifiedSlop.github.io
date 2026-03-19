@@ -685,6 +685,9 @@ function repoApp() {
         async init() {
             console.log('[App] Initializing...');
 
+            // Initialize debounced filter function with correct context
+            this.filterRepos = Utils.debounce(() => this.doFilterRepos(), CONFIG.DEBOUNCE_DELAY);
+
             // Initialize modules
             ParticleSystem.init('particle-canvas');
             TypingEffect.init('[x-text="typedText"]');
@@ -720,7 +723,7 @@ function repoApp() {
 
         clearSearch() {
             this.search = '';
-            this.filterRepos();
+            this.doFilterRepos();
         },
 
         // URL state management
@@ -818,11 +821,11 @@ function repoApp() {
         processRepos() {
             this.languages = RepoHelpers.extractLanguages(this.repos);
             this.allTopics = RepoHelpers.extractTopics(this.repos);
-            this.filterRepos();
+            this.doFilterRepos();
         },
 
-        // Filter and sort
-        filterRepos: Utils.debounce(function() {
+        // Filter and sort (internal implementation)
+        doFilterRepos() {
             const filters = {
                 search: this.search,
                 languages: this.selectedLanguages,
@@ -839,7 +842,10 @@ function repoApp() {
             this.updateURL();
 
             console.log(`[Filter] Results: ${result.length} repos`);
-        }, CONFIG.DEBOUNCE_DELAY),
+        },
+
+        // Filter and sort (debounced for user input)
+        filterRepos: null, // Will be initialized in constructor
 
         // Filter actions
         toggleLanguage(lang) {
@@ -850,7 +856,7 @@ function repoApp() {
             } else {
                 this.selectedLanguages.push(lower);
             }
-            this.filterRepos();
+            this.doFilterRepos();
         },
 
         toggleTopic(topic) {
@@ -861,7 +867,7 @@ function repoApp() {
             } else {
                 this.selectedTopics.push(lower);
             }
-            this.filterRepos();
+            this.doFilterRepos();
         },
 
         clearFilters() {
@@ -871,7 +877,7 @@ function repoApp() {
             this.licenseFilter = 'all';
             this.wikiFilter = false;
             this.sortOption = 'stars';
-            this.filterRepos();
+            this.doFilterRepos();
         },
 
         // Keyboard navigation

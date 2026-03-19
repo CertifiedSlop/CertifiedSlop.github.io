@@ -421,7 +421,7 @@
                     <button @click="fetchRepos()" class="px-6 py-3 bg-red-600 hover:bg-red-500 text-white font-semibold rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-primary">
                         Retry
                     </button>
-                    <button @click="error = false; filterRepos()"
+                    <button @click="error = false; doFilterRepos()"
                             x-show="repos.length > 0"
                             class="px-6 py-3 bg-purple-600 hover:bg-purple-500 text-white font-semibold rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-primary">
                         Show cached data
