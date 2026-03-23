@@ -279,22 +279,32 @@ function initSearch() {
 
 // Hover tracking
 function initHoverTracking() {
-  document.querySelectorAll('#repo-grid article').forEach(card => {
+  const cards = document.querySelectorAll('#repo-grid article');
+  console.log('Found repo cards:', cards.length);
+
+  cards.forEach(card => {
+    console.log('Setting up card:', card.dataset.repoName);
+
     card.addEventListener('mouseenter', () => {
       hoverCount++;
       if (hoverCount >= 10) unlockAchievement('hover_master');
     });
-    card.addEventListener('click', () => {
+
+    card.addEventListener('click', (e) => {
+      console.log('Card clicked!', card.dataset.repoName);
       const repoName = card.dataset.repoName;
       const repo = REPOS.find(r => r.name === repoName);
+      console.log('Found repo:', repo);
       if (repo) {
         openRepoDetail(repo);
         unlockAchievement('repo_explorer');
       }
     });
+
     card.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
+        console.log('Card activated via keyboard');
         const repoName = card.dataset.repoName;
         const repo = REPOS.find(r => r.name === repoName);
         if (repo) {
