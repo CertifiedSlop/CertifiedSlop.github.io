@@ -1443,6 +1443,21 @@ function repoApp() {
             return SentimentAnalyzer.getSentimentColor(sentiment);
         },
 
+        getMoodClass(repo) {
+            const sentiment = SentimentAnalyzer.analyze(repo);
+            const moodMap = {
+                '😊 Happy': 'mood-happy',
+                '🤔 Thoughtful': 'mood-thoughtful',
+                '🔥 Spicy': 'mood-spicy',
+                '😴 Sleepy': 'mood-sleepy',
+                '🤖 Robotic': 'mood-robotic',
+                '🎉 Excited': 'mood-excited',
+                '😎 Cool': 'mood-cool',
+                '🧐 Sophisticated': 'mood-sophisticated'
+            };
+            return moodMap[sentiment] || '';
+        },
+
         cycleTheme() {
             ThemeManager.cycle();
             this.showToast(`Theme changed to: ${ThemeManager.getName()}`);
