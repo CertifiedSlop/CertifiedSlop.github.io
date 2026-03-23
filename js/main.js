@@ -313,13 +313,28 @@ const ParticleSystem = {
             Math.floor((this.width * this.height) / CONFIG.PARTICLE_DENSITY)
         );
 
+        // Get theme colors based on current theme
+        const theme = ThemeManager.getName();
+        let colorFn;
+
+        if (theme === 'darker') {
+            // Cyber theme - cyan/blue
+            colorFn = () => `rgba(${6 + Math.random() * 20}, ${182 + Math.random() * 50}, ${212 + Math.random() * 43}, ${0.3 + Math.random() * 0.3})`;
+        } else if (theme === 'darkest') {
+            // Slop mode - green/pink
+            colorFn = () => `rgba(${34 + Math.random() * 50}, ${197 + Math.random() * 58}, ${94 + Math.random() * 100}, ${0.3 + Math.random() * 0.3})`;
+        } else {
+            // Default - purple/pink
+            colorFn = () => `rgba(${168 + Math.random() * 50}, ${85 + Math.random() * 50}, ${247 + Math.random() * 50}, ${0.3 + Math.random() * 0.3})`;
+        }
+
         this.particles = Array.from({ length: particleCount }, () => ({
             x: Math.random() * this.width,
             y: Math.random() * this.height,
             vx: (Math.random() - 0.5) * 0.3,
             vy: (Math.random() - 0.5) * 0.3,
             size: Math.random() * 2 + 1,
-            color: `rgba(${168 + Math.random() * 50}, ${85 + Math.random() * 50}, ${247 + Math.random() * 50}, ${0.3 + Math.random() * 0.3})`
+            color: colorFn()
         }));
     },
 
@@ -679,7 +694,9 @@ const KonamiDetector = {
 
     init(onActivate) {
         document.addEventListener('keydown', (e) => {
-            this.sequence.push(e.key);
+            // Normalize key to lowercase for comparison
+            const key = e.key.toLowerCase();
+            this.sequence.push(key);
             if (this.sequence.length > CONFIG.KONAMI_CODE.length) {
                 this.sequence.shift();
             }
@@ -868,8 +885,11 @@ const MouseTrail = {
 const AchievementSystem = {
     unlocked: [],
     notifications: [],
+    alpineComponent: null,
+    version: 0,
 
-    init() {
+    init(alpineComponent) {
+        this.alpineComponent = alpineComponent;
         this.loadAchievements();
     },
 
@@ -898,8 +918,19 @@ const AchievementSystem = {
             ...achievement
         };
         this.notifications.push(notification);
+        this.version++;
+
+        // Trigger Alpine reactivity by updating component state
+        if (this.alpineComponent) {
+            this.alpineComponent.achievementVersion = this.version;
+        }
+
         setTimeout(() => {
             this.notifications = this.notifications.filter(n => n.id !== notification.id);
+            this.version++;
+            if (this.alpineComponent) {
+                this.alpineComponent.achievementVersion = this.version;
+            }
         }, 4000);
     },
 
@@ -980,6 +1011,10 @@ const ThemeManager = {
         this.current = (this.current + 1) % this.themes.length;
         localStorage.setItem('slop_theme', this.themes[this.current]);
         this.apply();
+        // Recreate particles with new theme colors
+        if (typeof ParticleSystem !== 'undefined') {
+            ParticleSystem.createParticles();
+        }
         AchievementSystem.unlock('theme_explorer');
     },
 
@@ -1042,6 +1077,7 @@ function repoApp() {
         showAchievementModal: false,
         showSlopScoreModal: false,
         hoverCount: 0,
+        achievementVersion: 0,
 
         // Filters
         search: '',
@@ -1105,7 +1141,7 @@ function repoApp() {
             ThemeManager.init();
             BlockchainCounter.init();
             ScrollTracker.init();
-            AchievementSystem.init();
+            AchievementSystem.init(this);
             KonamiDetector.init(() => {
                 AchievementSystem.unlock('konami_master');
                 this.showToast('🎮 DISCO MODE ACTIVATED! 🎮');
