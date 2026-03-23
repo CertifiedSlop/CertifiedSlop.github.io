@@ -19,7 +19,8 @@ const CONFIG = {
     search_detective: { id: 'search_detective', title: 'Search Detective', desc: 'Used search functionality', icon: '🔍' },
     theme_explorer: { id: 'theme_explorer', title: 'Theme Explorer', desc: 'Changed the theme', icon: '🎨' },
     konami_master: { id: 'konami_master', title: 'Konami Master', desc: 'Entered the Konami code', icon: '🎮' },
-    slop_critic: { id: 'slop_critic', title: 'Slop Critic', desc: 'Viewed slop scores', icon: '⭐' }
+    slop_critic: { id: 'slop_critic', title: 'Slop Critic', desc: 'Viewed slop scores', icon: '⭐' },
+    repo_explorer: { id: 'repo_explorer', title: 'Repo Explorer', desc: 'Opened a repository detail view', icon: '📦' }
   }
 };
 
@@ -103,11 +104,20 @@ const totalStars = repos.reduce((sum, r) => sum + r.stargazers_count, 0);
 const totalForks = repos.reduce((sum, r) => sum + r.forks_count, 0);
 
 // Serialize data for client
-const serializedRepos = JSON.stringify(repos.map(r => ({ 
-  name: r.name, 
-  stargazers_count: r.stargazers_count, 
-  description: r.description, 
-  topics: r.topics 
+const serializedRepos = JSON.stringify(repos.map(r => ({
+  name: r.name,
+  html_url: r.html_url,
+  stargazers_count: r.stargazers_count,
+  forks_count: r.forks_count,
+  description: r.description,
+  topics: r.topics,
+  language: r.language,
+  created_at: r.created_at,
+  updated_at: r.updated_at,
+  default_branch: r.default_branch,
+  homepage: r.homepage,
+  archived: r.archived,
+  visibility: r.visibility
 })));
 
 const serializedConfig = JSON.stringify({
@@ -419,6 +429,111 @@ const serializedConfig = JSON.stringify({
         </div>
         <div class="p-6">
           <div id="slop-scores-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Repository Detail Modal -->
+  <div id="repo-detail-modal" class="hidden fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="repo-detail-title">
+    <div class="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity animate-fade-in"></div>
+    <div class="relative min-h-screen flex items-center justify-center p-4">
+      <div class="relative bg-card rounded-3xl border border-white/10 shadow-2xl max-w-3xl w-full max-h-[80vh] overflow-y-auto animate-scale-in">
+        <div class="sticky top-0 bg-card/95 backdrop-blur-sm border-b border-white/10 p-6 flex items-center justify-between">
+          <h2 id="repo-detail-title" class="text-2xl font-bold text-white flex items-center gap-3">
+            <span class="text-3xl">📦</span>
+            <span id="modal-repo-name"></span>
+          </h2>
+          <button id="close-repo-detail" class="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-xl transition-colors" aria-label="Close repository details">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 16 16"><path d="M4.646 4.646a.5.5 0 01.708 0L8 7.293l2.646-2.647a.5.5 0 01.708.708L8.707 8l2.647 2.646a.5.5 0 01-.708.708L8 8.707l-2.646 2.647a.5.5 0 01-.708-.708L7.293 8 4.646 5.354a.5.5 0 010-.708z"/></svg>
+          </button>
+        </div>
+        <div class="p-6 space-y-6">
+          <!-- Description -->
+          <div>
+            <p id="modal-repo-description" class="text-gray-300 text-lg leading-relaxed"></p>
+          </div>
+
+          <!-- Topics -->
+          <div id="modal-repo-topics" class="flex flex-wrap gap-2"></div>
+
+          <!-- Stats Grid -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div class="p-4 bg-white/5 rounded-2xl border border-white/10">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="text-2xl">⭐</span>
+                <span class="text-xs text-gray-400 uppercase tracking-wide">Stars</span>
+              </div>
+              <span id="modal-repo-stars" class="text-2xl font-bold text-yellow-400"></span>
+            </div>
+            <div class="p-4 bg-white/5 rounded-2xl border border-white/10">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="text-2xl">🍴</span>
+                <span class="text-xs text-gray-400 uppercase tracking-wide">Forks</span>
+              </div>
+              <span id="modal-repo-forks" class="text-2xl font-bold text-blue-400"></span>
+            </div>
+            <div class="p-4 bg-white/5 rounded-2xl border border-white/10">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="text-2xl">💾</span>
+                <span class="text-xs text-gray-400 uppercase tracking-wide">Language</span>
+              </div>
+              <span id="modal-repo-language" class="text-lg font-semibold text-purple-400"></span>
+            </div>
+            <div class="p-4 bg-white/5 rounded-2xl border border-white/10">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="text-2xl">🌿</span>
+                <span class="text-xs text-gray-400 uppercase tracking-wide">Branch</span>
+              </div>
+              <span id="modal-repo-branch" class="text-lg font-semibold text-green-400"></span>
+            </div>
+          </div>
+
+          <!-- Dates -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="flex items-center gap-3 p-3 bg-white/5 rounded-xl border border-white/10">
+              <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 16 16"><path d="M8 3.5a.5.5 0 00-1 0V9a.5.5 0 00.252.434l3.5 2a.5.5 0 00.496-.868L8 8.71V3.5z"/><path d="M8 16A8 8 0 108 0a8 8 0 000 16zm7-8A7 7 0 111 8a7 7 0 0114 0z"/></svg>
+              <div>
+                <span class="text-xs text-gray-400 uppercase tracking-wide">Created</span>
+                <p id="modal-repo-created" class="text-sm text-gray-300"></p>
+              </div>
+            </div>
+            <div class="flex items-center gap-3 p-3 bg-white/5 rounded-xl border border-white/10">
+              <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 16 16"><path d="M8 3.5a.5.5 0 00-1 0V9a.5.5 0 00.252.434l3.5 2a.5.5 0 00.496-.868L8 8.71V3.5z"/><path d="M8 16A8 8 0 108 0a8 8 0 000 16zm7-8A7 7 0 111 8a7 7 0 0114 0z"/></svg>
+              <div>
+                <span class="text-xs text-gray-400 uppercase tracking-wide">Updated</span>
+                <p id="modal-repo-updated" class="text-sm text-gray-300"></p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Homepage -->
+          <div id="modal-repo-homepage-container" class="hidden flex items-center gap-3 p-3 bg-white/5 rounded-xl border border-white/10">
+            <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 16 16"><path d="M8.707 1.5a1 1 0 00-1.414 0L.646 8.146a.5.5 0 00.708.708L2 8.207V13.5A1.5 1.5 0 003.5 15h9a1.5 1.5 0 001.5-1.5V8.207l.646.647a.5.5 0 00.708-.708L13 5.793V2.5a.5.5 0 00-.5-.5h-1a.5.5 0 00-.5.5v1.293L8.707 1.5ZM13 7.207V13.5a.5.5 0 01-.5.5h-9a.5.5 0 01-.5-.5V7.207l5-5 5 5Z"/></svg>
+            <div>
+              <span class="text-xs text-gray-400 uppercase tracking-wide">Homepage</span>
+              <p><a id="modal-repo-homepage" href="#" target="_blank" rel="noopener noreferrer" class="text-purple-400 hover:text-purple-300 underline"></a></p>
+            </div>
+          </div>
+
+          <!-- Archived Badge -->
+          <div id="modal-repo-archived" class="hidden">
+            <span class="inline-flex items-center gap-2 px-4 py-2 bg-orange-500/20 text-orange-400 text-sm font-medium rounded-xl border border-orange-500/30">
+              <span>📦</span> Archived
+            </span>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex flex-wrap gap-4 pt-4 border-t border-white/10">
+            <a id="modal-repo-github" href="#" target="_blank" rel="noopener noreferrer"
+               class="inline-flex items-center gap-2 px-6 py-3 bg-white text-gray-900 font-semibold rounded-xl hover:bg-gray-200 transition-colors">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+              <span>View on GitHub</span>
+            </a>
+            <button id="modal-repo-close" class="px-6 py-3 bg-white/10 text-white font-semibold rounded-xl hover:bg-white/20 transition-colors">
+              Close
+            </button>
+          </div>
         </div>
       </div>
     </div>

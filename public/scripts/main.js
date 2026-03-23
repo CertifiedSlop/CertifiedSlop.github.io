@@ -284,6 +284,25 @@ function initHoverTracking() {
       hoverCount++;
       if (hoverCount >= 10) unlockAchievement('hover_master');
     });
+    card.addEventListener('click', () => {
+      const repoName = card.dataset.repoName;
+      const repo = REPOS.find(r => r.name === repoName);
+      if (repo) {
+        openRepoDetail(repo);
+        unlockAchievement('repo_explorer');
+      }
+    });
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        const repoName = card.dataset.repoName;
+        const repo = REPOS.find(r => r.name === repoName);
+        if (repo) {
+          openRepoDetail(repo);
+          unlockAchievement('repo_explorer');
+        }
+      }
+    });
   });
 }
 
@@ -311,12 +330,102 @@ function initModals() {
   });
   
   // Close modals on backdrop click
-  document.querySelectorAll('#achievement-modal, #slop-scores-modal').forEach(modal => {
+  document.querySelectorAll('#achievement-modal, #slop-scores-modal, #repo-detail-modal').forEach(modal => {
     modal.addEventListener('click', (e) => {
       if (e.target === modal.querySelector('.fixed.inset-0')) {
         modal.classList.add('hidden');
       }
     });
+  });
+
+  // Repository detail modal
+  document.getElementById('close-repo-detail').addEventListener('click', () => {
+    document.getElementById('repo-detail-modal').classList.add('hidden');
+  });
+
+  document.getElementById('modal-repo-close').addEventListener('click', () => {
+    document.getElementById('repo-detail-modal').classList.add('hidden');
+  });
+
+  // Close on Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('#repo-detail-modal').forEach(modal => {
+        modal.classList.add('hidden');
+      });
+    }
+  });
+}
+
+// Repository Detail Modal
+function openRepoDetail(repo) {
+  const modal = document.getElementById('repo-detail-modal');
+
+  // Set repo name
+  document.getElementById('modal-repo-name').textContent = repo.name;
+
+  // Set description
+  const descEl = document.getElementById('modal-repo-description');
+  descEl.textContent = repo.description || 'No description provided. Just pure slop.';
+
+  // Set topics
+  const topicsEl = document.getElementById('modal-repo-topics');
+  topicsEl.innerHTML = '';
+  if (repo.topics && repo.topics.length > 0) {
+    repo.topics.forEach(topic => {
+      const topicEl = document.createElement('span');
+      topicEl.className = 'px-3 py-1.5 bg-purple-500/10 text-purple-300 text-sm rounded-xl border border-purple-500/20';
+      topicEl.textContent = '#' + topic;
+      topicsEl.appendChild(topicEl);
+    });
+  } else {
+    topicsEl.innerHTML = '<span class="text-gray-500 text-sm">No topics</span>';
+  }
+
+  // Set stats
+  document.getElementById('modal-repo-stars').textContent = formatNumber(repo.stargazers_count);
+  document.getElementById('modal-repo-forks').textContent = formatNumber(repo.forks_count);
+  document.getElementById('modal-repo-language').textContent = repo.language || 'N/A';
+  document.getElementById('modal-repo-branch').textContent = repo.default_branch || 'main';
+
+  // Set dates
+  document.getElementById('modal-repo-created').textContent = getRelativeTimeFull(repo.created_at);
+  document.getElementById('modal-repo-updated').textContent = getRelativeTimeFull(repo.updated_at);
+
+  // Set homepage
+  const homepageContainer = document.getElementById('modal-repo-homepage-container');
+  const homepageEl = document.getElementById('modal-repo-homepage');
+  if (repo.homepage) {
+    homepageContainer.classList.remove('hidden');
+    homepageEl.href = repo.homepage;
+    homepageEl.textContent = repo.homepage.replace(/^https?:\/\//, '');
+  } else {
+    homepageContainer.classList.add('hidden');
+  }
+
+  // Set archived badge
+  const archivedEl = document.getElementById('modal-repo-archived');
+  if (repo.archived) {
+    archivedEl.classList.remove('hidden');
+  } else {
+    archivedEl.classList.add('hidden');
+  }
+
+  // Set GitHub link
+  document.getElementById('modal-repo-github').href = repo.html_url;
+
+  // Show modal
+  modal.classList.remove('hidden');
+}
+
+function getRelativeTimeFull(dateString) {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
   });
 }
 
