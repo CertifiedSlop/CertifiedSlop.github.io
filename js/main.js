@@ -10,7 +10,7 @@ const CONFIG = {
     ORG_NAME: 'CertifiedSlop',
     API_BASE_URL: 'https://api.github.com',
     REPOS_PER_PAGE: 100,
-    CACHE_KEY: 'certifiedslop_repos_cache_v4',
+    CACHE_KEY: 'certifiedslop_repos_cache_v5',
     CACHE_DURATION: 5 * 60 * 1000, // 5 minutes
     WIKI_ALLOWLIST: [
         'websAIte', 'SQuAiL', 'AIuth', 'Slopix', 
@@ -532,6 +532,11 @@ const RepoHelpers = {
     },
 
     filterRepos(repos, filters) {
+        // Defensive check: ensure repos is a valid array
+        if (!Array.isArray(repos) || repos.length === 0) {
+            return [];
+        }
+
         let result = [...repos];
         const { search, languages, topics, license, wiki } = filters;
 
@@ -683,10 +688,6 @@ function repoApp() {
 
         // Initialize
         async init() {
-            console.log('[App] Initializing...');
-            console.log('[App] this.repos before fetch:', this.repos);
-            console.log('[App] this.loading before fetch:', this.loading);
-
             // Initialize debounced filter function with correct context
             this.filterRepos = Utils.debounce(() => this.doFilterRepos(), CONFIG.DEBOUNCE_DELAY);
 
@@ -713,12 +714,6 @@ function repoApp() {
 
             // Update timestamp
             this.updateLastUpdated();
-
-            console.log('[App] Initialization complete');
-            console.log('[App] this.repos after fetch:', this.repos.length);
-            console.log('[App] this.filteredRepos after fetch:', this.filteredRepos.length);
-            console.log('[App] this.loading after fetch:', this.loading);
-            console.log('[App] this.error after fetch:', this.error);
         },
 
         // Search management
@@ -756,38 +751,28 @@ function repoApp() {
 
         // Repository fetching
         async fetchRepos() {
-            console.log('[Fetch] Starting fetch...');
-            console.log('[Fetch] this.loading = true');
             this.loading = true;
             this.error = false;
 
             // Check cache first
             const cached = Cache.get(CONFIG.CACHE_KEY);
             if (cached) {
-                console.log(`[Cache] Hit: ${cached.length} repos`);
                 this.repos = cached;
                 this.processRepos();
                 this.loading = false;
-                console.log('[Fetch] Cache hit - loading = false, repos =', this.repos.length);
                 return;
             }
-            console.log('[Cache] Miss - fetching from API');
 
             try {
-                console.log('[API] Fetching from GitHub API...');
                 const { data, rateLimit } = await API.fetchRepos(CONFIG.ORG_NAME);
-                console.log('[API] Response received:', data.length, 'repos');
 
                 // Filter out excluded repos
                 this.repos = data.filter(repo =>
                     !CONFIG.EXCLUDED_REPO_PREFIXES.some(prefix => repo.name.startsWith(prefix))
                 );
 
-                console.log(`[API] Filtered to: ${this.repos.length} repos`);
-
                 // Cache results
                 Cache.set(CONFIG.CACHE_KEY, this.repos);
-                console.log('[Cache] Data cached');
 
                 // Store rate limit info
                 this.rateLimitInfo = rateLimit;
@@ -795,10 +780,7 @@ function repoApp() {
 
                 this.processRepos();
                 this.loading = false;
-                console.log('[Fetch] Success - loading = false, repos =', this.repos.length, ', filtered =', this.filteredRepos.length);
             } catch (error) {
-                console.error('[API] Error:', error);
-
                 if (error.type === 'RATE_LIMITED') {
                     this.errorType = 'RATE_LIMITED';
                     this.errorMessage = error.message;
@@ -810,27 +792,20 @@ function repoApp() {
                         this.processRepos();
                         this.error = false;
                         this.showToast('Using cached data (API rate limit exceeded)');
-                        console.log('[Fetch] Rate limited - using cache');
                         return;
                     }
                 }
 
                 this.error = true;
                 this.errorMessage = error.message || 'Failed to load repositories';
-                console.log('[Fetch] Error state - error = true');
             } finally {
                 this.loading = false;
-                console.log('[Fetch] Finally block - loading = false');
             }
         },
 
         checkRateLimitStatus() {
             if (this.rateLimitInfo?.remaining && this.rateLimitInfo.remaining < 10) {
-                console.warn(`[Rate Limit] Low remaining: ${this.rateLimitInfo.remaining}`);
-                if (this.rateLimitInfo.reset) {
-                    const waitMinutes = API.getRateLimitWaitMinutes(this.rateLimitInfo.reset);
-                    console.warn(`[Rate Limit] Resets in ${waitMinutes} minutes`);
-                }
+                this.showToast('API rate limit low - using cached data');
             }
         },
 
@@ -838,6 +813,9 @@ function repoApp() {
         processRepos() {
             this.languages = RepoHelpers.extractLanguages(this.repos);
             this.allTopics = RepoHelpers.extractTopics(this.repos);
+
+            // Force Alpine reactivity by clearing first, then populating
+            this.filteredRepos.splice(0, this.filteredRepos.length);
             this.doFilterRepos();
         },
 
@@ -854,11 +832,10 @@ function repoApp() {
             let result = RepoHelpers.filterRepos(this.repos, filters);
             result = RepoHelpers.sortRepos(result, this.sortOption);
 
-            this.filteredRepos = result;
+            // Use splice for better Alpine.js reactivity
+            this.filteredRepos.splice(0, this.filteredRepos.length, ...result);
             this.focusedCardIndex = result.length > 0 ? 0 : -1;
             this.updateURL();
-
-            console.log(`[Filter] Results: ${result.length} repos`);
         },
 
         // Filter and sort (debounced for user input)
@@ -1000,7 +977,6 @@ if (typeof window !== 'undefined') {
 
 if (typeof document !== 'undefined') {
     document.addEventListener('alpine:init', () => {
-        console.log('[Alpine] Initialized');
-        console.log('[Alpine] repoApp available:', typeof window.repoApp === 'function');
+        // Alpine.js initialized
     });
 }
