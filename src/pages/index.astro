@@ -154,93 +154,120 @@ const serializedConfig = JSON.stringify({
 
   <!-- Hero Section -->
   <header class="relative overflow-hidden" role="banner">
-    <div class="absolute inset-0 bg-gradient-to-br from-purple-900/40 via-primary to-blue-900/40 bg-[length:200%_200%] animate-gradient"></div>
+    <div class="absolute inset-0 bg-gradient-to-br from-purple-900/30 via-primary to-blue-900/30 bg-[length:400%_400%] animate-gradient"></div>
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(168,85,247,0.15),transparent_50%)]"></div>
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(59,130,246,0.1),transparent_50%)]"></div>
     <canvas id="particle-canvas" class="absolute inset-0 w-full h-full pointer-events-none" aria-hidden="true"></canvas>
 
-    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24" style="z-index: 1;">
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28" style="z-index: 1;">
       <div class="flex flex-col items-center text-center">
         <!-- Avatar -->
-        <div class="relative mb-6">
-          <div class="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full blur-xl opacity-50 animate-pulse"></div>
+        <div class="relative mb-8 group">
+          <div class="absolute inset-0 bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 rounded-full blur-2xl opacity-30 group-hover:opacity-50 transition-opacity duration-500 animate-pulse"></div>
+          <div class="absolute inset-[-4px] bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-blue-500/20 rounded-full blur-xl group-hover:blur-2xl transition-all duration-500"></div>
           <img
             src="https://avatars.githubusercontent.com/u/265597819?v=4"
             alt="Certified Slop organization avatar"
-            class="relative w-28 h-28 sm:w-36 sm:h-36 rounded-full border-4 border-white/10 shadow-2xl animate-float"
-            width="144"
-            height="144"
+            class="relative w-32 h-32 sm:w-40 sm:h-40 lg:w-48 lg:h-48 rounded-full border-2 border-white/20 shadow-2xl shadow-purple-500/20 animate-float transition-transform duration-500 group-hover:scale-105"
+            width="192"
+            height="192"
           >
         </div>
 
         <!-- Title & Tagline -->
-        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold mb-3">
-          <span class="bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">
+        <h1 class="text-5xl sm:text-6xl lg:text-7xl font-black mb-4 tracking-tight">
+          <span class="bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent drop-shadow-lg">
             Certified Slop
           </span>
         </h1>
-        <p class="text-xl sm:text-2xl text-gray-400 italic mb-2 min-h-[2rem]" id="tagline">
-          <span></span><span class="animate-pulse">|</span>
+        <p class="text-lg sm:text-xl lg:text-2xl text-gray-400 italic mb-3 min-h-[2.5rem] font-light" id="tagline">
+          <span class="text-gray-300"></span><span class="animate-pulse text-purple-400">|</span>
         </p>
-        <p class="text-gray-500 mb-8 flex items-center gap-2">
-          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg>
-          Czech Republic
+        <p class="text-gray-500 mb-10 flex items-center gap-2 text-sm sm:text-base">
+          <svg class="w-5 h-5 text-purple-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg>
+          <span>Prague, <span class="text-gray-400">Czech Republic</span></span>
         </p>
 
         <!-- Stats -->
-        <div class="flex flex-wrap justify-center gap-3 sm:gap-4 mb-8" role="list" aria-label="Organization statistics">
-          <div class="flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-sm rounded-full border border-white/10" role="listitem">
-            <svg class="w-5 h-5 text-purple-400" fill="currentColor" viewBox="0 0 16 16"><path d="M2 2.5A2.5 2.5 0 014.5 0h8.75a.75.75 0 01.75.75v12.5a.75.75 0 01-.75.75h-2.5a.75.75 0 110-1.5h1.75v-2h-8a1 1 0 00-.714 1.7.75.75 0 01-1.072 1.05A2.495 2.495 0 012 11.5v-9zm10.5-1V9h-8c-.356 0-.694.074-1 .208V2.5a1 1 0 011-1h8zM5 12.25v3.25a.25.25 0 00.4.2l1.45-1.087a.25.25 0 01.3 0L8.6 15.7a.25.25 0 00.4-.2v-3.25a.25.25 0 00-.25-.25h-3.5a.25.25 0 00-.25.25z"/></svg>
-            <span class="text-white font-semibold">{repos.length}</span>
-            <span class="text-gray-400 text-sm">repos</span>
+        <div class="flex flex-wrap justify-center gap-4 sm:gap-6 mb-10" role="list" aria-label="Organization statistics">
+          <div class="group flex items-center gap-3 px-5 py-3 bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.08] hover:border-purple-500/30 hover:bg-white/[0.05] transition-all duration-300 hover:scale-105" role="listitem">
+            <div class="p-2 bg-purple-500/10 rounded-xl group-hover:bg-purple-500/20 transition-colors">
+              <svg class="w-5 h-5 text-purple-400" fill="currentColor" viewBox="0 0 16 16"><path d="M2 2.5A2.5 2.5 0 014.5 0h8.75a.75.75 0 01.75.75v12.5a.75.75 0 01-.75.75h-2.5a.75.75 0 110-1.5h1.75v-2h-8a1 1 0 00-.714 1.7.75.75 0 01-1.072 1.05A2.495 2.495 0 012 11.5v-9zm10.5-1V9h-8c-.356 0-.694.074-1 .208V2.5a1 1 0 011-1h8zM5 12.25v3.25a.25.25 0 00.4.2l1.45-1.087a.25.25 0 01.3 0L8.6 15.7a.25.25 0 00.4-.2v-3.25a.25.25 0 00-.25-.25h-3.5a.25.25 0 00-.25.25z"/></svg>
+            </div>
+            <div class="text-left">
+              <span class="block text-2xl font-bold text-white">{repos.length}</span>
+              <span class="text-xs text-gray-500 uppercase tracking-wide">Repositories</span>
+            </div>
           </div>
-          <div class="flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-sm rounded-full border border-white/10" role="listitem">
-            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 16 16"><path d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/></svg>
-            <span class="text-white font-semibold">{formatNumber(totalStars)}</span>
-            <span class="text-gray-400 text-sm">stars</span>
+          <div class="group flex items-center gap-3 px-5 py-3 bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.08] hover:border-yellow-500/30 hover:bg-white/[0.05] transition-all duration-300 hover:scale-105" role="listitem">
+            <div class="p-2 bg-yellow-500/10 rounded-xl group-hover:bg-yellow-500/20 transition-colors">
+              <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 16 16"><path d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/></svg>
+            </div>
+            <div class="text-left">
+              <span class="block text-2xl font-bold text-white">{formatNumber(totalStars)}</span>
+              <span class="text-xs text-gray-500 uppercase tracking-wide">Stars</span>
+            </div>
           </div>
-          <div class="flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-sm rounded-full border border-white/10" role="listitem">
-            <svg class="w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 16 16"><path d="M5 3.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm0 2.122a2.25 2.25 0 10-1.5 0v.878A2.25 2.25 0 005.75 8.5h1.5v2.128a2.251 2.251 0 101.5 0V8.5h1.5a2.25 2.25 0 002.25-2.25v-.878a2.25 2.25 0 10-1.5 0v.878a.75.75 0 01-.75.75h-4.5A.75.75 0 015 6.25v-.878zm3.75 7.378a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm3-8.75a.75.75 0 100-1.5.75.75 0 000 1.5z"/></svg>
-            <span class="text-white font-semibold">{formatNumber(totalForks)}</span>
-            <span class="text-gray-400 text-sm">forks</span>
+          <div class="group flex items-center gap-3 px-5 py-3 bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/[0.08] hover:border-blue-500/30 hover:bg-white/[0.05] transition-all duration-300 hover:scale-105" role="listitem">
+            <div class="p-2 bg-blue-500/10 rounded-xl group-hover:bg-blue-500/20 transition-colors">
+              <svg class="w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 16 16"><path d="M5 3.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm0 2.122a2.25 2.25 0 10-1.5 0v.878A2.25 2.25 0 005.75 8.5h1.5v2.128a2.251 2.251 0 101.5 0V8.5h1.5a2.25 2.25 0 002.25-2.25v-.878a2.25 2.25 0 10-1.5 0v.878a.75.75 0 01-.75.75h-4.5A.75.75 0 015 6.25v-.878zm3.75 7.378a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm3-8.75a.75.75 0 100-1.5.75.75 0 000 1.5z"/></svg>
+            </div>
+            <div class="text-left">
+              <span class="block text-2xl font-bold text-white">{formatNumber(totalForks)}</span>
+              <span class="text-xs text-gray-500 uppercase tracking-wide">Forks</span>
+            </div>
           </div>
         </div>
 
         <!-- CTA Button -->
         <a href="https://github.com/CertifiedSlop" target="_blank" rel="noopener noreferrer"
-           class="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-500 hover:to-green-400 text-white font-semibold rounded-xl shadow-lg shadow-green-500/30 transition-all duration-300 hover:scale-105 hover:shadow-green-500/50 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-primary">
-          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+           class="group inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-green-600 to-emerald-500 hover:from-green-500 hover:to-emerald-400 text-white font-semibold rounded-2xl shadow-lg shadow-green-500/30 transition-all duration-300 hover:scale-105 hover:shadow-green-500/50 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-primary">
+          <svg class="w-6 h-6 transition-transform group-hover:scale-110" fill="currentColor" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
           <span>View on GitHub</span>
+          <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
         </a>
       </div>
     </div>
   </header>
 
   <!-- Main Content -->
-  <main id="main-content" class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <main id="main-content" class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-16">
     <!-- Feature Bar -->
-    <section class="mb-8">
-      <div class="flex flex-wrap justify-center gap-3">
-        <button id="theme-toggle" class="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600/20 to-pink-600/20 hover:from-purple-600/30 hover:to-pink-600/30 border border-purple-500/30 rounded-xl transition-all">
-          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zM8 1.5a6.5 6.5 0 010 13c-1.355 0-2.618-.37-3.713-1.016a.75.75 0 01.363-1.398A5.002 5.002 0 008 13a5 5 0 100-10 .75.75 0 010-1.5z"/></svg>
-          <span class="text-sm font-medium" id="current-theme">dark</span>
+    <section class="mb-12">
+      <div class="flex flex-wrap justify-center gap-4">
+        <button id="theme-toggle" class="group flex items-center gap-2.5 px-5 py-3 bg-gradient-to-r from-purple-600/15 to-pink-600/15 hover:from-purple-600/25 hover:to-pink-600/25 border border-purple-500/25 hover:border-purple-500/40 rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/10">
+          <svg class="w-5 h-5 text-purple-400 group-hover:text-purple-300 transition-colors" fill="currentColor" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zM8 1.5a6.5 6.5 0 010 13c-1.355 0-2.618-.37-3.713-1.016a.75.75 0 01.363-1.398A5.002 5.002 0 008 13a5 5 0 100-10 .75.75 0 010-1.5z"/></svg>
+          <span class="text-sm font-medium text-gray-300 group-hover:text-white transition-colors" id="current-theme">dark</span>
         </button>
-        <button id="achievements-btn" class="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-yellow-600/20 to-orange-600/20 border border-yellow-500/30 rounded-xl">
-          <span class="text-sm font-medium">Achievements (<span id="achievement-progress">0</span>%)</span>
+        <button id="achievements-btn" class="group flex items-center gap-2.5 px-5 py-3 bg-gradient-to-r from-yellow-600/15 to-orange-600/15 hover:from-yellow-600/25 hover:to-orange-600/25 border border-yellow-500/25 hover:border-yellow-500/40 rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-yellow-500/10">
+          <span class="text-xl group-hover:scale-110 transition-transform">🏆</span>
+          <span class="text-sm font-medium text-gray-300 group-hover:text-white transition-colors">Achievements (<span id="achievement-progress" class="text-yellow-400 font-semibold">0</span>%)</span>
         </button>
-        <button id="slop-scores-btn" class="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-600/20 to-emerald-600/20 border border-green-500/30 rounded-xl">
-          <span class="text-sm font-medium">Slop Scores™</span>
+        <button id="slop-scores-btn" class="group flex items-center gap-2.5 px-5 py-3 bg-gradient-to-r from-green-600/15 to-emerald-600/15 hover:from-green-600/25 hover:to-emerald-600/25 border border-green-500/25 hover:border-green-500/40 rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-green-500/10">
+          <span class="text-xl group-hover:scale-110 transition-transform">⭐</span>
+          <span class="text-sm font-medium text-gray-300 group-hover:text-white transition-colors">Slop Scores™</span>
         </button>
       </div>
     </section>
 
     <!-- Search -->
-    <section class="mb-10">
-      <div class="relative max-w-3xl mx-auto mb-6">
+    <section class="mb-12">
+      <div class="relative max-w-2xl mx-auto">
+        <div class="absolute inset-y-0 left-5 flex items-center pointer-events-none">
+          <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        </div>
         <input
           id="search-input"
           type="text"
-          placeholder="Search repositories..."
-          class="w-full pl-14 pr-12 py-4 bg-secondary/80 backdrop-blur-xl border border-white/10 rounded-2xl text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition-all text-lg"
+          placeholder="Search repositories by name or mood..."
+          class="w-full pl-14 pr-6 py-4 bg-secondary/60 backdrop-blur-xl border border-white/10 rounded-2xl text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition-all text-lg shadow-lg shadow-black/20"
         />
+        <div class="absolute inset-y-0 right-4 flex items-center pointer-events-none">
+          <kbd class="hidden sm:inline-flex items-center gap-1 px-2.5 py-1.5 bg-white/5 border border-white/10 rounded-lg text-xs text-gray-500">
+            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 16 16"><path d="M.293.293a1 1 0 011.414 0L8 6.583 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z"/></svg>
+            Search
+          </kbd>
+        </div>
       </div>
     </section>
 
@@ -263,57 +290,69 @@ const serializedConfig = JSON.stringify({
 
     <!-- Repo Grid -->
     {!fetchError && repos.length > 0 && (
-      <section id="repo-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <section id="repo-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
         {repos.map((repo) => {
           const sentiment = analyzeSentiment(repo);
           const moodClass = getMoodClass(sentiment);
           const sentimentColor = getSentimentColor(sentiment);
-          
+
           return (
             <article
-              class={`group bg-card hover:bg-card-hover rounded-2xl border border-white/10 p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-purple-500/20 cursor-pointer card-shine relative overflow-hidden ${moodClass}`}
+              class={`group relative bg-card hover:bg-card-hover rounded-3xl border border-white/[0.08] hover:border-purple-500/30 p-6 transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl hover:shadow-purple-500/10 cursor-pointer card-shine overflow-hidden ${moodClass}`}
               data-repo-name={repo.name}
               data-sentiment={sentiment}
               tabindex="0"
             >
-              <div class="flex items-center gap-2 mb-3">
-                <span class={`px-2.5 py-1 bg-purple-500/10 text-xs rounded-lg border border-purple-500/20 ${sentimentColor}`}>
+              <!-- Gradient overlay on hover -->
+              <div class="absolute inset-0 bg-gradient-to-br from-purple-500/[0.03] to-pink-500/[0.03] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+
+              <!-- Top badges -->
+              <div class="flex items-center gap-2 mb-4 relative">
+                <span class={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-xl border transition-colors ${sentimentColor.replace('text-', 'bg-').replace('400', '500/10')} ${sentimentColor} border-white/10`}>
                   {sentiment}
                 </span>
-                <span class="px-2.5 py-1 bg-green-500/10 text-green-400 text-xs rounded-lg border border-green-500/20">
-                  🏆 Certified Slop
+                <span class="px-3 py-1.5 bg-green-500/10 text-green-400 text-xs font-medium rounded-xl border border-green-500/20">
+                  ✨ Certified Slop
                 </span>
               </div>
 
-              <h3 class="font-semibold text-lg text-purple-400 hover:text-purple-300 mb-2">{repo.name}</h3>
-              <p class="text-gray-400 text-sm mb-4 min-h-[3rem]">{repo.description || 'No description provided'}</p>
+              <!-- Repo name -->
+              <h3 class="font-bold text-xl text-purple-300 group-hover:text-purple-200 mb-3 transition-colors line-clamp-1">{repo.name}</h3>
 
+              <!-- Description -->
+              <p class="text-gray-400 text-sm mb-4 min-h-[3rem] line-clamp-2 leading-relaxed">{repo.description || 'No description provided. Just pure slop.'}</p>
+
+              <!-- Topics -->
               {repo.topics && repo.topics.length > 0 && (
                 <div class="flex flex-wrap gap-2 mb-4">
                   {repo.topics.slice(0, 4).map((topic) => (
-                    <span class="px-2.5 py-1 bg-purple-500/10 text-purple-400 text-xs rounded-lg border border-purple-500/20">
-                      {topic}
+                    <span class="px-2.5 py-1 bg-purple-500/10 text-purple-300 text-xs rounded-lg border border-purple-500/20 hover:border-purple-500/40 transition-colors">
+                      #{topic}
                     </span>
                   ))}
                 </div>
               )}
 
-              <div class="flex flex-wrap items-center gap-2 text-xs text-gray-500">
+              <!-- Bottom meta -->
+              <div class="flex flex-wrap items-center gap-3 text-xs text-gray-500 pt-4 border-t border-white/[0.06]">
                 {repo.language && (
-                  <span class="flex items-center gap-1">
-                    <span class="w-2 h-2 rounded-full bg-blue-400"></span>
-                    {repo.language}
+                  <span class="flex items-center gap-1.5">
+                    <span class="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-blue-400 to-cyan-400 shadow-sm"></span>
+                    <span class="font-medium">{repo.language}</span>
                   </span>
                 )}
-                <span class="flex items-center gap-1">
-                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16"><path d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/></svg>
+                <span class="flex items-center gap-1.5" title="Stars">
+                  <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 16 16"><path d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/></svg>
                   {formatNumber(repo.stargazers_count)}
                 </span>
-                <span class="flex items-center gap-1">
-                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16"><path d="M5 3.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm0 2.122a2.25 2.25 0 10-1.5 0v.878A2.25 2.25 0 005.75 8.5h1.5v2.128a2.251 2.251 0 101.5 0V8.5h1.5a2.25 2.25 0 002.25-2.25v-.878a2.25 2.25 0 10-1.5 0v.878a.75.75 0 01-.75.75h-4.5A.75.75 0 015 6.25v-.878zm3.75 7.378a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm3-8.75a.75.75 0 100-1.5.75.75 0 000 1.5z"/></svg>
+                <span class="flex items-center gap-1.5" title="Forks">
+                  <svg class="w-4 h-4 text-blue-400" fill="currentColor" viewBox="0 0 16 16"><path d="M5 3.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm0 2.122a2.25 2.25 0 10-1.5 0v.878A2.25 2.25 0 005.75 8.5h1.5v2.128a2.251 2.251 0 101.5 0V8.5h1.5a2.25 2.25 0 002.25-2.25v-.878a2.25 2.25 0 10-1.5 0v.878a.75.75 0 01-.75.75h-4.5A.75.75 0 015 6.25v-.878zm3.75 7.378a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm3-8.75a.75.75 0 100-1.5.75.75 0 000 1.5z"/></svg>
                   {formatNumber(repo.forks_count)}
                 </span>
-                <span class="ml-auto">{getRelativeTime(repo.updated_at)}</span>
+                <span class="ml-auto flex items-center gap-1.5" title="Last updated">
+                  <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 16 16"><path d="M8 3.5a.5.5 0 00-1 0V9a.5.5 0 00.252.434l3.5 2a.5.5 0 00.496-.868L8 8.71V3.5z"/><path d="M8 16A8 8 0 108 0a8 8 0 000 16zm7-8A7 7 0 111 8a7 7 0 0114 0z"/></svg>
+                  {getRelativeTime(repo.updated_at)}
+                </span>
               </div>
             </article>
           );
@@ -323,40 +362,56 @@ const serializedConfig = JSON.stringify({
   </main>
 
   <!-- Achievement Modal -->
-  <div id="achievement-modal" class="hidden fixed inset-0 z-50 overflow-y-auto">
-    <div class="fixed inset-0 bg-black/80 backdrop-blur-sm"></div>
+  <div id="achievement-modal" class="hidden fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="achievements-title">
+    <div class="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity animate-fade-in"></div>
     <div class="relative min-h-screen flex items-center justify-center p-4">
-      <div class="relative bg-card rounded-2xl border border-white/10 shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+      <div class="relative bg-card rounded-3xl border border-white/10 shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto animate-scale-in">
         <div class="sticky top-0 bg-card/95 backdrop-blur-sm border-b border-white/10 p-6 flex items-center justify-between">
-          <h2 class="text-xl font-bold text-white flex items-center gap-2">
-            <span>🏆 Achievements</span>
-            <span class="text-sm font-normal text-gray-400"><span id="modal-achievement-progress">0</span>% complete</span>
+          <h2 id="achievements-title" class="text-2xl font-bold text-white flex items-center gap-3">
+            <span class="text-3xl">🏆</span>
+            <div>
+              <span>Achievements</span>
+              <span class="block text-sm font-normal text-gray-400"><span id="modal-achievement-progress">0</span>% complete</span>
+            </div>
           </h2>
-          <button id="close-achievements" class="p-2 text-gray-400 hover:text-white">
+          <button id="close-achievements" class="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-xl transition-colors" aria-label="Close achievements modal">
             <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 16 16"><path d="M4.646 4.646a.5.5 0 01.708 0L8 7.293l2.646-2.647a.5.5 0 01.708.708L8.707 8l2.647 2.646a.5.5 0 01-.708.708L8 8.707l-2.646 2.647a.5.5 0 01-.708-.708L7.293 8 4.646 5.354a.5.5 0 010-.708z"/></svg>
           </button>
         </div>
-        <div class="p-6">
-          <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-4">Unlocked</h3>
-          <div id="unlocked-achievements" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6"></div>
-          <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-4">Locked</h3>
-          <div id="locked-achievements" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+        <div class="p-6 space-y-6">
+          <div>
+            <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-4 flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-green-500"></span>
+              Unlocked
+            </h3>
+            <div id="unlocked-achievements" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+          </div>
+          <div>
+            <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-4 flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-gray-500"></span>
+              Locked
+            </h3>
+            <div id="locked-achievements" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Slop Scores Modal -->
-  <div id="slop-scores-modal" class="hidden fixed inset-0 z-50 overflow-y-auto">
-    <div class="fixed inset-0 bg-black/80 backdrop-blur-sm"></div>
+  <div id="slop-scores-modal" class="hidden fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="slop-scores-title">
+    <div class="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity animate-fade-in"></div>
     <div class="relative min-h-screen flex items-center justify-center p-4">
-      <div class="relative bg-card rounded-2xl border border-white/10 shadow-2xl max-w-4xl w-full max-h-[80vh] overflow-y-auto">
+      <div class="relative bg-card rounded-3xl border border-white/10 shadow-2xl max-w-4xl w-full max-h-[80vh] overflow-y-auto animate-scale-in">
         <div class="sticky top-0 bg-card/95 backdrop-blur-sm border-b border-white/10 p-6 flex items-center justify-between">
-          <h2 class="text-xl font-bold text-white flex items-center gap-2">
-            <span>⭐ Slop Scores™</span>
-            <span class="text-sm font-normal text-gray-400">Scientifically calculated</span>
+          <h2 id="slop-scores-title" class="text-2xl font-bold text-white flex items-center gap-3">
+            <span class="text-3xl">⭐</span>
+            <div>
+              <span>Slop Scores™</span>
+              <span class="block text-sm font-normal text-gray-400">Scientifically calculated</span>
+            </div>
           </h2>
-          <button id="close-slop-scores" class="p-2 text-gray-400 hover:text-white">
+          <button id="close-slop-scores" class="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-xl transition-colors" aria-label="Close slop scores modal">
             <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 16 16"><path d="M4.646 4.646a.5.5 0 01.708 0L8 7.293l2.646-2.647a.5.5 0 01.708.708L8.707 8l2.647 2.646a.5.5 0 01-.708.708L8 8.707l-2.646 2.647a.5.5 0 01-.708-.708L7.293 8 4.646 5.354a.5.5 0 010-.708z"/></svg>
           </button>
         </div>

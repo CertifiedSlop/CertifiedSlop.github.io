@@ -24,16 +24,21 @@ function unlockAchievement(id) {
 function showAchievementNotification(achievement) {
   const container = document.getElementById('achievement-notifications');
   const notification = document.createElement('div');
-  notification.className = 'flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl shadow-2xl animate-slide-up';
+  notification.className = 'flex items-center gap-3 px-5 py-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl shadow-2xl shadow-purple-500/30 animate-slide-up border border-white/10';
   notification.innerHTML = `
-    <span class="text-2xl">${achievement.icon}</span>
+    <span class="text-3xl">${achievement.icon}</span>
     <div>
-      <p class="font-semibold text-sm">Achievement Unlocked!</p>
+      <p class="font-bold text-sm text-white">Achievement Unlocked!</p>
       <p class="text-xs text-white/80">${achievement.title}</p>
     </div>
   `;
   container.appendChild(notification);
-  setTimeout(() => notification.remove(), 4000);
+  setTimeout(() => {
+    notification.style.opacity = '0';
+    notification.style.transform = 'translateX(100%)';
+    notification.style.transition = 'all 0.3s ease';
+    setTimeout(() => notification.remove(), 300);
+  }, 4000);
 }
 
 function updateAchievementProgress() {
@@ -45,18 +50,18 @@ function updateAchievementProgress() {
 function renderAchievementsModal() {
   const unlockedContainer = document.getElementById('unlocked-achievements');
   const lockedContainer = document.getElementById('locked-achievements');
-  
+
   unlockedContainer.innerHTML = '';
   lockedContainer.innerHTML = '';
-  
+
   Object.values(CONFIG.ACHIEVEMENTS).forEach(achievement => {
     const isUnlocked = unlockedAchievements.includes(achievement.id);
     const html = `
-      <div class="flex items-center gap-3 p-3 ${isUnlocked ? 'bg-green-500/10 border border-green-500/30' : 'bg-gray-500/10 border border-gray-500/30 opacity-50'} rounded-xl">
-        <span class="text-3xl ${isUnlocked ? '' : 'grayscale'}">${achievement.icon}</span>
+      <div class="flex items-center gap-3 p-4 rounded-2xl transition-all ${isUnlocked ? 'bg-green-500/10 border border-green-500/30 hover:border-green-500/50' : 'bg-gray-500/10 border border-gray-500/30 opacity-50'}">
+        <span class="text-4xl ${isUnlocked ? '' : 'grayscale'} transition-transform ${isUnlocked ? 'hover:scale-110' : ''}">${achievement.icon}</span>
         <div>
           <p class="font-semibold ${isUnlocked ? 'text-green-400' : 'text-gray-400'}">${achievement.title}</p>
-          <p class="text-xs text-gray-500">${achievement.desc}</p>
+          <p class="text-xs text-gray-500 mt-0.5">${achievement.desc}</p>
         </div>
       </div>
     `;
@@ -88,10 +93,15 @@ function cycleTheme() {
 function showToast(message) {
   const container = document.getElementById('toast-container');
   const toast = document.createElement('div');
-  toast.className = 'flex items-center gap-3 px-4 py-3 bg-card border border-white/10 rounded-xl shadow-xl animate-slide-up';
-  toast.innerHTML = `<span class="text-sm text-gray-300">${message}</span>`;
+  toast.className = 'flex items-center gap-3 px-5 py-4 bg-card border border-white/10 rounded-2xl shadow-xl animate-slide-up';
+  toast.innerHTML = `<span class="text-sm text-gray-300 font-medium">${message}</span>`;
   container.appendChild(toast);
-  setTimeout(() => toast.remove(), 3000);
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateY(20px)';
+    toast.style.transition = 'all 0.3s ease';
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
 }
 
 // Typing Effect
@@ -314,23 +324,25 @@ function initModals() {
 function renderSlopScores() {
   const container = document.getElementById('slop-scores-grid');
   container.innerHTML = '';
-  
+
   REPOS.forEach(repo => {
     const score = calculateSlopScore(repo);
     const rating = getSlopRating(score);
-    
+
+    const scoreColor = score >= 70 ? 'from-green-400 to-emerald-400' : score >= 50 ? 'from-yellow-400 to-orange-400' : 'from-gray-400 to-zinc-400';
+
     container.innerHTML += `
-      <div class="p-4 bg-white/5 border border-white/10 rounded-xl">
+      <div class="group p-5 bg-white/5 border border-white/10 hover:border-purple-500/30 rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/10">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="font-semibold text-white truncate pr-2">${repo.name}</h3>
+          <span class="text-2xl flex-shrink-0 group-hover:scale-110 transition-transform">${rating.emoji}</span>
+        </div>
         <div class="flex items-center justify-between mb-2">
-          <h3 class="font-semibold text-white truncate">${repo.name}</h3>
-          <span class="text-2xl">${rating.emoji}</span>
+          <span class="text-4xl font-black bg-gradient-to-r ${scoreColor} bg-clip-text text-transparent">${score}</span>
+          <span class="text-xs text-gray-400 font-medium px-2 py-1 bg-white/5 rounded-lg">${rating.label}</span>
         </div>
-        <div class="flex items-center justify-between">
-          <span class="text-3xl font-bold bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">${score}</span>
-          <span class="text-sm text-gray-400">${rating.label}</span>
-        </div>
-        <div class="mt-2 h-2 bg-gray-700 rounded-full overflow-hidden">
-          <div class="h-full bg-gradient-to-r from-green-500 to-emerald-500" style="width: ${score}%"></div>
+        <div class="h-2.5 bg-gray-700/50 rounded-full overflow-hidden">
+          <div class="h-full bg-gradient-to-r ${scoreColor} rounded-full transition-all duration-500" style="width: ${score}%"></div>
         </div>
       </div>
     `;
