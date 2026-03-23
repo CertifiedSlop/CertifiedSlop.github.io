@@ -227,13 +227,15 @@ function initMouseTrail() {
 // Konami Code
 function initKonamiCode() {
   let sequence = [];
+  const konamiCode = ['arrowup', 'arrowup', 'arrowdown', 'arrowdown', 'arrowleft', 'arrowright', 'arrowleft', 'arrowright', 'b', 'a'];
+
   document.addEventListener('keydown', (e) => {
     const key = e.key.toLowerCase();
     sequence.push(key);
-    if (sequence.length > CONFIG.KONAMI_CODE.length) {
+    if (sequence.length > konamiCode.length) {
       sequence.shift();
     }
-    if (sequence.join(',') === CONFIG.KONAMI_CODE.join(',')) {
+    if (sequence.join(',') === konamiCode.join(',')) {
       unlockAchievement('konami_master');
       document.body.classList.add('disco-mode');
       showToast('🎮 DISCO MODE ACTIVATED! 🎮');
