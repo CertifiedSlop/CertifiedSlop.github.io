@@ -159,6 +159,7 @@ function useParticleSystem() {
   const canvasRef = { current: HTMLCanvasElement | null };
 
   const init = useCallback((canvasId: string) => {
+    if (typeof window === 'undefined') return;
     const canvas = document.getElementById(canvasId) as HTMLCanvasElement;
     if (!canvas) return;
     canvasRef.current = canvas;
@@ -200,6 +201,7 @@ function useParticleSystem() {
 // Mouse trail
 function useMouseTrail() {
   useEffect(() => {
+    if (typeof window === 'undefined') return;
     const canvas = document.createElement('canvas');
     canvas.id = 'mouse-trail-canvas';
     canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;';
@@ -256,6 +258,16 @@ function useMouseTrail() {
 
 // Main App Component
 export default function Home() {
+  // Check if we're on client side
+  const [isClient, setIsClient] = useState(false);
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) {
+    return null;
+  }
+
   const [repos, setRepos] = useState<Repo[]>([]);
   const [filteredRepos, setFilteredRepos] = useState<Repo[]>([]);
   const [loading, setLoading] = useState(true);
