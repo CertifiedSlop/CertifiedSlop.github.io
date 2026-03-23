@@ -1,6 +1,6 @@
 # CertifiedSlop.github.io
 
-Official GitHub Pages website for the **Certified Slop** organization.
+Official GitHub Pages website for the **Certified Slop** organization - Now rebuilt in Next.js because why not!
 
 > We make slop. That's it.
 
@@ -8,107 +8,100 @@ Official GitHub Pages website for the **Certified Slop** organization.
 
 Visit: [https://certifiedslop.github.io/](https://certifiedslop.github.io/)
 
+## 🛠️ Tech Stack
+
+- **Framework**: Next.js 14 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **Animations**: Framer Motion
+- **Hosting**: GitHub Pages
+
+## ✨ Features (Unnecessary but Amazing)
+
+- **Dynamic Repository Loading**: Fetches from GitHub API with localStorage caching
+- **Repository Moods**: Each repo has a unique personality that affects its behavior
+  - 😊 Happy - Bouncy with sparkles
+  - 🤔 Thoughtful - Slow blue glow
+  - 🔥 Spicy - Fire animations
+  - 😴 Sleepy - Dim and sluggish
+  - 🤖 Robotic - Mechanical twitching
+  - 🎉 Excited - Constant jiggling
+  - 😎 Cool - Smooth sliding
+  - 🧐 Sophisticated - Elegant fade
+- **Achievement System**: Unlock meaningless badges
+- **Konami Code**: ↑↑↓↓←→←→BA for disco mode
+- **Blockchain™ Visitor Counter**: Totally legit localStorage mining
+- **Mouse Trail**: Particle effects following your cursor
+- **Theme Toggle**: dark, darker, darkest (2% difference)
+- **AI-Generated Loading Messages**: "Petting digital dogs..."
+- **Slop Scores™**: Scientifically meaningless repo ratings
+
+## 🚀 Development
+
+```bash
+# Install dependencies
+npm install
+
+# Run dev server
+npm run dev
+
+# Build for production
+npm run build
+
+# Preview production build
+npm start
+```
+
 ## 📁 Project Structure
 
 ```
 CertifiedSlop.github.io/
-├── index.html      # Main HTML page
-├── css/
-│   └── style.css   # Dark theme styles
-├── js/
-│   └── main.js     # GitHub API integration
-└── README.md       # This file
+├── src/
+│   ├── app/
+│   │   ├── layout.tsx      # Root layout
+│   │   ├── page.tsx        # Main page
+│   │   └── globals.css     # Global styles
+│   ├── components/         # React components
+│   ├── lib/
+│   │   ├── config.ts       # Configuration
+│   │   └── utils.ts        # Utility functions
+│   └── hooks/              # Custom hooks
+├── package.json
+├── next.config.js
+├── tailwind.config.js
+└── tsconfig.json
 ```
 
-## ✨ Features
-
-- **Dynamic Repository Loading**: Fetches all repositories from GitHub API automatically
-- **Responsive Design**: Works on desktop, tablet, and mobile devices
-- **Dark Theme**: GitHub-inspired dark color scheme
-- **Repository Cards**: Displays name, description, language, license, stars, and forks
-- **Wiki Links**: Shows wiki button for repositories with wikis enabled
-- **Auto-Updates**: New repositories appear automatically when added to the organization
-
-## 🚀 Deployment
+## 📦 Deployment
 
 This site is hosted on GitHub Pages. To deploy:
 
-1. Push this repository to `CertifiedSlop/CertifiedSlop.github.io`
-2. Go to **Settings** → **Pages**
-3. Set **Source** to `Deploy from a branch`
-4. Set **Branch** to `main` and folder to `/ (root)`
-5. Click **Save**
+1. Install dependencies: `npm install`
+2. Build: `npm run build`
+3. The static output goes to `out/` directory
+4. Push to `CertifiedSlop/CertifiedSlop.github.io` main branch
 
-The site will be available at: `https://certifiedslop.github.io/`
+GitHub Actions will automatically build and deploy.
 
-## 🛠️ Local Development
+## 🎮 Keyboard Shortcuts
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/CertifiedSlop/CertifiedSlop.github.io.git
-   cd CertifiedSlop.github.io
-   ```
-
-2. Open `index.html` in a browser, or use a local server:
-   ```bash
-   # Using Python
-   python -m http.server 8000
-
-   # Using Node.js
-   npx serve
-   ```
-
-3. Visit `http://localhost:8000`
+- `/` - Focus search
+- `?` - Show shortcuts (coming soon)
+- `↑↑↓↓←→←→BA` - Activate disco mode
 
 ## 📊 Repositories Displayed
 
-The site automatically displays all public repositories from the CertifiedSlop organization:
-
-| Repository | Description |
-|------------|-------------|
-| websAIte | Runtime generated AI website |
-| calculAItor | Python package for AI math calculations |
-| SQuAiL | Production-Ready LLM-Powered Relational Database* |
-| AIuth | Production-Ready Vibe-Based Auth Library |
-| Slopix | Linux kernel fork with AI improvements |
-| Slop-Package-manager | Package manager for OpenSLOP |
-| MooAId | AI assistant tool |
-| MooAIdroid | Android AI assistant |
-| CalcAIdroid | LLM-based Android calculator |
-| WikAI | AI-powered wiki tool |
-| AIpp-opener | App opener utility |
-| .github | Organization configuration |
-| CertifiedSlop | Organization profile |
-
-## 🎨 Customization
-
-### Changing Colors
-
-Edit the CSS variables in `css/style.css`:
-
-```css
-:root {
-    --bg-primary: #0d1117;      /* Main background */
-    --accent-primary: #58a6ff;  /* Primary accent color */
-    --accent-secondary: #238636; /* Secondary accent */
-}
-```
-
-### Modifying Organization Info
-
-Edit the header section in `index.html`:
-
-```html
-<div class="org-info">
-    <h1>Certified Slop</h1>
-    <p class="tagline">We make slop. That's it.</p>
-</div>
-```
+The site displays all public repositories from the CertifiedSlop organization including:
+- websAIte
+- SQuAiL
+- AIuth
+- Slopix
+- And more slop!
 
 ## 📄 License
 
-This website is licensed under the MIT License.
+MIT License - because why not add more slop to the world.
 
 ---
 
-Made with ❤️ by Certified Slop
+Made with 🔄 and unnecessary complexity by Certified Slop
