@@ -170,7 +170,7 @@ function useScrollTracker(onProgress: (progress: number) => void) {
 
 // Particle system
 function useParticleSystem() {
-  const canvasRef = { current: HTMLCanvasElement | null };
+  const canvasRef = { current: null as HTMLCanvasElement | null };
 
   const init = useCallback((canvasId: string) => {
     if (typeof window === 'undefined') return;
@@ -272,7 +272,7 @@ function useMouseTrail() {
 
 // Main App Component
 export default function Home() {
-  // ALL HOOKS MUST BE CALLED BEFORE ANY EARLY RETURN
+  // ALL HOOKS MUST BE CALLED BEFORE ANY CONDITIONAL LOGIC
   const [isClient, setIsClient] = useState(false);
   useEffect(() => {
     setIsClient(true);
@@ -299,9 +299,13 @@ export default function Home() {
   const particleSystem = useParticleSystem();
   useMouseTrail();
 
-  // Early return AFTER all hooks
+  // Show loading state on server and initial client render
   if (!isClient) {
-    return null;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-primary">
+        <div className="text-purple-400 animate-pulse">Loading slop...</div>
+      </div>
+    );
   }
 
   // Typing effect
