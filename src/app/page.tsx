@@ -272,15 +272,11 @@ function useMouseTrail() {
 
 // Main App Component
 export default function Home() {
-  // Check if we're on client side
+  // ALL HOOKS MUST BE CALLED BEFORE ANY EARLY RETURN
   const [isClient, setIsClient] = useState(false);
   useEffect(() => {
     setIsClient(true);
   }, []);
-
-  if (!isClient) {
-    return null;
-  }
 
   const [repos, setRepos] = useState<Repo[]>([]);
   const [filteredRepos, setFilteredRepos] = useState<Repo[]>([]);
@@ -302,6 +298,11 @@ export default function Home() {
   const { theme, cycle: cycleTheme } = useTheme();
   const particleSystem = useParticleSystem();
   useMouseTrail();
+
+  // Early return AFTER all hooks
+  if (!isClient) {
+    return null;
+  }
 
   // Typing effect
   useEffect(() => {
