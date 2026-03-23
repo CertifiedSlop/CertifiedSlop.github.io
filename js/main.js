@@ -1,6 +1,7 @@
 /**
  * CertifiedSlop.github.io - Main Application
  * Refactored for better modularity, performance, and maintainability
+ * Now with 100% more unnecessary features!
  */
 
 // ============================================================================
@@ -13,8 +14,8 @@ const CONFIG = {
     CACHE_KEY: 'certifiedslop_repos_cache_v5',
     CACHE_DURATION: 5 * 60 * 1000, // 5 minutes
     WIKI_ALLOWLIST: [
-        'websAIte', 'SQuAiL', 'AIuth', 'Slopix', 
-        'Slop-Package-manager', 'MooAId', 'MooAIdroid', 
+        'websAIte', 'SQuAiL', 'AIuth', 'Slopix',
+        'Slop-Package-manager', 'MooAId', 'MooAIdroid',
         'CalcAIdroid', 'WikAI', 'CertifiedSlop.github.io'
     ],
     EXCLUDED_REPO_PREFIXES: ['GNU', 'MIT'],
@@ -32,7 +33,36 @@ const CONFIG = {
     TOAST_DURATION: 3000,
     DEBOUNCE_DELAY: 300,
     MAX_TOPICS_DISPLAY: 20,
-    RECENT_UPDATE_DAYS: 7
+    RECENT_UPDATE_DAYS: 7,
+    // Unnecessary features config
+    KONAMI_CODE: ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'],
+    LOADING_MESSAGES: [
+        'Training neural network...',
+        'Petting digital dogs...',
+        'Consulting the blockchain oracle...',
+        'Generating AI-powered pixels...',
+        'Calculating slop coefficient...',
+        'Mining localStorage tokens...',
+        'Feeding the particle system...',
+        'Warming up the GPU...',
+        'Performing unnecessary computations...',
+        'Buffering the buffer...',
+        'Optimizing already optimized code...',
+        'Reading tea leaves...',
+        'Asking the magic 8-ball...',
+        'Compiling JavaScript to JavaScript...',
+        'Installing more dependencies...'
+    ],
+    SENTIMENTS: ['😊 Happy', '🤔 Thoughtful', '🔥 Spicy', '😴 Sleepy', '🤖 Robotic', '🎉 Excited', '😎 Cool', '🧐 Sophisticated'],
+    ACHIEVEMENTS: {
+        'first_scroll': { id: 'first_scroll', title: 'First Scroll', desc: 'You scrolled!', icon: '📜' },
+        'scroll_halfway': { id: 'scroll_halfway', title: 'Halfway There', desc: '50% scroll completion', icon: '🎯' },
+        'hover_master': { id: 'hover_master', title: 'Hover Master', desc: 'Hovered 10 repos', icon: '🖱️' },
+        'search_detective': { id: 'search_detective', title: 'Search Detective', desc: 'Used search functionality', icon: '🔍' },
+        'theme_explorer': { id: 'theme_explorer', title: 'Theme Explorer', desc: 'Changed the theme', icon: '🎨' },
+        'konami_master': { id: 'konami_master', title: 'Konami Master', desc: 'Entered the Konami code', icon: '🎮' },
+        'slop_critic': { id: 'slop_critic', title: 'Slop Critic', desc: 'Viewed slop scores', icon: '⭐' }
+    }
 };
 
 // ============================================================================
@@ -637,6 +667,358 @@ const RepoHelpers = {
 };
 
 // ============================================================================
+// UNNECESSARY FEATURES MODULES
+// ============================================================================
+
+// Konami Code Detector with Disco Mode
+const KonamiDetector = {
+    sequence: [],
+    discoMode: false,
+    animationId: null,
+    hue: 0,
+
+    init(onActivate) {
+        document.addEventListener('keydown', (e) => {
+            this.sequence.push(e.key);
+            if (this.sequence.length > CONFIG.KONAMI_CODE.length) {
+                this.sequence.shift();
+            }
+            if (this.sequence.join(',') === CONFIG.KONAMI_CODE.join(',')) {
+                this.activateDiscoMode();
+                onActivate?.();
+            }
+        });
+    },
+
+    activateDiscoMode() {
+        this.discoMode = true;
+        document.body.classList.add('disco-mode');
+        this.animateDisco();
+        setTimeout(() => {
+            this.discoMode = false;
+            document.body.classList.remove('disco-mode');
+            if (this.animationId) cancelAnimationFrame(this.animationId);
+        }, 10000);
+    },
+
+    animateDisco() {
+        const animate = () => {
+            this.hue = (this.hue + 5) % 360;
+            document.documentElement.style.setProperty('--disco-hue', this.hue);
+            this.animationId = requestAnimationFrame(animate);
+        };
+        animate();
+    }
+};
+
+// Fake AI Sentiment Analysis
+const SentimentAnalyzer = {
+    analyze(repo) {
+        // Completely scientific algorithm based on totally real metrics
+        const nameFactor = repo.name.length % CONFIG.SENTIMENTS.length;
+        const starFactor = (repo.stargazers_count || 0) % 3;
+        const combined = (nameFactor + starFactor) % CONFIG.SENTIMENTS.length;
+        return CONFIG.SENTIMENTS[combined];
+    },
+
+    getSentimentColor(sentiment) {
+        const colors = {
+            '😊 Happy': 'text-yellow-400',
+            '🤔 Thoughtful': 'text-blue-400',
+            '🔥 Spicy': 'text-red-400',
+            '😴 Sleepy': 'text-indigo-400',
+            '🤖 Robotic': 'text-gray-400',
+            '🎉 Excited': 'text-pink-400',
+            '😎 Cool': 'text-cyan-400',
+            '🧐 Sophisticated': 'text-purple-400'
+        };
+        return colors[sentiment] || 'text-gray-400';
+    }
+};
+
+// Blockchain™ Visitor Counter (totally legit)
+const BlockchainCounter = {
+    visits: 0,
+    blocks: [],
+
+    init() {
+        this.loadFromChain();
+        this.mineBlock();
+    },
+
+    loadFromChain() {
+        const stored = localStorage.getItem('slop_blockchain_visits');
+        if (stored) {
+            const data = JSON.parse(stored);
+            this.visits = data.visits || 0;
+            this.blocks = data.blocks || [];
+        }
+    },
+
+    mineBlock() {
+        this.visits++;
+        const block = {
+            id: this.blocks.length,
+            timestamp: Date.now(),
+            hash: this.generateHash(),
+            previousHash: this.blocks[this.blocks.length - 1]?.hash || '0',
+            nonce: Math.floor(Math.random() * 1000000)
+        };
+        block.hash = this.generateHash(block);
+        this.blocks.push(block);
+        this.saveToChain();
+        return block;
+    },
+
+    generateHash(block) {
+        const data = block ? JSON.stringify(block) : Date.now().toString();
+        let hash = 0;
+        for (let i = 0; i < data.length; i++) {
+            const char = data.charCodeAt(i);
+            hash = ((hash << 5) - hash) + char;
+            hash = hash & hash;
+        }
+        return Math.abs(hash).toString(16).padStart(8, '0');
+    },
+
+    saveToChain() {
+        localStorage.setItem('slop_blockchain_visits', JSON.stringify({
+            visits: this.visits,
+            blocks: this.blocks.slice(-10)
+        }));
+    },
+
+    getVisitCount() {
+        return this.visits;
+    },
+
+    getChainLength() {
+        return this.blocks.length;
+    }
+};
+
+// Mouse Trail Particle System (because one wasn't enough)
+const MouseTrail = {
+    particles: [],
+    canvas: null,
+    ctx: null,
+    animationId: null,
+
+    init() {
+        this.createCanvas();
+        document.addEventListener('mousemove', (e) => this.addParticle(e.clientX, e.clientY));
+        this.animate();
+    },
+
+    createCanvas() {
+        this.canvas = document.createElement('canvas');
+        this.canvas.id = 'mouse-trail-canvas';
+        this.canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;';
+        document.body.appendChild(this.canvas);
+        this.ctx = this.canvas.getContext('2d');
+        this.resize();
+        window.addEventListener('resize', () => this.resize());
+    },
+
+    resize() {
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+    },
+
+    addParticle(x, y) {
+        for (let i = 0; i < 3; i++) {
+            this.particles.push({
+                x, y,
+                vx: (Math.random() - 0.5) * 4,
+                vy: (Math.random() - 0.5) * 4,
+                life: 1,
+                color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+                size: Math.random() * 4 + 2
+            });
+        }
+    },
+
+    animate() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.particles = this.particles.filter(p => {
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vy += 0.1;
+            p.life -= 0.02;
+            if (p.life > 0) {
+                this.ctx.globalAlpha = p.life;
+                this.ctx.fillStyle = p.color;
+                this.ctx.beginPath();
+                this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                this.ctx.fill();
+                return true;
+            }
+            return false;
+        });
+        this.animationId = requestAnimationFrame(() => this.animate());
+    },
+
+    destroy() {
+        if (this.animationId) cancelAnimationFrame(this.animationId);
+        this.canvas?.remove();
+    }
+};
+
+// Achievement System
+const AchievementSystem = {
+    unlocked: [],
+    notifications: [],
+
+    init() {
+        this.loadAchievements();
+    },
+
+    loadAchievements() {
+        const stored = localStorage.getItem('slop_achievements');
+        if (stored) {
+            this.unlocked = JSON.parse(stored);
+        }
+    },
+
+    unlock(achievementId) {
+        if (!this.unlocked.includes(achievementId)) {
+            this.unlocked.push(achievementId);
+            this.saveAchievements();
+            this.showNotification(CONFIG.ACHIEVEMENTS[achievementId]);
+        }
+    },
+
+    saveAchievements() {
+        localStorage.setItem('slop_achievements', JSON.stringify(this.unlocked));
+    },
+
+    showNotification(achievement) {
+        const notification = {
+            id: Date.now(),
+            ...achievement
+        };
+        this.notifications.push(notification);
+        setTimeout(() => {
+            this.notifications = this.notifications.filter(n => n.id !== notification.id);
+        }, 4000);
+    },
+
+    getNotifications() {
+        return this.notifications;
+    },
+
+    isUnlocked(id) {
+        return this.unlocked.includes(id);
+    },
+
+    getProgress() {
+        return Math.round((this.unlocked.length / Object.keys(CONFIG.ACHIEVEMENTS).length) * 100);
+    }
+};
+
+// AI-Generated Loading Message Generator
+const LoadingMessageGenerator = {
+    currentMessage: '',
+    intervalId: null,
+
+    start() {
+        this.currentMessage = CONFIG.LOADING_MESSAGES[0];
+        this.intervalId = setInterval(() => {
+            const available = CONFIG.LOADING_MESSAGES.filter(m => m !== this.currentMessage);
+            this.currentMessage = available[Math.floor(Math.random() * available.length)];
+        }, 800);
+    },
+
+    stop() {
+        if (this.intervalId) clearInterval(this.intervalId);
+        this.currentMessage = '';
+    },
+
+    getMessage() {
+        return this.currentMessage;
+    }
+};
+
+// Slop Score Algorithm (™ pending)
+const SlopScoreCalculator = {
+    calculate(repo) {
+        // Scientific formula for measuring slopiness
+        const nameSlop = repo.name.includes('AI') ? 20 : 0;
+        const descriptionSlop = repo.description ? Math.min(repo.description.length / 10, 20) : 10;
+        const starSlop = Math.max(0, 30 - (repo.stargazers_count / 10));
+        const topicSlop = Math.min((repo.topics?.length || 0) * 5, 20);
+        const randomSlop = Math.random() * 10;
+        const aiBonus = repo.name.match(/AI/gi)?.length * 5 || 0;
+
+        return Math.min(100, Math.round(nameSlop + descriptionSlop + starSlop + topicSlop + randomSlop + aiBonus));
+    },
+
+    getRating(score) {
+        if (score >= 90) return { label: 'Maximum Slop', emoji: '🏆' };
+        if (score >= 70) return { label: 'Premium Slop', emoji: '✨' };
+        if (score >= 50) return { label: 'Certified Slop', emoji: '✅' };
+        if (score >= 30) return { label: 'Questionable Slop', emoji: '🤔' };
+        return { label: 'Not Enough Slop', emoji: '😢' };
+    }
+};
+
+// Theme Manager (3 themes that are almost the same)
+const ThemeManager = {
+    themes: ['dark', 'darker', 'darkest'],
+    current: 0,
+
+    init() {
+        const stored = localStorage.getItem('slop_theme');
+        if (stored) {
+            this.current = this.themes.indexOf(stored);
+            if (this.current === -1) this.current = 0;
+        }
+        this.apply();
+    },
+
+    cycle() {
+        this.current = (this.current + 1) % this.themes.length;
+        localStorage.setItem('slop_theme', this.themes[this.current]);
+        this.apply();
+        AchievementSystem.unlock('theme_explorer');
+    },
+
+    apply() {
+        document.documentElement.setAttribute('data-theme', this.themes[this.current]);
+    },
+
+    getName() {
+        return this.themes[this.current];
+    }
+};
+
+// Scroll Progress Tracker
+const ScrollTracker = {
+    progress: 0,
+
+    init() {
+        window.addEventListener('scroll', () => this.update());
+    },
+
+    update() {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        this.progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+
+        if (this.progress >= 10 && !AchievementSystem.isUnlocked('first_scroll')) {
+            AchievementSystem.unlock('first_scroll');
+        }
+        if (this.progress >= 50 && !AchievementSystem.isUnlocked('scroll_halfway')) {
+            AchievementSystem.unlock('scroll_halfway');
+        }
+    },
+
+    getProgress() {
+        return this.progress;
+    }
+};
+
+// ============================================================================
 // MAIN ALPINE.JS COMPONENT
 // ============================================================================
 function repoApp() {
@@ -657,6 +1039,9 @@ function repoApp() {
         focusedCardIndex: -1,
         showShortcutsModal: false,
         toasts: [],
+        showAchievementModal: false,
+        showSlopScoreModal: false,
+        hoverCount: 0,
 
         // Filters
         search: '',
@@ -686,14 +1071,53 @@ function repoApp() {
             return this.repos.length;
         },
 
+        get visitCount() {
+            return BlockchainCounter.getVisitCount();
+        },
+
+        get chainLength() {
+            return BlockchainCounter.getChainLength();
+        },
+
+        get scrollProgress() {
+            return ScrollTracker.getProgress();
+        },
+
+        get achievementProgress() {
+            return AchievementSystem.getProgress();
+        },
+
+        get notifications() {
+            return AchievementSystem.getNotifications();
+        },
+
+        get loadingMessage() {
+            return LoadingMessageGenerator.getMessage();
+        },
+
+        get themeName() {
+            return ThemeManager.getName();
+        },
+
         // Initialize
         async init() {
+            // Initialize unnecessary features
+            ThemeManager.init();
+            BlockchainCounter.init();
+            ScrollTracker.init();
+            AchievementSystem.init();
+            KonamiDetector.init(() => {
+                AchievementSystem.unlock('konami_master');
+                this.showToast('🎮 DISCO MODE ACTIVATED! 🎮');
+            });
+
             // Initialize debounced filter function with correct context
             this.filterRepos = Utils.debounce(() => this.doFilterRepos(), CONFIG.DEBOUNCE_DELAY);
 
             // Initialize modules
             ParticleSystem.init('particle-canvas');
             TypingEffect.init('[x-text="typedText"]');
+            MouseTrail.init();
 
             // Setup keyboard shortcuts
             KeyboardShortcuts.init({
@@ -702,7 +1126,7 @@ function repoApp() {
                 onNavigate: (key) => this.navigateCards(key),
                 onOpen: (index) => this.openRepo(index),
                 onClose: () => this.closeModals(),
-                isModalOpen: () => this.selectedRepo !== null || this.showShortcutsModal,
+                isModalOpen: () => this.selectedRepo !== null || this.showShortcutsModal || this.showAchievementModal || this.showSlopScoreModal,
                 getFocusedIndex: () => this.focusedCardIndex
             });
 
@@ -753,6 +1177,7 @@ function repoApp() {
         async fetchRepos() {
             this.loading = true;
             this.error = false;
+            LoadingMessageGenerator.start();
 
             // Check cache first
             const cached = Cache.get(CONFIG.CACHE_KEY);
@@ -760,6 +1185,7 @@ function repoApp() {
                 this.repos = cached;
                 this.processRepos();
                 this.loading = false;
+                LoadingMessageGenerator.stop();
                 return;
             }
 
@@ -780,6 +1206,7 @@ function repoApp() {
 
                 this.processRepos();
                 this.loading = false;
+                LoadingMessageGenerator.stop();
             } catch (error) {
                 if (error.type === 'RATE_LIMITED') {
                     this.errorType = 'RATE_LIMITED';
@@ -792,12 +1219,14 @@ function repoApp() {
                         this.processRepos();
                         this.error = false;
                         this.showToast('Using cached data (API rate limit exceeded)');
+                        LoadingMessageGenerator.stop();
                         return;
                     }
                 }
 
                 this.error = true;
                 this.errorMessage = error.message || 'Failed to load repositories';
+                LoadingMessageGenerator.stop();
             } finally {
                 this.loading = false;
             }
@@ -945,6 +1374,59 @@ function repoApp() {
             setTimeout(() => {
                 this.toasts = this.toasts.filter(t => t.id !== id);
             }, CONFIG.TOAST_DURATION);
+        },
+
+        // New unnecessary feature methods
+        trackHover() {
+            this.hoverCount++;
+            if (this.hoverCount >= 10 && !AchievementSystem.isUnlocked('hover_master')) {
+                AchievementSystem.unlock('hover_master');
+            }
+        },
+
+        trackSearch() {
+            if (this.search.trim().length > 0 && !AchievementSystem.isUnlocked('search_detective')) {
+                AchievementSystem.unlock('search_detective');
+            }
+        },
+
+        getSlopScore(repo) {
+            return SlopScoreCalculator.calculate(repo);
+        },
+
+        getSlopRating(repo) {
+            const score = SlopScoreCalculator.calculate(repo);
+            return SlopScoreCalculator.getRating(score);
+        },
+
+        getSentiment(repo) {
+            return SentimentAnalyzer.analyze(repo);
+        },
+
+        getSentimentColor(sentiment) {
+            return SentimentAnalyzer.getSentimentColor(sentiment);
+        },
+
+        cycleTheme() {
+            ThemeManager.cycle();
+            this.showToast(`Theme changed to: ${ThemeManager.getName()}`);
+        },
+
+        showAchievements() {
+            this.showAchievementModal = true;
+        },
+
+        showSlopScores() {
+            this.showSlopScoreModal = true;
+            AchievementSystem.unlock('slop_critic');
+        },
+
+        getUnlockedAchievements() {
+            return Object.values(CONFIG.ACHIEVEMENTS).filter(a => AchievementSystem.isUnlocked(a.id));
+        },
+
+        getLockedAchievements() {
+            return Object.values(CONFIG.ACHIEVEMENTS).filter(a => !AchievementSystem.isUnlocked(a.id));
         },
 
         // Utility methods (exposed to template)

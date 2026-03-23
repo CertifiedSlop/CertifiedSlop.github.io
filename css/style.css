@@ -41,9 +41,43 @@
     z-index: 0;
 }
 
+/* Mouse trail canvas */
+#mouse-trail-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+}
+
 /* Smooth scrolling */
 html {
     scroll-behavior: smooth;
+}
+
+/* Disco Mode - because why not */
+body.disco-mode {
+    animation: disco 0.5s linear infinite;
+}
+
+@keyframes disco {
+    0% { filter: hue-rotate(0deg); }
+    100% { filter: hue-rotate(360deg); }
+}
+
+/* Theme variations */
+html[data-theme="dark"] {
+    --bg-primary: #0f0f11;
+}
+
+html[data-theme="darker"] {
+    --bg-primary: #0a0a0c;
+}
+
+html[data-theme="darkest"] {
+    --bg-primary: #050507;
 }
 
 /* Custom scrollbar */
