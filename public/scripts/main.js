@@ -174,54 +174,10 @@ function initParticleSystem() {
   animate();
 }
 
-// Mouse Trail
+// Mouse Trail - disabled due to performance issues
 function initMouseTrail() {
-  const canvas = document.createElement('canvas');
-  canvas.id = 'mouse-trail-canvas';
-  canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;';
-  document.body.appendChild(canvas);
-  
-  const ctx = canvas.getContext('2d');
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  
-  const particles = [];
-  
-  document.addEventListener('mousemove', (e) => {
-    for (let i = 0; i < 3; i++) {
-      particles.push({
-        x: e.clientX,
-        y: e.clientY,
-        vx: (Math.random() - 0.5) * 4,
-        vy: (Math.random() - 0.5) * 4,
-        life: 1,
-        color: `hsl(${Math.random() * 360}, 100%, 50%)`,
-        size: Math.random() * 4 + 2
-      });
-    }
-  });
-  
-  function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    for (let i = particles.length - 1; i >= 0; i--) {
-      const p = particles[i];
-      p.x += p.vx;
-      p.y += p.vy;
-      p.vy += 0.1;
-      p.life -= 0.02;
-      if (p.life > 0) {
-        ctx.globalAlpha = p.life;
-        ctx.fillStyle = p.color;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fill();
-      } else {
-        particles.splice(i, 1);
-      }
-    }
-    requestAnimationFrame(animate);
-  }
-  animate();
+  // Disabled - was causing lag
+  return;
 }
 
 // Konami Code
@@ -782,9 +738,12 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('cursor-trail-btn').addEventListener('click', toggleCursorTrail);
 
   // Add click handler for Join Us button (Rick Roll achievement)
-  document.querySelector('a[href="/watch"]').addEventListener('click', () => {
-    unlockAchievement('rick_rolled');
-  });
+  const joinBtn = document.querySelector('a[href="/watch"]');
+  if (joinBtn) {
+    joinBtn.addEventListener('click', () => {
+      unlockAchievement('rick_rolled');
+    });
+  }
 
   // Add click handler for Matrix button achievement
   const originalToggleMatrix = toggleMatrixRain;
