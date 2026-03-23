@@ -26,7 +26,7 @@ interface Toast {
 }
 
 interface Notification {
-  id: number;
+  id: number | string;
   icon: string;
   title: string;
   desc: string;
