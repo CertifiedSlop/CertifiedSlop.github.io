@@ -347,9 +347,17 @@ export default function Home() {
   // Scroll tracker
   useScrollTracker((progress) => {
     setScrollProgress(progress);
-    if (progress >= 10 && !unlocked.includes('first_scroll')) unlock('first_scroll');
-    if (progress >= 50 && !unlocked.includes('scroll_halfway')) unlock('scroll_halfway');
   });
+
+  // Unlock scroll achievements
+  useEffect(() => {
+    if (scrollProgress >= 10 && !unlocked.includes('first_scroll')) {
+      unlock('first_scroll');
+    }
+    if (scrollProgress >= 50 && !unlocked.includes('scroll_halfway')) {
+      unlock('scroll_halfway');
+    }
+  }, [scrollProgress, unlocked, unlock]);
 
   // Initialize particle system
   useEffect(() => {
@@ -407,14 +415,20 @@ export default function Home() {
       } else {
         setFilteredRepos(repos);
       }
-      if (value.trim() && !unlocked.includes('search_detective')) unlock('search_detective');
     }, 300),
-    [repos, unlocked, unlock]
+    [repos]
   );
 
   useEffect(() => {
     debouncedSearch(search);
   }, [search, debouncedSearch]);
+
+  // Unlock search achievement
+  useEffect(() => {
+    if (search.trim() && !unlocked.includes('search_detective')) {
+      unlock('search_detective');
+    }
+  }, [search, unlocked, unlock]);
 
   const showToast = (message: string) => {
     const id = Date.now();
@@ -423,12 +437,15 @@ export default function Home() {
   };
 
   const handleHover = () => {
-    setHoverCount(prev => {
-      const newCount = prev + 1;
-      if (newCount >= 10 && !unlocked.includes('hover_master')) unlock('hover_master');
-      return newCount;
-    });
+    setHoverCount(prev => prev + 1);
   };
+
+  // Unlock hover achievement
+  useEffect(() => {
+    if (hoverCount >= 10 && !unlocked.includes('hover_master')) {
+      unlock('hover_master');
+    }
+  }, [hoverCount, unlocked, unlock]);
 
   const languages = useMemo(() =>
     [...new Set(repos.filter(r => r.language).map(r => r.language as string))].sort(),
