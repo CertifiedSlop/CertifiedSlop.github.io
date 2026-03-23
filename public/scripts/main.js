@@ -466,11 +466,11 @@ function spawnConfetti() {
   }
 }
 
-// Enhanced unlockAchievement with confetti
+// Enhanced unlockAchievement with confetti - disabled due to performance
 const originalUnlockAchievement = unlockAchievement;
 unlockAchievement = function(id) {
   originalUnlockAchievement(id);
-  spawnConfetti();
+  // spawnConfetti(); - disabled due to lag
 };
 
 // Scroll Tracker
@@ -720,7 +720,7 @@ document.addEventListener('DOMContentLoaded', () => {
   updateAchievementProgress();
   initTypingEffect();
   initParticleSystem();
-  initMouseTrail();
+  // initMouseTrail() - disabled due to lag
   initKonamiCode();
   initScrollTracker();
   initSearch();

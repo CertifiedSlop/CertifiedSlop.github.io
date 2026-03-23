@@ -110,8 +110,11 @@ layout: false
         setTimeout(() => {
           loading.style.display = 'none';
           videoWrapper.style.display = 'block';
-          // Autoplay the YouTube video
-          iframe.src = 'https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&rel=0&modestbranding=1';
+          // Autoplay the YouTube video with sound
+          iframe.src = 'https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&rel=0&modestbranding=1&controls=1&start=0';
+          // Also try to unmute and play
+          iframe.allow = 'autoplay; encrypted-media; picture-in-picture';
+          iframe.allowFullscreen = true;
         }, 500);
       }
       progressBar.style.width = progress + '%';
