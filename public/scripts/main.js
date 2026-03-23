@@ -824,7 +824,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('cursor-trail-btn').addEventListener('click', toggleCursorTrail);
 
   // Add click handler for Join Us button (Rick Roll achievement)
-  document.querySelector('a[href*="youtube.com"]').addEventListener('click', () => {
+  document.querySelector('a[href="/watch"]').addEventListener('click', () => {
     unlockAchievement('rick_rolled');
   });
 
