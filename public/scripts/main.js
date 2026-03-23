@@ -350,55 +350,13 @@ function initVisitorCounter() {
   }, 2000);
 }
 
-// Cursor Trail
+// Cursor Trail - disabled by default due to performance
 let isCursorTrailEnabled = false;
 let trailParticles = [];
 
 function initCursorTrail() {
-  const canvas = document.getElementById('cursor-trail');
-  const ctx = canvas.getContext('2d');
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-
-  document.addEventListener('mousemove', (e) => {
-    if (!isCursorTrailEnabled) return;
-
-    for (let i = 0; i < 3; i++) {
-      trailParticles.push({
-        x: e.clientX,
-        y: e.clientY,
-        vx: (Math.random() - 0.5) * 4,
-        vy: (Math.random() - 0.5) * 4,
-        life: 1,
-        color: `hsl(${Math.random() * 360}, 100%, 50%)`,
-        size: Math.random() * 4 + 2
-      });
-    }
-  });
-
-  function animate() {
-    if (isCursorTrailEnabled) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      for (let i = trailParticles.length - 1; i >= 0; i--) {
-        const p = trailParticles[i];
-        p.x += p.vx;
-        p.y += p.vy;
-        p.vy += 0.1;
-        p.life -= 0.02;
-        if (p.life > 0) {
-          ctx.globalAlpha = p.life;
-          ctx.fillStyle = p.color;
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-          ctx.fill();
-        } else {
-          trailParticles.splice(i, 1);
-        }
-      }
-    }
-    requestAnimationFrame(animate);
-  }
-  animate();
+  // Don't initialize by default - user must enable it
+  return;
 }
 
 function toggleCursorTrail() {
