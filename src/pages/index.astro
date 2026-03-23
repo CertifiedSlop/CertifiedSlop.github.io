@@ -29,23 +29,23 @@ try {
   const response = await fetch(`${CONFIG.API_BASE_URL}/orgs/${CONFIG.ORG_NAME}/repos?per_page=100&type=all`);
   if (!response.ok) throw new Error('Failed to fetch');
   const data = await response.json();
-  repos = data.filter((repo: any) => 
+  repos = data.filter((repo) => 
     !CONFIG.EXCLUDED_REPO_PREFIXES.some(prefix => repo.name.startsWith(prefix))
   );
-} catch (e: any) {
+} catch (e) {
   fetchError = e.message;
 }
 
 // Helper functions
-function analyzeSentiment(repo: any) {
+function analyzeSentiment(repo) {
   const nameFactor = repo.name.length % CONFIG.SENTIMENTS.length;
   const starFactor = (repo.stargazers_count || 0) % 3;
   const combined = (nameFactor + starFactor) % CONFIG.SENTIMENTS.length;
   return CONFIG.SENTIMENTS[combined];
 }
 
-function getMoodClass(sentiment: string) {
-  const moodMap: Record<string, string> = {
+function getMoodClass(sentiment) {
+  const moodMap = {
     '😊 Happy': 'mood-happy',
     '🤔 Thoughtful': 'mood-thoughtful',
     '🔥 Spicy': 'mood-spicy',
@@ -58,8 +58,8 @@ function getMoodClass(sentiment: string) {
   return moodMap[sentiment] || '';
 }
 
-function getSentimentColor(sentiment: string) {
-  const colors: Record<string, string> = {
+function getSentimentColor(sentiment) {
+  const colors = {
     '😊 Happy': 'text-yellow-400',
     '🤔 Thoughtful': 'text-blue-400',
     '🔥 Spicy': 'text-red-400',
@@ -72,31 +72,13 @@ function getSentimentColor(sentiment: string) {
   return colors[sentiment] || 'text-gray-400';
 }
 
-function calculateSlopScore(repo: any) {
-  const nameSlop = repo.name.includes('AI') ? 20 : 0;
-  const descriptionSlop = repo.description ? Math.min(repo.description.length / 10, 20) : 10;
-  const starSlop = Math.max(0, 30 - (repo.stargazers_count / 10));
-  const topicSlop = Math.min((repo.topics?.length || 0) * 5, 20);
-  const randomSlop = Math.random() * 10;
-  const aiBonus = (repo.name.match(/AI/gi)?.length || 0) * 5;
-  return Math.min(100, Math.round(nameSlop + descriptionSlop + starSlop + topicSlop + randomSlop + aiBonus));
-}
-
-function getSlopRating(score: number) {
-  if (score >= 90) return { label: 'Maximum Slop', emoji: '🏆' };
-  if (score >= 70) return { label: 'Premium Slop', emoji: '✨' };
-  if (score >= 50) return { label: 'Certified Slop', emoji: '✅' };
-  if (score >= 30) return { label: 'Questionable Slop', emoji: '🤔' };
-  return { label: 'Not Enough Slop', emoji: '😢' };
-}
-
-function formatNumber(num: number) {
+function formatNumber(num) {
   if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
   if (num >= 1000) return (num / 1000).toFixed(1) + 'k';
   return num.toString();
 }
 
-function getRelativeTime(dateString: string) {
+function getRelativeTime(dateString) {
   const date = new Date(dateString);
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
@@ -115,8 +97,28 @@ function getRelativeTime(dateString: string) {
   return `${Math.floor(diffDays / 365)}y ago`;
 }
 
-const totalStars = repos.reduce((sum: number, r: any) => sum + r.stargazers_count, 0);
-const totalForks = repos.reduce((sum: number, r: any) => sum + r.forks_count, 0);
+const totalStars = repos.reduce((sum, r) => sum + r.stargazers_count, 0);
+const totalForks = repos.reduce((sum, r) => sum + r.forks_count, 0);
+
+// Serialize data for client
+const serializedRepos = JSON.stringify(repos.map(r => ({ 
+  name: r.name, 
+  stargazers_count: r.stargazers_count, 
+  description: r.description, 
+  topics: r.topics 
+})));
+
+const serializedConfig = JSON.stringify({
+  ACHIEVEMENTS: CONFIG.ACHIEVEMENTS,
+  SENTIMENTS: CONFIG.SENTIMENTS,
+  KONAMI_CODE: ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'],
+  TAGLINES: [
+    "We make slop. That's it.",
+    'AI-powered tools & libraries',
+    'Building the future, one repo at a time',
+    'Open source • Czech Republic'
+  ]
+});
 ---
 
 <!DOCTYPE html>
@@ -135,6 +137,10 @@ const totalForks = repos.reduce((sum: number, r: any) => sum + r.forks_count, 0)
   <meta property="og:image" content="https://avatars.githubusercontent.com/u/265597819?v=4">
   
   <script type="module" src="/scripts/main.js"></script>
+  <script>
+    window.SLOP_CONFIG = {serializedConfig};
+    window.REPOS = {serializedRepos};
+  </script>
 </head>
 <body class="bg-primary text-white min-h-screen flex flex-col">
   <!-- Scroll Progress Bar -->
@@ -260,10 +266,8 @@ const totalForks = repos.reduce((sum: number, r: any) => sum + r.forks_count, 0)
     <!-- Repo Grid -->
     {!fetchError && repos.length > 0 && (
       <section id="repo-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {repos.map((repo: any) => {
+        {repos.map((repo) => {
           const sentiment = analyzeSentiment(repo);
-          const slopScore = calculateSlopScore(repo);
-          const slopRating = getSlopRating(slopScore);
           const moodClass = getMoodClass(sentiment);
           const sentimentColor = getSentimentColor(sentiment);
           
@@ -279,7 +283,7 @@ const totalForks = repos.reduce((sum: number, r: any) => sum + r.forks_count, 0)
                   {sentiment}
                 </span>
                 <span class="px-2.5 py-1 bg-green-500/10 text-green-400 text-xs rounded-lg border border-green-500/20">
-                  {slopRating.emoji} {slopRating.label}
+                  🏆 Certified Slop
                 </span>
               </div>
 
@@ -288,7 +292,7 @@ const totalForks = repos.reduce((sum: number, r: any) => sum + r.forks_count, 0)
 
               {repo.topics && repo.topics.length > 0 && (
                 <div class="flex flex-wrap gap-2 mb-4">
-                  {repo.topics.slice(0, 4).map((topic: string) => (
+                  {repo.topics.slice(0, 4).map((topic) => (
                     <span class="px-2.5 py-1 bg-purple-500/10 text-purple-400 text-xs rounded-lg border border-purple-500/20">
                       {topic}
                     </span>
@@ -367,29 +371,5 @@ const totalForks = repos.reduce((sum: number, r: any) => sum + r.forks_count, 0)
 
   <!-- Toast Container -->
   <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2"></div>
-
-  <script>
-    // Inline config for client scripts
-    window.SLOP_CONFIG = {
-      ACHIEVEMENTS: {
-        first_scroll: { id: 'first_scroll', title: 'First Scroll', desc: 'You scrolled!', icon: '📜' },
-        scroll_halfway: { id: 'scroll_halfway', title: 'Halfway There', desc: '50% scroll completion', icon: '🎯' },
-        hover_master: { id: 'hover_master', title: 'Hover Master', desc: 'Hovered 10 repos', icon: '🖱️' },
-        search_detective: { id: 'search_detective', title: 'Search Detective', desc: 'Used search functionality', icon: '🔍' },
-        theme_explorer: { id: 'theme_explorer', title: 'Theme Explorer', desc: 'Changed the theme', icon: '🎨' },
-        konami_master: { id: 'konami_master', title: 'Konami Master', desc: 'Entered the Konami code', icon: '🎮' },
-        slop_critic: { id: 'slop_critic', title: 'Slop Critic', desc: 'Viewed slop scores', icon: '⭐' }
-      },
-      SENTIMENTS: ['😊 Happy', '🤔 Thoughtful', '🔥 Spicy', '😴 Sleepy', '🤖 Robotic', '🎉 Excited', '😎 Cool', '🧐 Sophisticated'],
-      KONAMI_CODE: ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'],
-      TAGLINES: [
-        "We make slop. That's it.",
-        'AI-powered tools & libraries',
-        'Building the future, one repo at a time',
-        'Open source • Czech Republic'
-      ]
-    };
-    window.REPOS = {repos.map(r => ({ name: r.name, stargazers_count: r.stargazers_count, description: r.description, topics: r.topics }))};
-  </script>
 </body>
 </html>

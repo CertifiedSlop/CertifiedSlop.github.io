@@ -1,6 +1,4 @@
 // Certified Slop - Client-side JavaScript
-// All the unnecessary features that make this site "special"
-
 const CONFIG = window.SLOP_CONFIG || {};
 const REPOS = window.REPOS || [];
 
