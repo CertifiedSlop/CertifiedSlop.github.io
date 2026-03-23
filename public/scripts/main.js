@@ -279,22 +279,15 @@ function initSearch() {
 
 // Hover tracking
 function initHoverTracking() {
-  const cards = document.querySelectorAll('#repo-grid article');
-  console.log('Found repo cards:', cards.length);
-
-  cards.forEach(card => {
-    console.log('Setting up card:', card.dataset.repoName);
-
+  document.querySelectorAll('#repo-grid article').forEach(card => {
     card.addEventListener('mouseenter', () => {
       hoverCount++;
       if (hoverCount >= 10) unlockAchievement('hover_master');
     });
 
-    card.addEventListener('click', (e) => {
-      console.log('Card clicked!', card.dataset.repoName);
+    card.addEventListener('click', () => {
       const repoName = card.dataset.repoName;
       const repo = REPOS.find(r => r.name === repoName);
-      console.log('Found repo:', repo);
       if (repo) {
         openRepoDetail(repo);
         unlockAchievement('repo_explorer');
@@ -304,7 +297,6 @@ function initHoverTracking() {
     card.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        console.log('Card activated via keyboard');
         const repoName = card.dataset.repoName;
         const repo = REPOS.find(r => r.name === repoName);
         if (repo) {
@@ -437,6 +429,12 @@ function getRelativeTimeFull(dateString) {
     hour: '2-digit',
     minute: '2-digit'
   });
+}
+
+function formatNumber(num) {
+  if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+  if (num >= 1000) return (num / 1000).toFixed(1) + 'k';
+  return num.toString();
 }
 
 // Slop Scores
