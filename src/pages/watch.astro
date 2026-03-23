@@ -23,40 +23,72 @@ layout: false
       font-family: system-ui, -apple-system, sans-serif;
       color: white;
     }
-    .video-container {
-      width: 100%;
-      max-width: 900px;
-      aspect-ratio: 16/9;
+    .loading {
+      text-align: center;
+      padding: 2rem;
     }
-    video {
-      width: 100%;
-      height: 100%;
-      border-radius: 12px;
-      box-shadow: 0 20px 60px rgba(168, 85, 247, 0.3);
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid #333;
+      border-top-color: #a855f7;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
     h1 {
-      text-align: center;
       font-size: 1.5rem;
-      margin-bottom: 1rem;
+      margin-bottom: 0.5rem;
       background: linear-gradient(to right, #a855f7, #ec4899);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
+    p {
+      color: #888;
+    }
+    .progress {
+      width: 200px;
+      height: 4px;
+      background: #222;
+      border-radius: 2px;
+      margin: 1rem auto;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(to right, #a855f7, #ec4899);
+      width: 0%;
+      transition: width 0.3s;
+    }
   </style>
 </head>
 <body>
-  <h1>🎵 Welcome to Certified Slop</h1>
-  <div class="video-container">
-    <video id="video" controls autoplay>
-      <source src="/videos/welcome.mp4" type="video/mp4">
-      Your browser does not support the video tag.
-    </video>
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <h1>Welcome to Certified Slop</h1>
+    <p>Loading community introduction...</p>
+    <div class="progress">
+      <div class="progress-bar" id="progress"></div>
+    </div>
   </div>
+
   <script>
-    // Track that user watched (for achievement)
-    document.getElementById('video').addEventListener('play', () => {
-      console.log('🎵 Never gonna give you up...');
-    });
+    // Fake loading progress for 2-3 seconds, then redirect
+    let progress = 0;
+    const progressBar = document.getElementById('progress');
+    const interval = setInterval(() => {
+      progress += Math.random() * 15;
+      if (progress >= 100) {
+        progress = 100;
+        clearInterval(interval);
+        // Redirect to the video
+        window.location.href = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+      }
+      progressBar.style.width = progress + '%';
+    }, 200);
   </script>
 </body>
 </html>
