@@ -1,0 +1,374 @@
+// Certified Slop - Client-side JavaScript
+// All the unnecessary features that make this site "special"
+
+const CONFIG = window.SLOP_CONFIG || {};
+const REPOS = window.REPOS || [];
+
+// State
+let hoverCount = 0;
+let scrollProgress = 0;
+let unlockedAchievements = JSON.parse(localStorage.getItem('slop_achievements') || '[]');
+let currentTheme = localStorage.getItem('slop_theme') || 'dark';
+
+// Achievement System
+function unlockAchievement(id) {
+  if (!unlockedAchievements.includes(id)) {
+    unlockedAchievements.push(id);
+    localStorage.setItem('slop_achievements', JSON.stringify(unlockedAchievements));
+    const achievement = CONFIG.ACHIEVEMENTS[id];
+    if (achievement) {
+      showAchievementNotification(achievement);
+      updateAchievementProgress();
+    }
+  }
+}
+
+function showAchievementNotification(achievement) {
+  const container = document.getElementById('achievement-notifications');
+  const notification = document.createElement('div');
+  notification.className = 'flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl shadow-2xl animate-slide-up';
+  notification.innerHTML = `
+    <span class="text-2xl">${achievement.icon}</span>
+    <div>
+      <p class="font-semibold text-sm">Achievement Unlocked!</p>
+      <p class="text-xs text-white/80">${achievement.title}</p>
+    </div>
+  `;
+  container.appendChild(notification);
+  setTimeout(() => notification.remove(), 4000);
+}
+
+function updateAchievementProgress() {
+  const progress = Math.round((unlockedAchievements.length / Object.keys(CONFIG.ACHIEVEMENTS).length) * 100);
+  document.getElementById('achievement-progress').textContent = progress;
+  document.getElementById('modal-achievement-progress').textContent = progress;
+}
+
+function renderAchievementsModal() {
+  const unlockedContainer = document.getElementById('unlocked-achievements');
+  const lockedContainer = document.getElementById('locked-achievements');
+  
+  unlockedContainer.innerHTML = '';
+  lockedContainer.innerHTML = '';
+  
+  Object.values(CONFIG.ACHIEVEMENTS).forEach(achievement => {
+    const isUnlocked = unlockedAchievements.includes(achievement.id);
+    const html = `
+      <div class="flex items-center gap-3 p-3 ${isUnlocked ? 'bg-green-500/10 border border-green-500/30' : 'bg-gray-500/10 border border-gray-500/30 opacity-50'} rounded-xl">
+        <span class="text-3xl ${isUnlocked ? '' : 'grayscale'}">${achievement.icon}</span>
+        <div>
+          <p class="font-semibold ${isUnlocked ? 'text-green-400' : 'text-gray-400'}">${achievement.title}</p>
+          <p class="text-xs text-gray-500">${achievement.desc}</p>
+        </div>
+      </div>
+    `;
+    if (isUnlocked) {
+      unlockedContainer.innerHTML += html;
+    } else {
+      lockedContainer.innerHTML += html;
+    }
+  });
+}
+
+// Theme System
+function applyTheme(theme) {
+  currentTheme = theme;
+  localStorage.setItem('slop_theme', theme);
+  document.documentElement.setAttribute('data-theme', theme);
+  document.getElementById('current-theme').textContent = theme;
+}
+
+function cycleTheme() {
+  const themes = ['dark', 'darker', 'darkest'];
+  const currentIndex = themes.indexOf(currentTheme);
+  const nextTheme = themes[(currentIndex + 1) % themes.length];
+  applyTheme(nextTheme);
+  unlockAchievement('theme_explorer');
+}
+
+// Toast Notifications
+function showToast(message) {
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = 'flex items-center gap-3 px-4 py-3 bg-card border border-white/10 rounded-xl shadow-xl animate-slide-up';
+  toast.innerHTML = `<span class="text-sm text-gray-300">${message}</span>`;
+  container.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
+}
+
+// Typing Effect
+function initTypingEffect() {
+  const taglineElement = document.querySelector('#tagline span:first-child');
+  if (!taglineElement) return;
+  
+  let index = 0;
+  let currentTagline = 0;
+  let isTyping = true;
+  const taglines = CONFIG.TAGLINES || [];
+  
+  function type() {
+    if (isTyping) {
+      if (index < taglines[currentTagline].length) {
+        taglineElement.textContent = taglines[currentTagline].slice(0, index + 1);
+        index++;
+        setTimeout(type, 50 + Math.random() * 50);
+      } else {
+        isTyping = false;
+        setTimeout(type, 2000);
+      }
+    } else {
+      if (index > 0) {
+        taglineElement.textContent = taglines[currentTagline].slice(0, index - 1);
+        index--;
+        setTimeout(type, 30);
+      } else {
+        isTyping = true;
+        currentTagline = (currentTagline + 1) % taglines.length;
+        setTimeout(type, 500);
+      }
+    }
+  }
+  type();
+}
+
+// Particle System
+function initParticleSystem() {
+  const canvas = document.getElementById('particle-canvas');
+  if (!canvas) return;
+  
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = 600;
+  
+  const particles = Array.from({ length: 80 }, () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    vx: (Math.random() - 0.5) * 0.3,
+    vy: (Math.random() - 0.5) * 0.3,
+    size: Math.random() * 2 + 1,
+    color: `rgba(${168 + Math.random() * 50}, ${85 + Math.random() * 50}, ${247 + Math.random() * 50}, ${0.3 + Math.random() * 0.3})`
+  }));
+  
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+      if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fillStyle = p.color;
+      ctx.fill();
+    });
+    requestAnimationFrame(animate);
+  }
+  animate();
+}
+
+// Mouse Trail
+function initMouseTrail() {
+  const canvas = document.createElement('canvas');
+  canvas.id = 'mouse-trail-canvas';
+  canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;';
+  document.body.appendChild(canvas);
+  
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  
+  const particles = [];
+  
+  document.addEventListener('mousemove', (e) => {
+    for (let i = 0; i < 3; i++) {
+      particles.push({
+        x: e.clientX,
+        y: e.clientY,
+        vx: (Math.random() - 0.5) * 4,
+        vy: (Math.random() - 0.5) * 4,
+        life: 1,
+        color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+        size: Math.random() * 4 + 2
+      });
+    }
+  });
+  
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.1;
+      p.life -= 0.02;
+      if (p.life > 0) {
+        ctx.globalAlpha = p.life;
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        particles.splice(i, 1);
+      }
+    }
+    requestAnimationFrame(animate);
+  }
+  animate();
+}
+
+// Konami Code
+function initKonamiCode() {
+  let sequence = [];
+  document.addEventListener('keydown', (e) => {
+    const key = e.key.toLowerCase();
+    sequence.push(key);
+    if (sequence.length > CONFIG.KONAMI_CODE.length) {
+      sequence.shift();
+    }
+    if (sequence.join(',') === CONFIG.KONAMI_CODE.join(',')) {
+      unlockAchievement('konami_master');
+      document.body.classList.add('disco-mode');
+      showToast('🎮 DISCO MODE ACTIVATED! 🎮');
+      setTimeout(() => document.body.classList.remove('disco-mode'), 10000);
+      sequence = [];
+    }
+  });
+}
+
+// Scroll Tracker
+function initScrollTracker() {
+  window.addEventListener('scroll', () => {
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    scrollProgress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+    document.getElementById('scroll-progress').style.width = `${scrollProgress}%`;
+    
+    if (scrollProgress >= 10) unlockAchievement('first_scroll');
+    if (scrollProgress >= 50) unlockAchievement('scroll_halfway');
+  });
+}
+
+// Search
+function initSearch() {
+  const searchInput = document.getElementById('search-input');
+  const repoCards = document.querySelectorAll('#repo-grid article');
+  
+  searchInput.addEventListener('input', (e) => {
+    const query = e.target.value.toLowerCase();
+    if (query.trim()) unlockAchievement('search_detective');
+    
+    repoCards.forEach(card => {
+      const name = card.dataset.repoName.toLowerCase();
+      const sentiment = card.dataset.sentiment.toLowerCase();
+      if (name.includes(query) || sentiment.includes(query)) {
+        card.style.display = '';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  });
+}
+
+// Hover tracking
+function initHoverTracking() {
+  document.querySelectorAll('#repo-grid article').forEach(card => {
+    card.addEventListener('mouseenter', () => {
+      hoverCount++;
+      if (hoverCount >= 10) unlockAchievement('hover_master');
+    });
+  });
+}
+
+// Modals
+function initModals() {
+  // Achievements modal
+  document.getElementById('achievements-btn').addEventListener('click', () => {
+    document.getElementById('achievement-modal').classList.remove('hidden');
+    renderAchievementsModal();
+  });
+  
+  document.getElementById('close-achievements').addEventListener('click', () => {
+    document.getElementById('achievement-modal').classList.add('hidden');
+  });
+  
+  // Slop Scores modal
+  document.getElementById('slop-scores-btn').addEventListener('click', () => {
+    document.getElementById('slop-scores-modal').classList.remove('hidden');
+    renderSlopScores();
+    unlockAchievement('slop_critic');
+  });
+  
+  document.getElementById('close-slop-scores').addEventListener('click', () => {
+    document.getElementById('slop-scores-modal').classList.add('hidden');
+  });
+  
+  // Close modals on backdrop click
+  document.querySelectorAll('#achievement-modal, #slop-scores-modal').forEach(modal => {
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal.querySelector('.fixed.inset-0')) {
+        modal.classList.add('hidden');
+      }
+    });
+  });
+}
+
+// Slop Scores
+function renderSlopScores() {
+  const container = document.getElementById('slop-scores-grid');
+  container.innerHTML = '';
+  
+  REPOS.forEach(repo => {
+    const score = calculateSlopScore(repo);
+    const rating = getSlopRating(score);
+    
+    container.innerHTML += `
+      <div class="p-4 bg-white/5 border border-white/10 rounded-xl">
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="font-semibold text-white truncate">${repo.name}</h3>
+          <span class="text-2xl">${rating.emoji}</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-3xl font-bold bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">${score}</span>
+          <span class="text-sm text-gray-400">${rating.label}</span>
+        </div>
+        <div class="mt-2 h-2 bg-gray-700 rounded-full overflow-hidden">
+          <div class="h-full bg-gradient-to-r from-green-500 to-emerald-500" style="width: ${score}%"></div>
+        </div>
+      </div>
+    `;
+  });
+}
+
+function calculateSlopScore(repo) {
+  const nameSlop = repo.name.includes('AI') ? 20 : 0;
+  const descriptionSlop = repo.description ? Math.min(repo.description.length / 10, 20) : 10;
+  const starSlop = Math.max(0, 30 - (repo.stargazers_count / 10));
+  const topicSlop = Math.min((repo.topics?.length || 0) * 5, 20);
+  const randomSlop = Math.random() * 10;
+  const aiBonus = (repo.name.match(/AI/gi)?.length || 0) * 5;
+  return Math.min(100, Math.round(nameSlop + descriptionSlop + starSlop + topicSlop + randomSlop + aiBonus));
+}
+
+function getSlopRating(score) {
+  if (score >= 90) return { label: 'Maximum Slop', emoji: '🏆' };
+  if (score >= 70) return { label: 'Premium Slop', emoji: '✨' };
+  if (score >= 50) return { label: 'Certified Slop', emoji: '✅' };
+  if (score >= 30) return { label: 'Questionable Slop', emoji: '🤔' };
+  return { label: 'Not Enough Slop', emoji: '😢' };
+}
+
+// Initialize everything
+document.addEventListener('DOMContentLoaded', () => {
+  applyTheme(currentTheme);
+  updateAchievementProgress();
+  initTypingEffect();
+  initParticleSystem();
+  initMouseTrail();
+  initKonamiCode();
+  initScrollTracker();
+  initSearch();
+  initHoverTracking();
+  initModals();
+  
+  document.getElementById('theme-toggle').addEventListener('click', cycleTheme);
+});

@@ -1,6 +1,6 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+/* Custom CSS for Certified Slop */
 
 /* Screen reader only utility */
 .sr-only {
@@ -411,24 +411,5 @@ html[data-theme="darkest"] .bg-card:hover {
 
   html {
     scroll-behavior: auto;
-  }
-}
-
-/* Print styles */
-@media print {
-  .gradient-mesh,
-  .animate-float,
-  button,
-  .toast-container {
-    display: none !important;
-  }
-
-  body {
-    background: white;
-    color: black;
-  }
-
-  a {
-    text-decoration: underline;
   }
 }
