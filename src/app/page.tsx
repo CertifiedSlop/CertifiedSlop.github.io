@@ -65,11 +65,13 @@ function useAchievements() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
     const stored = localStorage.getItem('slop_achievements');
     if (stored) setUnlocked(JSON.parse(stored));
   }, []);
 
   const unlock = useCallback((achievementId: string) => {
+    if (typeof window === 'undefined') return;
     setUnlocked(prev => {
       if (!prev.includes(achievementId)) {
         const newUnlocked = [...prev, achievementId];
@@ -97,11 +99,13 @@ function useTheme() {
   const [theme, setTheme] = useState<'dark' | 'darker' | 'darkest'>('dark');
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
     const stored = localStorage.getItem('slop_theme') as 'dark' | 'darker' | 'darkest' | null;
     if (stored) setTheme(stored);
   }, []);
 
   const cycle = useCallback(() => {
+    if (typeof window === 'undefined') return;
     setTheme(prev => {
       const themes: ('dark' | 'darker' | 'darkest')[] = ['dark', 'darker', 'darkest'];
       const next = themes[(themes.indexOf(prev) + 1) % themes.length];
@@ -111,6 +115,7 @@ function useTheme() {
   }, []);
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
     document.documentElement.setAttribute('data-theme', theme);
   }, [theme]);
 

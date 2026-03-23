@@ -5,6 +5,7 @@ const nextConfig = {
     unoptimized: true,
   },
   trailingSlash: true,
+  basePath: '',
   eslint: {
     ignoreDuringBuilds: true,
   },
