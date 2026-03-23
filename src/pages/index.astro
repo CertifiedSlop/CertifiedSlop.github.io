@@ -159,6 +159,9 @@ const serializedConfig = JSON.stringify({
   <!-- Achievement Notifications -->
   <div id="achievement-notifications" class="fixed top-4 right-4 z-[10001] space-y-2"></div>
 
+  <!-- Matrix Rain Canvas -->
+  <canvas id="matrix-rain" class="fixed inset-0 w-full h-full pointer-events-none z-[9998] hidden"></canvas>
+
   <!-- Skip link -->
   <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-purple-600 focus:text-white focus:rounded-lg">
     Skip to main content
@@ -231,6 +234,13 @@ const serializedConfig = JSON.stringify({
           </div>
         </div>
 
+        <!-- Fake Visitor Counter -->
+        <div class="mb-8 flex items-center justify-center gap-2 text-sm text-gray-500">
+          <span class="px-3 py-1 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 font-mono">
+            🔴 LIVE: <span id="visitor-count">4,827,391</span> visitors
+          </span>
+        </div>
+
         <!-- CTA Button -->
         <a href="https://github.com/CertifiedSlop" target="_blank" rel="noopener noreferrer"
            class="group inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-green-600 to-emerald-500 hover:from-green-500 hover:to-emerald-400 text-white font-semibold rounded-2xl shadow-lg shadow-green-500/30 transition-all duration-300 hover:scale-105 hover:shadow-green-500/50 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-primary">
@@ -250,6 +260,14 @@ const serializedConfig = JSON.stringify({
         <button id="theme-toggle" class="group flex items-center gap-2.5 px-5 py-3 bg-gradient-to-r from-purple-600/15 to-pink-600/15 hover:from-purple-600/25 hover:to-pink-600/25 border border-purple-500/25 hover:border-purple-500/40 rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/10">
           <svg class="w-5 h-5 text-purple-400 group-hover:text-purple-300 transition-colors" fill="currentColor" viewBox="0 0 16 16"><path d="M8 12a4 4 0 100-8 4 4 0 000 8zM8 1.5a6.5 6.5 0 010 13c-1.355 0-2.618-.37-3.713-1.016a.75.75 0 01.363-1.398A5.002 5.002 0 008 13a5 5 0 100-10 .75.75 0 010-1.5z"/></svg>
           <span class="text-sm font-medium text-gray-300 group-hover:text-white transition-colors" id="current-theme">dark</span>
+        </button>
+        <button id="matrix-rain-btn" class="group flex items-center gap-2.5 px-5 py-3 bg-gradient-to-r from-green-600/15 to-emerald-600/15 hover:from-green-600/25 hover:to-emerald-600/25 border border-green-500/25 hover:border-green-500/40 rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-green-500/10">
+          <span class="text-xl group-hover:scale-110 transition-transform">💻</span>
+          <span class="text-sm font-medium text-gray-300 group-hover:text-white transition-colors">Matrix Mode</span>
+        </button>
+        <button id="comic-sans-btn" class="group flex items-center gap-2.5 px-5 py-3 bg-gradient-to-r from-pink-600/15 to-rose-600/15 hover:from-pink-600/25 hover:to-rose-600/25 border border-pink-500/25 hover:border-pink-500/40 rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-pink-500/10">
+          <span class="text-xl group-hover:scale-110 transition-transform">🎨</span>
+          <span class="text-sm font-medium text-gray-300 group-hover:text-white transition-colors">Comic Sans</span>
         </button>
         <button id="achievements-btn" class="group flex items-center gap-2.5 px-5 py-3 bg-gradient-to-r from-yellow-600/15 to-orange-600/15 hover:from-yellow-600/25 hover:to-orange-600/25 border border-yellow-500/25 hover:border-yellow-500/40 rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-yellow-500/10">
           <span class="text-xl group-hover:scale-110 transition-transform">🏆</span>

@@ -245,6 +245,111 @@ function initKonamiCode() {
   });
 }
 
+// Matrix Rain
+let matrixInterval = null;
+let isMatrixRainEnabled = false;
+
+function initMatrixRain() {
+  const canvas = document.getElementById('matrix-rain');
+  const ctx = canvas.getContext('2d');
+
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const katakana = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const characters = katakana.split('');
+
+  const fontSize = 16;
+  const columns = canvas.width / fontSize;
+  const drops = [];
+
+  for (let i = 0; i < columns; i++) {
+    drops[i] = Math.random() * -100;
+  }
+
+  function draw() {
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = '#0f0';
+    ctx.font = fontSize + 'px monospace';
+
+    for (let i = 0; i < drops.length; i++) {
+      const text = characters[Math.floor(Math.random() * characters.length)];
+      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+        drops[i] = 0;
+      }
+      drops[i]++;
+    }
+  }
+
+  if (matrixInterval) clearInterval(matrixInterval);
+  matrixInterval = setInterval(draw, 33);
+}
+
+function toggleMatrixRain() {
+  const canvas = document.getElementById('matrix-rain');
+  isMatrixRainEnabled = !isMatrixRainEnabled;
+
+  if (isMatrixRainEnabled) {
+    canvas.classList.remove('hidden');
+    initMatrixRain();
+    showToast('💻 Welcome to the Matrix!');
+  } else {
+    canvas.classList.add('hidden');
+    if (matrixInterval) clearInterval(matrixInterval);
+    showToast('💻 Left the Matrix');
+  }
+}
+
+// Handle window resize for Matrix Rain
+window.addEventListener('resize', () => {
+  if (isMatrixRainEnabled) {
+    const canvas = document.getElementById('matrix-rain');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+});
+
+// Comic Sans Mode
+let isComicSansEnabled = false;
+
+function toggleComicSans() {
+  isComicSansEnabled = !isComicSansEnabled;
+
+  if (isComicSansEnabled) {
+    document.body.style.fontFamily = '"Comic Sans MS", "Comic Sans", cursive';
+    document.querySelectorAll('*').forEach(el => {
+      el.style.fontFamily = '"Comic Sans MS", "Comic Sans", cursive';
+    });
+    showToast('🎨 Art mode enabled!');
+  } else {
+    document.body.style.fontFamily = '';
+    document.querySelectorAll('*').forEach(el => {
+      el.style.fontFamily = '';
+    });
+    showToast('🎨 Art mode disabled');
+  }
+}
+
+// Fake Visitor Counter
+function initVisitorCounter() {
+  const counterEl = document.getElementById('visitor-count');
+  if (!counterEl) return;
+
+  let count = 4827391;
+
+  // Increment randomly every few seconds
+  setInterval(() => {
+    if (Math.random() > 0.3) {
+      count += Math.floor(Math.random() * 5) + 1;
+      counterEl.textContent = count.toLocaleString();
+    }
+  }, 2000);
+}
+
 // Scroll Tracker
 function initScrollTracker() {
   window.addEventListener('scroll', () => {
@@ -498,6 +603,9 @@ document.addEventListener('DOMContentLoaded', () => {
   initSearch();
   initHoverTracking();
   initModals();
-  
+  initVisitorCounter();
+
   document.getElementById('theme-toggle').addEventListener('click', cycleTheme);
+  document.getElementById('matrix-rain-btn').addEventListener('click', toggleMatrixRain);
+  document.getElementById('comic-sans-btn').addEventListener('click', toggleComicSans);
 });
