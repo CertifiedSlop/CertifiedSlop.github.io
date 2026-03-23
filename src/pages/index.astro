@@ -20,7 +20,14 @@ const CONFIG = {
     theme_explorer: { id: 'theme_explorer', title: 'Theme Explorer', desc: 'Changed the theme', icon: '🎨' },
     konami_master: { id: 'konami_master', title: 'Konami Master', desc: 'Entered the Konami code', icon: '🎮' },
     slop_critic: { id: 'slop_critic', title: 'Slop Critic', desc: 'Viewed slop scores', icon: '⭐' },
-    repo_explorer: { id: 'repo_explorer', title: 'Repo Explorer', desc: 'Opened a repository detail view', icon: '📦' }
+    repo_explorer: { id: 'repo_explorer', title: 'Repo Explorer', desc: 'Opened a repository detail view', icon: '📦' },
+    matrix_hacker: { id: 'matrix_hacker', title: 'Matrix Hacker', desc: 'Entered the Matrix', icon: '💻' },
+    design_criminal: { id: 'design_criminal', title: 'Design Criminal', desc: 'Enabled Comic Sans', icon: '🎨' },
+    rick_rolled: { id: 'rick_rolled', title: 'Never Gonna Give You Up', desc: 'Clicked Join Us', icon: '🎵' },
+    slop_devotee: { id: 'slop_devotee', title: 'Slop Devotee', desc: 'Clicked the logo 10 times', icon: '🙏' },
+    feeling_sloppy: { id: 'feeling_sloppy', title: 'Feeling Sloppy', desc: 'Typed the secret word', icon: '🍦' },
+    ai_believer: { id: 'ai_believer', title: 'AI Believer', desc: 'Triggered AI takeover', icon: '🤖' },
+    certified_slop: { id: 'certified_slop', title: 'Certified', desc: 'Found the certified code', icon: '✨' }
   }
 };
 
@@ -162,6 +169,9 @@ const serializedConfig = JSON.stringify({
   <!-- Matrix Rain Canvas -->
   <canvas id="matrix-rain" class="fixed inset-0 w-full h-full pointer-events-none z-[9998] hidden"></canvas>
 
+  <!-- Cursor Trail Canvas -->
+  <canvas id="cursor-trail" class="fixed inset-0 w-full h-full pointer-events-none z-[9997] hidden"></canvas>
+
   <!-- Skip link -->
   <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-purple-600 focus:text-white focus:rounded-lg">
     Skip to main content
@@ -239,6 +249,9 @@ const serializedConfig = JSON.stringify({
           <span class="px-3 py-1 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 font-mono">
             🔴 LIVE: <span id="visitor-count">4,827,391</span> visitors
           </span>
+          <span class="px-3 py-1 bg-purple-500/10 border border-purple-500/20 rounded-lg text-purple-400 font-mono">
+            🍦 Slop Level: <span id="slop-meter">97</span>%
+          </span>
         </div>
 
         <!-- CTA Buttons -->
@@ -277,6 +290,10 @@ const serializedConfig = JSON.stringify({
         <button id="comic-sans-btn" class="group flex items-center gap-2.5 px-5 py-3 bg-gradient-to-r from-pink-600/15 to-rose-600/15 hover:from-pink-600/25 hover:to-rose-600/25 border border-pink-500/25 hover:border-pink-500/40 rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-pink-500/10">
           <span class="text-xl group-hover:scale-110 transition-transform">🎨</span>
           <span class="text-sm font-medium text-gray-300 group-hover:text-white transition-colors">Comic Sans</span>
+        </button>
+        <button id="cursor-trail-btn" class="group flex items-center gap-2.5 px-5 py-3 bg-gradient-to-r from-cyan-600/15 to-blue-600/15 hover:from-cyan-600/25 hover:to-blue-600/25 border border-cyan-500/25 hover:border-cyan-500/40 rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-cyan-500/10">
+          <span class="text-xl group-hover:scale-110 transition-transform">✨</span>
+          <span class="text-sm font-medium text-gray-300 group-hover:text-white transition-colors">Cursor Trail</span>
         </button>
         <button id="achievements-btn" class="group flex items-center gap-2.5 px-5 py-3 bg-gradient-to-r from-yellow-600/15 to-orange-600/15 hover:from-yellow-600/25 hover:to-orange-600/25 border border-yellow-500/25 hover:border-yellow-500/40 rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-yellow-500/10">
           <span class="text-xl group-hover:scale-110 transition-transform">🏆</span>

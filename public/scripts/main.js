@@ -350,6 +350,215 @@ function initVisitorCounter() {
   }, 2000);
 }
 
+// Cursor Trail
+let isCursorTrailEnabled = false;
+let trailParticles = [];
+
+function initCursorTrail() {
+  const canvas = document.getElementById('cursor-trail');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  document.addEventListener('mousemove', (e) => {
+    if (!isCursorTrailEnabled) return;
+
+    for (let i = 0; i < 3; i++) {
+      trailParticles.push({
+        x: e.clientX,
+        y: e.clientY,
+        vx: (Math.random() - 0.5) * 4,
+        vy: (Math.random() - 0.5) * 4,
+        life: 1,
+        color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+        size: Math.random() * 4 + 2
+      });
+    }
+  });
+
+  function animate() {
+    if (isCursorTrailEnabled) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = trailParticles.length - 1; i >= 0; i--) {
+        const p = trailParticles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.1;
+        p.life -= 0.02;
+        if (p.life > 0) {
+          ctx.globalAlpha = p.life;
+          ctx.fillStyle = p.color;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          trailParticles.splice(i, 1);
+        }
+      }
+    }
+    requestAnimationFrame(animate);
+  }
+  animate();
+}
+
+function toggleCursorTrail() {
+  const canvas = document.getElementById('cursor-trail');
+  isCursorTrailEnabled = !isCursorTrailEnabled;
+
+  if (isCursorTrailEnabled) {
+    canvas.classList.remove('hidden');
+    showToast('✨ Cursor trail enabled!');
+  } else {
+    canvas.classList.add('hidden');
+    trailParticles = [];
+    showToast('✨ Cursor trail disabled');
+  }
+}
+
+// Secret Codes
+let secretSequence = '';
+const secretCodes = {
+  'slop': () => {
+    unlockAchievement('feeling_sloppy');
+    spawnSlopStorm();
+    showToast('🍦 Feeling Sloppy!');
+  },
+  'ai': () => {
+    unlockAchievement('ai_believer');
+    enableAITakeover();
+    showToast('🤖 AI Takeover initiated!');
+  },
+  'certified': () => {
+    unlockAchievement('certified_slop');
+    enableCertifiedGlow();
+    showToast('✨ Certified!');
+  }
+};
+
+function initSecretCodes() {
+  document.addEventListener('keydown', (e) => {
+    if (e.key.length === 1 && e.key.match(/[a-z]/i)) {
+      secretSequence += e.key.toLowerCase();
+      if (secretSequence.length > 10) {
+        secretSequence = secretSequence.slice(-10);
+      }
+
+      for (const code in secretCodes) {
+        if (secretSequence.endsWith(code)) {
+          secretCodes[code]();
+          secretSequence = '';
+          break;
+        }
+      }
+    }
+  });
+}
+
+function spawnSlopStorm() {
+  const emojis = ['🍦', '🤖', '✨', '💻', '🎨'];
+  for (let i = 0; i < 30; i++) {
+    setTimeout(() => {
+      const emoji = document.createElement('div');
+      emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      emoji.style.cssText = `
+        position: fixed;
+        left: ${Math.random() * 100}vw;
+        top: -50px;
+        font-size: ${Math.random() * 30 + 20}px;
+        pointer-events: none;
+        z-index: 10000;
+        animation: fall ${Math.random() * 2 + 2}s linear;
+      `;
+      document.body.appendChild(emoji);
+      setTimeout(() => emoji.remove(), 4000);
+    }, i * 100);
+  }
+}
+
+function enableAITakeover() {
+  document.querySelectorAll('h1, h2, h3, h4, h5, p, span, button').forEach(el => {
+    if (el.textContent && !el.textContent.startsWith('AI')) {
+      el.textContent = 'AI ' + el.textContent;
+    }
+  });
+}
+
+function enableCertifiedGlow() {
+  document.body.style.boxShadow = 'inset 0 0 100px rgba(168, 85, 247, 0.5)';
+  setTimeout(() => {
+    document.body.style.boxShadow = '';
+  }, 5000);
+}
+
+// Click Logo Easter Egg
+let logoClickCount = 0;
+
+function initLogoClicker() {
+  const logo = document.querySelector('header img');
+  if (!logo) return;
+
+  logo.style.cursor = 'pointer';
+  logo.addEventListener('click', () => {
+    logoClickCount++;
+    if (logoClickCount >= 10) {
+      unlockAchievement('slop_devotee');
+      logo.style.animation = 'spin 1s ease-in-out infinite';
+      logo.style.filter = 'drop-shadow(0 0 20px gold)';
+      showToast('🙏 Slop Devotee unlocked!');
+      logoClickCount = 0;
+      setTimeout(() => {
+        logo.style.animation = '';
+        logo.style.filter = '';
+      }, 5000);
+    } else {
+      showToast(`🔥 ${10 - logoClickCount} more clicks...`);
+    }
+  });
+}
+
+// Slop Meter
+function initSlopMeter() {
+  const meterEl = document.getElementById('slop-meter');
+  if (!meterEl) return;
+
+  let slopLevel = 97;
+  setInterval(() => {
+    const change = Math.floor(Math.random() * 5) - 2;
+    slopLevel = Math.max(0, Math.min(100, slopLevel + change));
+    meterEl.textContent = slopLevel;
+  }, 3000);
+}
+
+// Confetti Cannon
+function spawnConfetti() {
+  const colors = ['#a855f7', '#ec4899', '#3b82f6', '#22d3ee', '#4ade80', '#fbbf24'];
+  for (let i = 0; i < 50; i++) {
+    setTimeout(() => {
+      const confetti = document.createElement('div');
+      confetti.style.cssText = `
+        position: fixed;
+        left: ${Math.random() * 100}vw;
+        top: -20px;
+        width: ${Math.random() * 10 + 5}px;
+        height: ${Math.random() * 10 + 5}px;
+        background: ${colors[Math.floor(Math.random() * colors.length)]};
+        pointer-events: none;
+        z-index: 10001;
+        animation: confetti-fall ${Math.random() * 2 + 2}s linear;
+      `;
+      document.body.appendChild(confetti);
+      setTimeout(() => confetti.remove(), 4000);
+    }, i * 50);
+  }
+}
+
+// Enhanced unlockAchievement with confetti
+const originalUnlockAchievement = unlockAchievement;
+unlockAchievement = function(id) {
+  originalUnlockAchievement(id);
+  spawnConfetti();
+};
+
 // Scroll Tracker
 function initScrollTracker() {
   window.addEventListener('scroll', () => {
@@ -604,8 +813,36 @@ document.addEventListener('DOMContentLoaded', () => {
   initHoverTracking();
   initModals();
   initVisitorCounter();
+  initCursorTrail();
+  initSecretCodes();
+  initLogoClicker();
+  initSlopMeter();
 
   document.getElementById('theme-toggle').addEventListener('click', cycleTheme);
   document.getElementById('matrix-rain-btn').addEventListener('click', toggleMatrixRain);
   document.getElementById('comic-sans-btn').addEventListener('click', toggleComicSans);
+  document.getElementById('cursor-trail-btn').addEventListener('click', toggleCursorTrail);
+
+  // Add click handler for Join Us button (Rick Roll achievement)
+  document.querySelector('a[href*="youtube.com"]').addEventListener('click', () => {
+    unlockAchievement('rick_rolled');
+  });
+
+  // Add click handler for Matrix button achievement
+  const originalToggleMatrix = toggleMatrixRain;
+  toggleMatrixRain = function() {
+    originalToggleMatrix();
+    if (isMatrixRainEnabled) {
+      unlockAchievement('matrix_hacker');
+    }
+  };
+
+  // Add click handler for Comic Sans achievement
+  const originalToggleComic = toggleComicSans;
+  toggleComicSans = function() {
+    originalToggleComic();
+    if (isComicSansEnabled) {
+      unlockAchievement('design_criminal');
+    }
+  };
 });
