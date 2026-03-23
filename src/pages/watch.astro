@@ -63,6 +63,18 @@ layout: false
       width: 0%;
       transition: width 0.3s;
     }
+    .video-wrapper {
+      display: none;
+      width: 100%;
+      max-width: 960px;
+      aspect-ratio: 16/9;
+    }
+    iframe {
+      width: 100%;
+      height: 100%;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(168, 85, 247, 0.3);
+    }
   </style>
 </head>
 <body>
@@ -75,17 +87,32 @@ layout: false
     </div>
   </div>
 
+  <div class="video-wrapper" id="video-wrapper">
+    <iframe id="youtube-frame" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+  </div>
+
   <script>
-    // Fake loading progress for 2-3 seconds, then redirect
+    // Fake loading progress for 2-3 seconds, then show video
     let progress = 0;
     const progressBar = document.getElementById('progress');
+    const loading = document.getElementById('loading');
+    const videoWrapper = document.getElementById('video-wrapper');
+    const iframe = document.getElementById('youtube-frame');
+
     const interval = setInterval(() => {
       progress += Math.random() * 15;
       if (progress >= 100) {
         progress = 100;
         clearInterval(interval);
-        // Redirect to the video
-        window.location.href = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+        progressBar.style.width = '100%';
+
+        // Show video after short delay
+        setTimeout(() => {
+          loading.style.display = 'none';
+          videoWrapper.style.display = 'block';
+          // Autoplay the YouTube video
+          iframe.src = 'https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&rel=0&modestbranding=1';
+        }, 500);
       }
       progressBar.style.width = progress + '%';
     }, 200);
