@@ -63,6 +63,7 @@ function getSlopRating(score: number) {
 function useAchievements() {
   const [unlocked, setUnlocked] = useState<string[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [pendingUnlock, setPendingUnlock] = useState<string | null>(null);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -76,18 +77,26 @@ function useAchievements() {
       if (!prev.includes(achievementId)) {
         const newUnlocked = [...prev, achievementId];
         localStorage.setItem('slop_achievements', JSON.stringify(newUnlocked));
-        const achievement = CONFIG.ACHIEVEMENTS[achievementId as keyof typeof CONFIG.ACHIEVEMENTS];
-        if (achievement) {
-          setNotifications(prev => [...prev, { id: Date.now(), ...achievement }]);
-          setTimeout(() => {
-            setNotifications(prev => prev.filter(n => n.id !== Date.now()));
-          }, 4000);
-        }
         return newUnlocked;
       }
       return prev;
     });
+    setPendingUnlock(achievementId);
   }, []);
+
+  // Handle notifications separately to avoid nested state updates
+  useEffect(() => {
+    if (!pendingUnlock) return;
+    const achievement = CONFIG.ACHIEVEMENTS[pendingUnlock as keyof typeof CONFIG.ACHIEVEMENTS];
+    if (achievement) {
+      const notification = { id: Date.now(), ...achievement };
+      setNotifications(prev => [...prev, notification]);
+      setTimeout(() => {
+        setNotifications(prev => prev.filter(n => n.id !== notification.id));
+      }, 4000);
+    }
+    setPendingUnlock(null);
+  }, [pendingUnlock]);
 
   const progress = Math.round((unlocked.length / Object.keys(CONFIG.ACHIEVEMENTS).length) * 100);
 
