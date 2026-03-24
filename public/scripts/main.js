@@ -1203,6 +1203,448 @@ function stopElevatorMusic() {
   musicInterval = null;
 }
 
+// Loading Screen
+const loadingMessages = [
+  { text: "Heating up the slop...", sub: "This is definitely necessary" },
+  { text: "Convincing the slop to appear...", sub: "The slop is shy" },
+  { text: "Downloading more RAM...", sub: "Almost there..." },
+  { text: "Brewing coffee for the slop...", sub: "Caffeinated slop loads faster" },
+  { text: "Polishing the pixels...", sub: "Sparkling clean!" },
+  { text: "Warming up the servers...", sub: "Brrr, it's cold in here" },
+  { text: "Assembling the slop...", sub: "Like IKEA furniture" },
+  { text: "Consulting the slop oracle...", sub: "The oracle says: soon" },
+  { text: "Generating more slop...", sub: "Slop production at 110%" },
+  { text: "Almost ready...", sub: "Patience is a virtue" }
+];
+
+function initLoadingScreen() {
+  const loadingScreen = document.getElementById('loading-screen');
+  const loadingText = document.getElementById('loading-text');
+  const loadingSubtext = document.getElementById('loading-subtext');
+  const loadingProgress = document.getElementById('loading-progress');
+
+  let progress = 0;
+  let messageIndex = 0;
+
+  const interval = setInterval(() => {
+    // Random progress that sometimes goes backwards
+    const change = Math.random() > 0.8 ? -5 : Math.floor(Math.random() * 15) + 5;
+    progress = Math.min(100, Math.max(0, progress + change));
+    loadingProgress.style.width = progress + '%';
+
+    // Update message
+    if (Math.random() > 0.7 && messageIndex < loadingMessages.length - 1) {
+      messageIndex++;
+      loadingText.textContent = loadingMessages[messageIndex].text;
+      loadingSubtext.textContent = loadingMessages[messageIndex].sub;
+    }
+
+    // Complete loading at random time between 3-5 seconds
+    if (progress >= 100 && Math.random() > 0.95) {
+      clearInterval(interval);
+      setTimeout(() => {
+        loadingScreen.style.opacity = '0';
+        loadingScreen.style.transition = 'opacity 0.5s ease';
+        setTimeout(() => {
+          loadingScreen.classList.add('hidden');
+          unlockAchievement('patient_loader');
+        }, 500);
+      }, 500);
+    }
+  }, 200);
+}
+
+// Cookie Banner
+function initCookieBanner() {
+  const banner = document.getElementById('cookie-banner');
+  const hasResponded = localStorage.getItem('slop_cookie_responded');
+
+  // Show banner after 2 seconds if no response
+  setTimeout(() => {
+    if (!hasResponded) {
+      banner.classList.remove('hidden');
+    }
+  }, 2000);
+
+  document.getElementById('cookie-accept').addEventListener('click', () => {
+    localStorage.setItem('slop_cookie_responded', 'true');
+    banner.classList.add('hidden');
+    unlockAchievement('cookie_monster');
+    showToast('🍪 Cookies accepted! The slop is now 10% tastier!');
+  });
+
+  document.getElementById('cookie-decline').addEventListener('click', () => {
+    localStorage.setItem('slop_cookie_responded', 'true');
+    banner.classList.add('hidden');
+    showToast('🍪 Cookies declined. The slop tastes the same.');
+  });
+
+  document.getElementById('cookie-manage').addEventListener('click', () => {
+    document.getElementById('cookie-preferences-modal').classList.remove('hidden');
+  });
+
+  document.getElementById('close-cookie-preferences').addEventListener('click', () => {
+    document.getElementById('cookie-preferences-modal').classList.add('hidden');
+  });
+
+  document.getElementById('save-cookie-preferences').addEventListener('click', () => {
+    document.getElementById('cookie-preferences-modal').classList.add('hidden');
+    localStorage.setItem('slop_cookie_responded', 'true');
+    banner.classList.add('hidden');
+    showToast('🍪 Preferences saved! Bob thanks you.');
+  });
+}
+
+// Live Chat Support
+let chatMessageCount = 0;
+const chatResponses = [
+  "Have you tried turning it off and on again?",
+  "Our slop experts are currently slopping. Please hold.",
+  "Please hold, we're brewing your answer...",
+  "That's a great question! Let me transfer you to someone who knows.",
+  "I'm sure that's important. Next question?",
+  "Your feedback has been noted and will be ignored.",
+  "I understand your frustration. Have you tried coffee?",
+  "This is an automated message. Nobody is actually here.",
+  "The slop is working as intended. The problem is you.",
+  "I'll make a note of that. *makes no note*"
+];
+
+function initChatWidget() {
+  const chatToggle = document.getElementById('chat-toggle');
+  const chatMessages = document.getElementById('chat-messages');
+  const chatClose = document.getElementById('chat-close');
+  const chatSend = document.getElementById('chat-send');
+  const chatInput = document.getElementById('chat-input');
+  const chatHistory = document.getElementById('chat-history');
+
+  chatToggle.addEventListener('click', () => {
+    chatMessages.classList.toggle('hidden');
+  });
+
+  chatClose.addEventListener('click', () => {
+    chatMessages.classList.add('hidden');
+  });
+
+  function sendMessage() {
+    const message = chatInput.value.trim();
+    if (!message) return;
+
+    // Add user message
+    chatHistory.innerHTML += `
+      <div class="flex items-start gap-2 justify-end">
+        <div class="bg-purple-500/20 rounded-2xl rounded-tr-none p-3 max-w-[80%]">
+          <p class="text-sm text-white">${message}</p>
+        </div>
+        <div class="w-6 h-6 bg-pink-500/20 rounded-full flex items-center justify-center text-xs">👤</div>
+      </div>
+    `;
+
+    chatMessageCount++;
+    if (chatMessageCount >= 10) {
+      unlockAchievement('chat_champion');
+    }
+
+    chatInput.value = '';
+    chatHistory.scrollTop = chatHistory.scrollHeight;
+
+    // Auto-response after delay
+    setTimeout(() => {
+      const response = chatResponses[Math.floor(Math.random() * chatResponses.length)];
+      chatHistory.innerHTML += `
+        <div class="flex items-start gap-2">
+          <div class="w-6 h-6 bg-purple-500/20 rounded-full flex items-center justify-center text-xs">🤖</div>
+          <div class="bg-white/5 rounded-2xl rounded-tl-none p-3 max-w-[80%]">
+            <p class="text-sm text-gray-300">${response}</p>
+          </div>
+        </div>
+      `;
+      chatHistory.scrollTop = chatHistory.scrollHeight;
+    }, 1000 + Math.random() * 2000);
+  }
+
+  chatSend.addEventListener('click', sendMessage);
+  chatInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') sendMessage();
+  });
+}
+
+// Newsletter Signup
+function initNewsletterSignup() {
+  const modal = document.getElementById('newsletter-modal');
+  const emailInput = document.getElementById('newsletter-email');
+  const subscribeBtn = document.getElementById('newsletter-subscribe');
+
+  subscribeBtn.addEventListener('click', () => {
+    modal.classList.add('hidden');
+    unlockAchievement('newsletter_subscriber');
+    showToast('📧 Subscribed! You will receive nothing shortly.');
+  });
+}
+
+// Dark Pattern Toggle
+let isDarkPatternEnabled = false;
+
+function toggleDarkPattern() {
+  isDarkPatternEnabled = !isDarkPatternEnabled;
+
+  if (isDarkPatternEnabled) {
+    document.body.classList.add('dark-pattern');
+    // Make buttons harder to click by adding random offsets
+    document.querySelectorAll('button').forEach(btn => {
+      btn.style.transform = `translate(${Math.random() * 4 - 2}px, ${Math.random() * 4 - 2}px)`;
+    });
+    showToast('🌑 Dark patterns enabled! Good luck clicking things!');
+    unlockAchievement('dark_pattern_survivor');
+  } else {
+    document.body.classList.remove('dark-pattern');
+    document.querySelectorAll('button').forEach(btn => {
+      btn.style.transform = '';
+    });
+    showToast('🌑 Dark patterns disabled. Everything is normal again.');
+  }
+}
+
+// Sound Pack Selector
+let currentSoundPack = 'default';
+
+function initSoundPackSelector() {
+  const options = document.querySelectorAll('.sound-pack-option');
+  options.forEach(option => {
+    option.addEventListener('click', () => {
+      currentSoundPack = option.dataset.pack;
+      options.forEach(o => o.classList.remove('bg-gradient-to-r', 'from-purple-600/20', 'to-pink-600/20', 'border-purple-500/50'));
+      options.forEach(o => o.classList.add('bg-white/5', 'border-white/10'));
+      option.classList.remove('bg-white/5', 'border-white/10');
+      option.classList.add('bg-gradient-to-r', 'from-purple-600/20', 'to-pink-600/20', 'border-purple-500/50');
+      unlockAchievement('audio_phile');
+      showToast(`🎧 Sound pack changed to ${option.dataset.pack}!`);
+    });
+  });
+}
+
+// Slop Translator
+let currentLanguage = 'normal';
+const translations = {
+  pirate: {
+    'Certified Slop': 'Certified Slop, Arrr!',
+    'We make slop': 'We be makin\' slop',
+    'repositories': 'treasures',
+    'stars': 'gold doubloons'
+  },
+  shakespeare: {
+    'Certified Slop': 'Most Certified Slop',
+    'We make slop': 'Forsooth, we doth make slop',
+    'repositories': 'scrolls of knowledge',
+    'stars': 'heavenly bodies'
+  },
+  leet: {
+    'Certified Slop': 'C3r71f13d 5|0p',
+    'We make slop': 'W3 m4k3 5|0p',
+    'repositories': 'r3p05',
+    'stars': '574r5'
+  },
+  emoji: {
+    'Certified Slop': '✅🍦',
+    'We make slop': '👷🍦',
+    'repositories': '📦📦',
+    'stars': '⭐⭐'
+  }
+};
+
+function initTranslator() {
+  const options = document.querySelectorAll('.translator-option');
+  options.forEach(option => {
+    option.addEventListener('click', () => {
+      currentLanguage = option.dataset.lang;
+      options.forEach(o => o.classList.remove('bg-gradient-to-r', 'from-purple-600/20', 'to-pink-600/20', 'border-purple-500/50'));
+      options.forEach(o => o.classList.add('bg-white/5', 'border-white/10'));
+      option.classList.remove('bg-white/5', 'border-white/10');
+      option.classList.add('bg-gradient-to-r', 'from-purple-600/20', 'to-pink-600/20', 'border-purple-500/50');
+
+      if (currentLanguage !== 'normal') {
+        unlockAchievement('polyglot');
+        showToast(`🌐 Translated to ${option.dataset.lang}!`);
+      }
+
+      applyTranslation();
+    });
+  });
+}
+
+function applyTranslation() {
+  if (currentLanguage === 'normal') {
+    // Reset all text (would need original text stored)
+    return;
+  }
+
+  const trans = translations[currentLanguage];
+  document.querySelectorAll('h1, h2, h3, p, span, button').forEach(el => {
+    const originalText = el.textContent;
+    for (const [key, value] of Object.entries(trans)) {
+      if (originalText.includes(key)) {
+        el.textContent = originalText.replace(key, value);
+      }
+    }
+  });
+}
+
+// Desktop Notifications
+function initNotifications() {
+  const notificationMessages = [
+    "Your slop is ready!",
+    "Someone viewed slop near you!",
+    "It's been 5 minutes. Look at slop.",
+    "New slop available!",
+    "Your slop is getting cold!",
+    "Slop notification!",
+    "Remember to drink water!",
+    "Take a slop break!"
+  ];
+
+  function requestNotificationPermission() {
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission().then(permission => {
+        if (permission === 'granted') {
+          unlockAchievement('notification_enthusiast');
+        }
+      });
+    }
+  }
+
+  function sendNotification(message) {
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification('Slop Alert', {
+        body: message,
+        icon: 'https://avatars.githubusercontent.com/u/265597819?v=4'
+      });
+    }
+  }
+
+  // Request permission after 30 seconds
+  setTimeout(requestNotificationPermission, 30000);
+
+  // Send random notifications every 2-5 minutes
+  setInterval(() => {
+    if (Math.random() > 0.5) {
+      const message = notificationMessages[Math.floor(Math.random() * notificationMessages.length)];
+      sendNotification(message);
+    }
+  }, 120000 + Math.random() * 180000);
+}
+
+// Keyboard Shortcuts
+function initKeyboardShortcuts() {
+  document.addEventListener('keydown', (e) => {
+    // Don't trigger when typing in input
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+    if (e.key === '?') {
+      e.preventDefault();
+      document.getElementById('shortcuts-modal').classList.remove('hidden');
+      unlockAchievement('keyboard_warrior');
+    }
+
+    if (e.ctrlKey && e.key === 's') {
+      e.preventDefault();
+      showToast('💾 Slop saved! (not really)');
+      unlockAchievement('keyboard_warrior');
+    }
+
+    if (e.ctrlKey && e.key === 'p') {
+      e.preventDefault();
+      window.print();
+      unlockAchievement('keyboard_warrior');
+    }
+
+    if (e.key.toLowerCase() === 'h') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      unlockAchievement('keyboard_warrior');
+    }
+
+    if (e.key.toLowerCase() === 'r') {
+      location.reload();
+    }
+
+    if (e.key.toLowerCase() === 't') {
+      cycleTheme();
+      unlockAchievement('keyboard_warrior');
+    }
+
+    if (e.key.toLowerCase() === 'f') {
+      showRandomFact();
+      document.getElementById('facts-modal').classList.remove('hidden');
+      unlockAchievement('keyboard_warrior');
+    }
+  });
+}
+
+// Analytics Dashboard
+function initAnalytics() {
+  // Update live activity counter
+  setInterval(() => {
+    const counter = document.getElementById('stat-live-activity');
+    if (counter) {
+      const base = 1337;
+      const random = Math.floor(Math.random() * 100);
+      counter.textContent = `${base + random} users viewing slop right now`;
+    }
+  }, 3000);
+}
+
+// Easter Egg Hunt
+let eggsFound = 0;
+const foundEggs = new Set();
+
+function initEasterEggs() {
+  for (let i = 1; i <= 5; i++) {
+    const egg = document.getElementById(`egg-${i}`);
+    if (egg) {
+      egg.addEventListener('click', () => {
+        if (!foundEggs.has(i)) {
+          foundEggs.add(i);
+          eggsFound++;
+          egg.textContent = '🐣';
+          egg.style.opacity = '1';
+          showToast(`🥚 Easter egg ${i}/5 found!`);
+
+          if (eggsFound >= 5) {
+            unlockAchievement('egg_hunter');
+            showToast('🎉 All easter eggs found! You are a true slop explorer!');
+          }
+        }
+      });
+    }
+  }
+}
+
+// Premium Slop Upsell
+function initPremiumUpsell() {
+  const modal = document.getElementById('premium-upsell-modal');
+  const rejectBtn = document.getElementById('premium-reject');
+  const acceptBtn = document.getElementById('premium-accept');
+
+  // Show upsell after 60 seconds
+  setTimeout(() => {
+    if (!localStorage.getItem('slop_premium_responded')) {
+      modal.classList.remove('hidden');
+    }
+  }, 60000);
+
+  rejectBtn.addEventListener('click', () => {
+    localStorage.setItem('slop_premium_responded', 'true');
+    modal.classList.add('hidden');
+    unlockAchievement('frugal_consumer');
+    showToast('💰 Smart choice! Free slop is still slop.');
+  });
+
+  acceptBtn.addEventListener('click', () => {
+    localStorage.setItem('slop_premium_responded', 'true');
+    modal.classList.add('hidden');
+    showToast('💳 Just kidding! This is a joke website.');
+  });
+}
+
 // Confetti Cannon
 function spawnConfetti() {
   const colors = ['#a855f7', '#ec4899', '#3b82f6', '#22d3ee', '#4ade80', '#fbbf24'];
@@ -1407,6 +1849,48 @@ function initModals() {
   // Elevator music button
   document.getElementById('music-btn').addEventListener('click', toggleElevatorMusic);
 
+  // Analytics modal
+  document.getElementById('analytics-btn').addEventListener('click', () => {
+    document.getElementById('analytics-modal').classList.remove('hidden');
+    initAnalytics();
+    unlockAchievement('data_nerd');
+  });
+  document.getElementById('close-analytics').addEventListener('click', () => {
+    document.getElementById('analytics-modal').classList.add('hidden');
+  });
+
+  // Sound pack modal
+  document.getElementById('sound-pack-btn').addEventListener('click', () => {
+    document.getElementById('sound-pack-modal').classList.remove('hidden');
+  });
+  document.getElementById('close-sound-pack').addEventListener('click', () => {
+    document.getElementById('sound-pack-modal').classList.add('hidden');
+  });
+
+  // Translator modal
+  document.getElementById('translator-btn').addEventListener('click', () => {
+    document.getElementById('translator-modal').classList.remove('hidden');
+  });
+  document.getElementById('close-translator').addEventListener('click', () => {
+    document.getElementById('translator-modal').classList.add('hidden');
+  });
+
+  // Newsletter modal
+  document.getElementById('newsletter-btn').addEventListener('click', () => {
+    document.getElementById('newsletter-modal').classList.remove('hidden');
+  });
+  document.getElementById('close-newsletter').addEventListener('click', () => {
+    document.getElementById('newsletter-modal').classList.add('hidden');
+  });
+
+  // Dark pattern button
+  document.getElementById('dark-pattern-btn').addEventListener('click', toggleDarkPattern);
+
+  // Shortcuts modal
+  document.getElementById('close-shortcuts').addEventListener('click', () => {
+    document.getElementById('shortcuts-modal').classList.add('hidden');
+  });
+
   // Close modals on backdrop click
   document.querySelectorAll('#achievement-modal, #slop-scores-modal, #repo-detail-modal, #useless-chart-modal, #settings-modal, #useless-button-modal, #weather-modal, #crypto-modal, #facts-modal, #breathing-modal, #virtual-pet-modal').forEach(modal => {
     modal.addEventListener('click', (e) => {
@@ -1603,6 +2087,16 @@ document.addEventListener('DOMContentLoaded', () => {
   initRandomCompliments();
   initTabHoarder();
   initVirtualPetDecay();
+  initLoadingScreen();
+  initCookieBanner();
+  initChatWidget();
+  initNewsletterSignup();
+  initSoundPackSelector();
+  initTranslator();
+  initNotifications();
+  initKeyboardShortcuts();
+  initEasterEggs();
+  initPremiumUpsell();
 
   // Update sound toggle UI
   if (isSoundEnabled) {
@@ -1617,6 +2111,21 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('sound-toggle-btn').addEventListener('click', toggleSound);
   document.getElementById('useless-chart-btn').addEventListener('click', toggleUselessChart);
   document.getElementById('settings-btn').addEventListener('click', toggleSettingsModal);
+  document.getElementById('analytics-btn').addEventListener('click', () => {
+    document.getElementById('analytics-modal').classList.remove('hidden');
+    initAnalytics();
+    unlockAchievement('data_nerd');
+  });
+  document.getElementById('sound-pack-btn').addEventListener('click', () => {
+    document.getElementById('sound-pack-modal').classList.remove('hidden');
+  });
+  document.getElementById('translator-btn').addEventListener('click', () => {
+    document.getElementById('translator-modal').classList.remove('hidden');
+  });
+  document.getElementById('newsletter-btn').addEventListener('click', () => {
+    document.getElementById('newsletter-modal').classList.remove('hidden');
+  });
+  document.getElementById('dark-pattern-btn').addEventListener('click', toggleDarkPattern);
 
   // Add click handler for Join Us button (Rick Roll achievement)
   const joinBtn = document.querySelector('a[href="/watch"]');

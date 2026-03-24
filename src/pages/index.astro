@@ -44,7 +44,19 @@ const CONFIG = {
     chaos_embracer: { id: 'chaos_embracer', title: 'Chaos Embracer', desc: 'Shook the screen 3 times', icon: '📳' },
     mirror_mirror: { id: 'mirror_mirror', title: 'Mirror Mirror', desc: 'Enabled mirror mode', icon: '🪞' },
     breathe_easy: { id: 'breathe_easy', title: 'Breathe Easy', desc: 'Completed breathing exercise', icon: '🧘' },
-    music_appreciator: { id: 'music_appreciator', title: 'Music Appreciator', desc: 'Listened to elevator music', icon: '🎵' }
+    music_appreciator: { id: 'music_appreciator', title: 'Music Appreciator', desc: 'Listened to elevator music', icon: '🎵' },
+    newsletter_subscriber: { id: 'newsletter_subscriber', title: 'Newsletter Subscriber', desc: 'Signed up for the newsletter', icon: '📧' },
+    audio_phile: { id: 'audio_phile', title: 'Audio Phile', desc: 'Changed the sound pack', icon: '🎧' },
+    polyglot: { id: 'polyglot', title: 'Polyglot', desc: 'Translated slop to another language', icon: '🌐' },
+    notification_enthusiast: { id: 'notification_enthusiast', title: 'Notification Enthusiast', desc: 'Enabled desktop notifications', icon: '🔔' },
+    keyboard_warrior: { id: 'keyboard_warrior', title: 'Keyboard Warrior', desc: 'Used a keyboard shortcut', icon: '⌨️' },
+    data_nerd: { id: 'data_nerd', title: 'Data Nerd', desc: 'Viewed the analytics dashboard', icon: '📈' },
+    egg_hunter: { id: 'egg_hunter', title: 'Egg Hunter', desc: 'Found all 5 easter eggs', icon: '🥚' },
+    frugal_consumer: { id: 'frugal_consumer', title: 'Frugal Consumer', desc: 'Rejected Premium Slop', icon: '💰' },
+    cookie_monster: { id: 'cookie_monster', title: 'Cookie Monster', desc: 'Accepted all cookies', icon: '🍪' },
+    chat_champion: { id: 'chat_champion', title: 'Chat Champion', desc: 'Sent 10 messages to support', icon: '💬' },
+    patient_loader: { id: 'patient_loader', title: 'Patient Loader', desc: 'Waited through the loading screen', icon: '⏳' },
+    dark_pattern_survivor: { id: 'dark_pattern_survivor', title: 'Dark Pattern Survivor', desc: 'Enabled dark patterns and survived', icon: '🌑' }
   }
 };
 
@@ -177,6 +189,354 @@ const serializedConfig = JSON.stringify({
   </script>
 </head>
 <body class="bg-primary text-white min-h-screen flex flex-col">
+  <!-- Loading Screen -->
+  <div id="loading-screen" class="fixed inset-0 z-[99999] bg-gradient-to-br from-purple-900 via-primary to-pink-900 flex items-center justify-center">
+    <div class="text-center">
+      <div class="text-6xl mb-6 animate-bounce">🍦</div>
+      <h2 class="text-2xl font-bold text-white mb-4" id="loading-text">Heating up the slop...</h2>
+      <div class="w-64 h-3 bg-gray-700 rounded-full overflow-hidden mx-auto">
+        <div id="loading-progress" class="h-full bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 transition-all duration-300" style="width: 0%"></div>
+      </div>
+      <p class="text-gray-400 text-sm mt-4" id="loading-subtext">This is definitely necessary</p>
+    </div>
+  </div>
+
+  <!-- Cookie Consent Banner -->
+  <div id="cookie-banner" class="hidden fixed bottom-0 left-0 right-0 z-[99998] bg-card border-t border-white/10 p-6 backdrop-blur-lg">
+    <div class="max-w-4xl mx-auto flex flex-col sm:flex-row items-center gap-4">
+      <div class="flex-1 text-center sm:text-left">
+        <p class="text-white font-semibold mb-2">🍪 We value your privacy</p>
+        <p class="text-gray-400 text-sm">We use cookies to make the slop tastier. By accepting, you agree to our totally real cookie policy that definitely isn't made up.</p>
+      </div>
+      <div class="flex gap-3">
+        <button id="cookie-decline" class="px-4 py-2 bg-white/10 text-white font-medium rounded-xl hover:bg-white/20 transition-colors">Decline</button>
+        <button id="cookie-accept" class="px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-xl hover:scale-105 transition-transform">Accept All</button>
+        <button id="cookie-manage" class="px-4 py-2 bg-white/10 text-white font-medium rounded-xl hover:bg-white/20 transition-colors">Manage</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Live Chat Widget -->
+  <div id="chat-widget" class="fixed bottom-6 right-6 z-[9998]">
+    <!-- Chat Messages -->
+    <div id="chat-messages" class="hidden absolute bottom-16 right-0 w-80 bg-card border border-white/10 rounded-2xl shadow-2xl overflow-hidden">
+      <div class="p-4 bg-gradient-to-r from-purple-600 to-pink-600 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">💬</div>
+          <div>
+            <p class="text-white font-semibold text-sm">Slop Support</p>
+            <p class="text-white/60 text-xs">Online</p>
+          </div>
+        </div>
+        <button id="chat-close" class="text-white/60 hover:text-white">×</button>
+      </div>
+      <div id="chat-history" class="h-64 overflow-y-auto p-4 space-y-3">
+        <div class="flex items-start gap-2">
+          <div class="w-6 h-6 bg-purple-500/20 rounded-full flex items-center justify-center text-xs">🤖</div>
+          <div class="bg-white/5 rounded-2xl rounded-tl-none p-3 max-w-[80%]">
+            <p class="text-sm text-gray-300">Hi! Need help with slop?</p>
+          </div>
+        </div>
+      </div>
+      <div class="p-3 border-t border-white/10">
+        <div class="flex gap-2">
+          <input id="chat-input" type="text" placeholder="Type a message..." class="flex-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/50">
+          <button id="chat-send" class="px-3 py-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl hover:scale-105 transition-transform">📤</button>
+        </div>
+      </div>
+    </div>
+    <!-- Chat Toggle Button -->
+    <button id="chat-toggle" class="w-14 h-14 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full shadow-lg shadow-purple-500/30 flex items-center justify-center hover:scale-110 transition-transform">
+      <span class="text-2xl">💬</span>
+    </button>
+  </div>
+
+  <!-- Premium Slop Upsell Modal -->
+  <div id="premium-upsell-modal" class="hidden fixed inset-0 z-[99997] overflow-y-auto" role="dialog" aria-modal="true">
+    <div class="fixed inset-0 bg-black/80 backdrop-blur-sm"></div>
+    <div class="relative min-h-screen flex items-center justify-center p-4">
+      <div class="relative bg-gradient-to-br from-purple-900 to-pink-900 rounded-3xl border-2 border-yellow-500/50 shadow-2xl shadow-yellow-500/20 max-w-lg w-full animate-scale-in">
+        <div class="absolute -top-4 left-1/2 -translate-x-1/2 px-6 py-2 bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-bold rounded-full text-sm">
+          ⭐ LIMITED TIME OFFER ⭐
+        </div>
+        <div class="p-8 pt-10 text-center">
+          <div class="text-6xl mb-4">💎</div>
+          <h2 class="text-3xl font-black text-white mb-2">Premium Slop™</h2>
+          <p class="text-purple-300 text-sm mb-6">The slop you love, but premium</p>
+
+          <div class="text-5xl font-black text-white mb-2">$999<span class="text-lg text-gray-400 font-normal">/month</span></div>
+          <p class="text-gray-500 text-xs mb-6">Billed annually. No refunds. No takebacks.</p>
+
+          <div class="space-y-3 mb-8 text-left">
+            <div class="flex items-center gap-3 p-3 bg-white/5 rounded-xl">
+              <span class="text-green-400">✅</span>
+              <span class="text-gray-300 text-sm">More slop (unlimited!)</span>
+            </div>
+            <div class="flex items-center gap-3 p-3 bg-white/5 rounded-xl">
+              <span class="text-green-400">✅</span>
+              <span class="text-gray-300 text-sm">Faster slop (0.5s load time!)</span>
+            </div>
+            <div class="flex items-center gap-3 p-3 bg-white/5 rounded-xl">
+              <span class="text-green-400">✅</span>
+              <span class="text-gray-300 text-sm">HD slop (1080p!)</span>
+            </div>
+            <div class="flex items-center gap-3 p-3 bg-white/5 rounded-xl">
+              <span class="text-green-400">✅</span>
+              <span class="text-gray-300 text-sm">Premium slop support (we exist!)</span>
+            </div>
+            <div class="flex items-center gap-3 p-3 bg-white/5 rounded-xl">
+              <span class="text-green-400">✅</span>
+              <span class="text-gray-300 text-sm">Exclusive slop badges (flex!)</span>
+            </div>
+          </div>
+
+          <div class="flex gap-3">
+            <button id="premium-reject" class="flex-1 px-4 py-3 bg-white/5 text-gray-400 font-medium rounded-xl hover:bg-white/10 transition-colors text-xs">
+              No thanks, I hate nice things
+            </button>
+            <button id="premium-accept" class="flex-1 px-6 py-3 bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-bold rounded-xl hover:scale-105 transition-transform">
+              Take My Money!
+            </button>
+          </div>
+
+          <p class="text-gray-600 text-xs mt-4">*Slop not actually included with purchase</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cookie Preferences Modal -->
+  <div id="cookie-preferences-modal" class="hidden fixed inset-0 z-[99999] overflow-y-auto" role="dialog" aria-modal="true">
+    <div class="fixed inset-0 bg-black/80 backdrop-blur-sm"></div>
+    <div class="relative min-h-screen flex items-center justify-center p-4">
+      <div class="relative bg-card rounded-3xl border border-white/10 shadow-2xl max-w-md w-full animate-scale-in">
+        <div class="p-6 border-b border-white/10 flex items-center justify-between">
+          <h2 class="text-xl font-bold text-white">🍪 Cookie Preferences</h2>
+          <button id="close-cookie-preferences" class="text-gray-400 hover:text-white">×</button>
+        </div>
+        <div class="p-6 space-y-4">
+          <div class="flex items-center justify-between p-4 bg-white/5 rounded-xl">
+            <div>
+              <p class="text-white font-medium">Essential Cookies</p>
+              <p class="text-xs text-gray-500">Required for slop to function</p>
+            </div>
+            <div class="toggle-switch active" role="switch" aria-checked="true"></div>
+          </div>
+          <div class="flex items-center justify-between p-4 bg-white/5 rounded-xl">
+            <div>
+              <p class="text-white font-medium">Slop Enhancement Cookies</p>
+              <p class="text-xs text-gray-500">Makes the slop taste better</p>
+            </div>
+            <div class="toggle-switch" role="switch" aria-checked="false"></div>
+          </div>
+          <div class="flex items-center justify-between p-4 bg-white/5 rounded-xl">
+            <div>
+              <p class="text-white font-medium">Marketing Cookies</p>
+              <p class="text-xs text-gray-500">We promise not to spam</p>
+            </div>
+            <div class="toggle-switch" role="switch" aria-checked="false"></div>
+          </div>
+          <div class="flex items-center justify-between p-4 bg-white/5 rounded-xl">
+            <div>
+              <p class="text-white font-medium">Uncle Bob's Personal Cookies</p>
+              <p class="text-xs text-gray-500">Bob baked these himself</p>
+            </div>
+            <div class="toggle-switch" role="switch" aria-checked="false"></div>
+          </div>
+        </div>
+        <div class="p-6 border-t border-white/10">
+          <button id="save-cookie-preferences" class="w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-xl hover:scale-105 transition-transform">
+            Save Preferences
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Analytics Dashboard Modal -->
+  <div id="analytics-modal" class="hidden fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="analytics-title">
+    <div class="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity animate-fade-in"></div>
+    <div class="relative min-h-screen flex items-center justify-center p-4">
+      <div class="relative bg-card rounded-3xl border border-white/10 shadow-2xl max-w-2xl w-full animate-scale-in">
+        <div class="sticky top-0 bg-card/95 backdrop-blur-sm border-b border-white/10 p-6 flex items-center justify-between">
+          <h2 id="analytics-title" class="text-2xl font-bold text-white flex items-center gap-3">
+            <span class="text-3xl">📈</span>
+            <div>
+              <span>Slop Analytics</span>
+              <span class="block text-sm font-normal text-gray-400">100% real fake data</span>
+            </div>
+          </h2>
+          <button id="close-analytics" class="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-xl transition-colors" aria-label="Close analytics modal">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 16 16"><path d="M4.646 4.646a.5.5 0 01.708 0L8 7.293l2.646-2.647a.5.5 0 01.708.708L8.707 8l2.647 2.646a.5.5 0 01-.708.708L8 8.707l-2.646 2.647a.5.5 0 01-.708-.708L7.293 8 4.646 5.354a.5.5 0 010-.708z"/></svg>
+          </button>
+        </div>
+        <div class="p-6 space-y-6">
+          <div class="grid grid-cols-2 gap-4">
+            <div class="p-4 bg-white/5 rounded-2xl border border-white/10">
+              <p class="text-gray-400 text-xs mb-1">Slops Viewed Today</p>
+              <p id="stat-slops-viewed" class="text-3xl font-bold text-purple-400">42,069</p>
+            </div>
+            <div class="p-4 bg-white/5 rounded-2xl border border-white/10">
+              <p class="text-gray-400 text-xs mb-1">Average Slop Rating</p>
+              <p id="stat-slop-rating" class="text-3xl font-bold text-pink-400">6.9/10</p>
+            </div>
+            <div class="p-4 bg-white/5 rounded-2xl border border-white/10">
+              <p class="text-gray-400 text-xs mb-1">Time Spent on Slop</p>
+              <p id="stat-time-spent" class="text-3xl font-bold text-cyan-400">∞</p>
+            </div>
+            <div class="p-4 bg-white/5 rounded-2xl border border-white/10">
+              <p class="text-gray-400 text-xs mb-1">Slop Quality Index</p>
+              <p id="stat-quality-index" class="text-3xl font-bold text-green-400">99.9%</p>
+            </div>
+          </div>
+          <div class="p-4 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-2xl border border-purple-500/20">
+            <p class="text-gray-400 text-xs mb-2">Live Slop Activity</p>
+            <div class="flex items-center gap-2">
+              <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <p id="stat-live-activity" class="text-white font-mono text-sm">1,337 users viewing slop right now</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sound Pack Selector Modal -->
+  <div id="sound-pack-modal" class="hidden fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true">
+    <div class="fixed inset-0 bg-black/80 backdrop-blur-sm"></div>
+    <div class="relative min-h-screen flex items-center justify-center p-4">
+      <div class="relative bg-card rounded-3xl border border-white/10 shadow-2xl max-w-md w-full animate-scale-in">
+        <div class="p-6 border-b border-white/10 flex items-center justify-between">
+          <h2 class="text-xl font-bold text-white">🎧 Sound Pack</h2>
+          <button id="close-sound-pack" class="text-gray-400 hover:text-white">×</button>
+        </div>
+        <div class="p-6 space-y-3">
+          <button class="sound-pack-option w-full p-4 bg-gradient-to-r from-purple-600/20 to-pink-600/20 border border-purple-500/50 rounded-xl text-left hover:scale-105 transition-transform" data-pack="default">
+            <p class="text-white font-semibold">Default</p>
+            <p class="text-gray-500 text-xs">Classic slop sounds</p>
+          </button>
+          <button class="sound-pack-option w-full p-4 bg-white/5 border border-white/10 rounded-xl text-left hover:scale-105 transition-transform" data-pack="8bit">
+            <p class="text-white font-semibold">👾 8-Bit</p>
+            <p class="text-gray-500 text-xs">Retro game sounds</p>
+          </button>
+          <button class="sound-pack-option w-full p-4 bg-white/5 border border-white/10 rounded-xl text-left hover:scale-105 transition-transform" data-pack="asmr">
+            <p class="text-white font-semibold">🤫 ASMR</p>
+            <p class="text-gray-500 text-xs">Whispered achievements</p>
+          </button>
+          <button class="sound-pack-option w-full p-4 bg-white/5 border border-white/10 rounded-xl text-left hover:scale-105 transition-transform" data-pack="metal">
+            <p class="text-white font-semibold">🤘 Heavy Metal</p>
+            <p class="text-gray-500 text-xs">Guitar riffs for everything</p>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Translator Modal -->
+  <div id="translator-modal" class="hidden fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true">
+    <div class="fixed inset-0 bg-black/80 backdrop-blur-sm"></div>
+    <div class="relative min-h-screen flex items-center justify-center p-4">
+      <div class="relative bg-card rounded-3xl border border-white/10 shadow-2xl max-w-md w-full animate-scale-in">
+        <div class="p-6 border-b border-white/10 flex items-center justify-between">
+          <h2 class="text-xl font-bold text-white">🌐 Slop Translator</h2>
+          <button id="close-translator" class="text-gray-400 hover:text-white">×</button>
+        </div>
+        <div class="p-6 space-y-3">
+          <button class="translator-option w-full p-4 bg-white/5 border border-white/10 rounded-xl text-left hover:scale-105 transition-transform" data-lang="normal">
+            <p class="text-white font-semibold">🇬🇧 Normal (Boring)</p>
+          </button>
+          <button class="translator-option w-full p-4 bg-white/5 border border-white/10 rounded-xl text-left hover:scale-105 transition-transform" data-lang="pirate">
+            <p class="text-white font-semibold">🏴‍☠️ Pirate</p>
+            <p class="text-gray-500 text-xs">Arrr, matey! The slop be tasty!</p>
+          </button>
+          <button class="translator-option w-full p-4 bg-white/5 border border-white/10 rounded-xl text-left hover:scale-105 transition-transform" data-lang="shakespeare">
+            <p class="text-white font-semibold">🎭 Shakespearean</p>
+            <p class="text-gray-500 text-xs">Forsooth, 'tis fine slop indeed</p>
+          </button>
+          <button class="translator-option w-full p-4 bg-white/5 border border-white/10 rounded-xl text-left hover:scale-105 transition-transform" data-lang="leet">
+            <p class="text-white font-semibold">🄻🄴🄴🅃 1337</p>
+            <p class="text-gray-500 text-xs">7h3 5|0p 15 600d</p>
+          </button>
+          <button class="translator-option w-full p-4 bg-white/5 border border-white/10 rounded-xl text-left hover:scale-105 transition-transform" data-lang="emoji">
+            <p class="text-white font-semibold">🔤 Emoji Only</p>
+            <p class="text-gray-500 text-xs">🍦✨💯🚀</p>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Keyboard Shortcuts Help Modal -->
+  <div id="shortcuts-modal" class="hidden fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true">
+    <div class="fixed inset-0 bg-black/80 backdrop-blur-sm"></div>
+    <div class="relative min-h-screen flex items-center justify-center p-4">
+      <div class="relative bg-card rounded-3xl border border-white/10 shadow-2xl max-w-md w-full animate-scale-in">
+        <div class="p-6 border-b border-white/10 flex items-center justify-between">
+          <h2 class="text-xl font-bold text-white">⌨️ Keyboard Shortcuts</h2>
+          <button id="close-shortcuts" class="text-gray-400 hover:text-white">×</button>
+        </div>
+        <div class="p-6 space-y-3">
+          <div class="flex items-center justify-between p-3 bg-white/5 rounded-xl">
+            <span class="text-gray-300">Show this help</span>
+            <kbd class="px-2 py-1 bg-white/10 rounded text-xs">?</kbd>
+          </div>
+          <div class="flex items-center justify-between p-3 bg-white/5 rounded-xl">
+            <span class="text-gray-300">Save the slop</span>
+            <kbd class="px-2 py-1 bg-white/10 rounded text-xs">Ctrl+S</kbd>
+          </div>
+          <div class="flex items-center justify-between p-3 bg-white/5 rounded-xl">
+            <span class="text-gray-300">Print the slop</span>
+            <kbd class="px-2 py-1 bg-white/10 rounded text-xs">Ctrl+P</kbd>
+          </div>
+          <div class="flex items-center justify-between p-3 bg-white/5 rounded-xl">
+            <span class="text-gray-300">Go home</span>
+            <kbd class="px-2 py-1 bg-white/10 rounded text-xs">H</kbd>
+          </div>
+          <div class="flex items-center justify-between p-3 bg-white/5 rounded-xl">
+            <span class="text-gray-300">Reslop (refresh)</span>
+            <kbd class="px-2 py-1 bg-white/10 rounded text-xs">R</kbd>
+          </div>
+          <div class="flex items-center justify-between p-3 bg-white/5 rounded-xl">
+            <span class="text-gray-300">Toggle theme</span>
+            <kbd class="px-2 py-1 bg-white/10 rounded text-xs">T</kbd>
+          </div>
+          <div class="flex items-center justify-between p-3 bg-white/5 rounded-xl">
+            <span class="text-gray-300">Random slop fact</span>
+            <kbd class="px-2 py-1 bg-white/10 rounded text-xs">F</kbd>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Newsletter Signup Modal -->
+  <div id="newsletter-modal" class="hidden fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true">
+    <div class="fixed inset-0 bg-black/80 backdrop-blur-sm"></div>
+    <div class="relative min-h-screen flex items-center justify-center p-4">
+      <div class="relative bg-card rounded-3xl border border-white/10 shadow-2xl max-w-md w-full animate-scale-in">
+        <div class="p-6 border-b border-white/10 flex items-center justify-between">
+          <h2 class="text-xl font-bold text-white">📧 Slop Newsletter</h2>
+          <button id="close-newsletter" class="text-gray-400 hover:text-white">×</button>
+        </div>
+        <div class="p-6 space-y-4">
+          <p class="text-gray-300 text-center">Get the latest slop news delivered to your inbox! (We send nothing and you'll love it)</p>
+          <input id="newsletter-email" type="email" placeholder="your@email.com" class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/50">
+          <button id="newsletter-subscribe" class="w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-xl hover:scale-105 transition-transform">
+            Subscribe Now
+          </button>
+          <p class="text-gray-600 text-xs text-center">By subscribing, you agree to receive absolutely nothing of value.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Easter Eggs (hidden clickable elements) -->
+  <div id="egg-1" class="fixed top-0 left-0 w-8 h-8 cursor-pointer opacity-0 hover:opacity-100 transition-opacity z-[99996]" style="pointer-events: auto;">🥚</div>
+  <div id="egg-2" class="fixed bottom-0 right-0 w-8 h-8 cursor-pointer opacity-0 hover:opacity-100 transition-opacity z-[99996]" style="pointer-events: auto;">🥚</div>
+  <div id="egg-3" class="fixed top-1/2 left-0 w-8 h-8 cursor-pointer opacity-0 hover:opacity-100 transition-opacity z-[99996]" style="pointer-events: auto;">🥚</div>
+  <div id="egg-4" class="fixed top-0 right-0 w-8 h-8 cursor-pointer opacity-0 hover:opacity-100 transition-opacity z-[99996]" style="pointer-events: auto;">🥚</div>
+  <div id="egg-5" class="fixed bottom-0 left-0 w-8 h-8 cursor-pointer opacity-0 hover:opacity-100 transition-opacity z-[99996]" style="pointer-events: auto;">🥚</div>
+
   <!-- Scroll Progress Bar -->
   <div id="scroll-progress" class="fixed top-0 left-0 h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 z-[10000] transition-all duration-150" style="width: 0%"></div>
 
@@ -385,6 +745,29 @@ const serializedConfig = JSON.stringify({
         <button id="music-btn" class="group flex items-center gap-2.5 px-5 py-3 bg-gradient-to-r from-amber-600/15 to-yellow-600/15 hover:from-amber-600/25 hover:to-yellow-600/25 border border-amber-500/25 hover:border-amber-500/40 rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-amber-500/10">
           <span class="text-xl group-hover:scale-110 transition-transform">🎵</span>
           <span class="text-sm font-medium text-gray-300 group-hover:text-white transition-colors">Elevator Music</span>
+        </button>
+      </div>
+      <!-- Third row of feature buttons -->
+      <div class="flex flex-wrap justify-center gap-4 mt-4">
+        <button id="analytics-btn" class="group flex items-center gap-2.5 px-5 py-3 bg-gradient-to-r from-green-600/15 to-emerald-600/15 hover:from-green-600/25 hover:to-emerald-600/25 border border-green-500/25 hover:border-green-500/40 rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-green-500/10">
+          <span class="text-xl group-hover:scale-110 transition-transform">📈</span>
+          <span class="text-sm font-medium text-gray-300 group-hover:text-white transition-colors">Analytics</span>
+        </button>
+        <button id="sound-pack-btn" class="group flex items-center gap-2.5 px-5 py-3 bg-gradient-to-r from-purple-600/15 to-pink-600/15 hover:from-purple-600/25 hover:to-pink-600/25 border border-purple-500/25 hover:border-purple-500/40 rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/10">
+          <span class="text-xl group-hover:scale-110 transition-transform">🎧</span>
+          <span class="text-sm font-medium text-gray-300 group-hover:text-white transition-colors">Sound Pack</span>
+        </button>
+        <button id="translator-btn" class="group flex items-center gap-2.5 px-5 py-3 bg-gradient-to-r from-blue-600/15 to-cyan-600/15 hover:from-blue-600/25 hover:to-cyan-600/25 border border-blue-500/25 hover:border-blue-500/40 rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/10">
+          <span class="text-xl group-hover:scale-110 transition-transform">🌐</span>
+          <span class="text-sm font-medium text-gray-300 group-hover:text-white transition-colors">Translator</span>
+        </button>
+        <button id="newsletter-btn" class="group flex items-center gap-2.5 px-5 py-3 bg-gradient-to-r from-red-600/15 to-orange-600/15 hover:from-red-600/25 hover:to-orange-600/25 border border-red-500/25 hover:border-red-500/40 rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-red-500/10">
+          <span class="text-xl group-hover:scale-110 transition-transform">📧</span>
+          <span class="text-sm font-medium text-gray-300 group-hover:text-white transition-colors">Newsletter</span>
+        </button>
+        <button id="dark-pattern-btn" class="group flex items-center gap-2.5 px-5 py-3 bg-gradient-to-r from-gray-600/15 to-slate-600/15 hover:from-gray-600/25 hover:to-slate-600/25 border border-gray-500/25 hover:border-gray-500/40 rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-gray-500/10">
+          <span class="text-xl group-hover:scale-110 transition-transform">🌑</span>
+          <span class="text-sm font-medium text-gray-300 group-hover:text-white transition-colors">Dark Pattern</span>
         </button>
       </div>
     </section>
