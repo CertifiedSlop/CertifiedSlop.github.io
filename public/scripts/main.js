@@ -7,6 +7,12 @@ let hoverCount = 0;
 let scrollProgress = 0;
 let unlockedAchievements = JSON.parse(localStorage.getItem('slop_achievements') || '[]');
 let currentTheme = localStorage.getItem('slop_theme') || 'dark';
+let petCount = parseInt(localStorage.getItem('slop_pet_count') || '0');
+let scrollCount = parseInt(localStorage.getItem('slop_scroll_count') || '0');
+let modalCloseCount = parseInt(localStorage.getItem('slop_modal_close_count') || '0');
+let isSoundEnabled = localStorage.getItem('slop_sound_enabled') === 'true';
+let isDramaticModeEnabled = false;
+let uselessClickCount = 0;
 
 // Achievement System
 function unlockAchievement(id) {
@@ -443,6 +449,361 @@ function initSlopMeter() {
   }, 3000);
 }
 
+// Sound Effects System
+const soundEffects = {
+  hover: new AudioContext(),
+  click: new AudioContext(),
+  achievement: new AudioContext()
+};
+
+function playSound(type) {
+  if (!isSoundEnabled) return;
+
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = ctx.createOscillator();
+    const gainNode = ctx.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(ctx.destination);
+
+    if (type === 'hover') {
+      oscillator.frequency.value = 440 + Math.random() * 200;
+      oscillator.type = 'sine';
+      gainNode.gain.setValueAtTime(0.1, ctx.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
+      oscillator.start(ctx.currentTime);
+      oscillator.stop(ctx.currentTime + 0.1);
+    } else if (type === 'click') {
+      oscillator.frequency.value = 880;
+      oscillator.type = 'square';
+      gainNode.gain.setValueAtTime(0.1, ctx.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
+      oscillator.start(ctx.currentTime);
+      oscillator.stop(ctx.currentTime + 0.15);
+    } else if (type === 'achievement') {
+      // Play a little fanfare
+      [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.frequency.value = freq;
+        osc.type = 'triangle';
+        gain.gain.setValueAtTime(0.1, ctx.currentTime + i * 0.1);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + i * 0.1 + 0.3);
+        osc.start(ctx.currentTime + i * 0.1);
+        osc.stop(ctx.currentTime + i * 0.1 + 0.3);
+      });
+    } else if (type === 'dramatic') {
+      oscillator.frequency.value = 200;
+      oscillator.type = 'sawtooth';
+      gainNode.gain.setValueAtTime(0.1, ctx.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+      oscillator.start(ctx.currentTime);
+      oscillator.stop(ctx.currentTime + 0.5);
+    }
+
+    setTimeout(() => ctx.close(), 1000);
+  } catch (e) {
+    // Audio not supported
+  }
+}
+
+function toggleSound() {
+  isSoundEnabled = !isSoundEnabled;
+  localStorage.setItem('slop_sound_enabled', isSoundEnabled);
+
+  const icon = document.getElementById('sound-icon');
+  const text = document.getElementById('sound-text');
+
+  if (isSoundEnabled) {
+    icon.textContent = '🔊';
+    text.textContent = 'Sound On';
+    unlockAchievement('sound_enjoyer');
+    showToast('🔊 Sound effects enabled!');
+    playSound('click');
+  } else {
+    icon.textContent = '🔇';
+    text.textContent = 'Sound Off';
+    showToast('🔇 Sound effects disabled');
+  }
+}
+
+// Pet the Slop Mascot
+function initPetTheSlop() {
+  const mascot = document.getElementById('slop-mascot');
+  const petCountEl = document.getElementById('pet-count');
+  const happinessBar = document.getElementById('pet-happiness');
+
+  if (!mascot) return;
+
+  // Update pet count display
+  petCountEl.textContent = petCount;
+  updateHappiness(happinessBar);
+
+  mascot.addEventListener('click', () => {
+    petCount++;
+    petCountEl.textContent = petCount;
+    localStorage.setItem('slop_pet_count', petCount);
+
+    // Visual feedback
+    mascot.classList.add('happy');
+    setTimeout(() => mascot.classList.remove('happy'), 500);
+
+    // Update happiness bar
+    updateHappiness(happinessBar);
+
+    // Play sound
+    playSound('click');
+
+    // Show pet counter animation
+    showPetCounter(mascot);
+
+    // Unlock achievement
+    if (petCount >= 10) {
+      unlockAchievement('slop_petter');
+    }
+  });
+
+  // Keyboard support
+  mascot.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      mascot.click();
+    }
+  });
+}
+
+function updateHappiness(happinessBar) {
+  if (!happinessBar) return;
+  const happiness = Math.min(100, (petCount % 20) * 5);
+  happinessBar.style.width = happiness + '%';
+}
+
+function showPetCounter(mascot) {
+  const counter = document.createElement('span');
+  counter.textContent = '+1 🐾';
+  counter.className = 'pet-counter absolute text-purple-400 font-bold text-lg pointer-events-none';
+  counter.style.left = '50%';
+  counter.style.top = '-20px';
+  counter.style.transform = 'translateX(-50%)';
+  mascot.style.position = 'relative';
+  mascot.appendChild(counter);
+  setTimeout(() => counter.remove(), 500);
+}
+
+// Random Compliments
+const compliments = [
+  "You're doing great! 💕",
+  "Nice scrolling! 🌟",
+  "10/10 would watch you scroll again ⭐",
+  "Your taste in slop is impeccable 🍦",
+  "You're a certified slop enthusiast! ✨",
+  "This tab looks great on you! 💅",
+  "Keep being awesome! 🚀",
+  "You're why we make slop! 💖",
+  "Professional slop consumer detected! 🎯",
+  "Your presence has been noted! 📝"
+];
+
+function initRandomCompliments() {
+  setInterval(() => {
+    if (Math.random() > 0.7) { // 30% chance every 30 seconds
+      const compliment = compliments[Math.floor(Math.random() * compliments.length)];
+      showCompliment(compliment);
+    }
+  }, 30000);
+}
+
+function showCompliment(text) {
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = 'compliment-popup flex items-center gap-3 px-5 py-4 bg-gradient-to-r from-pink-600 to-purple-600 rounded-2xl shadow-2xl shadow-pink-500/30 animate-slide-up border border-white/10';
+  toast.innerHTML = `<span class="text-sm text-white font-medium">${text}</span>`;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateY(20px)';
+    toast.style.transition = 'all 0.3s ease';
+    setTimeout(() => toast.remove(), 300);
+  }, 4000);
+}
+
+// Dramatic Mode
+function toggleDramaticMode() {
+  isDramaticModeEnabled = !isDramaticModeEnabled;
+
+  if (isDramaticModeEnabled) {
+    document.body.classList.add('dramatic-mode');
+    showToast('🎭 Dramatic mode enabled!');
+    playSound('dramatic');
+    unlockAchievement('dramatic_person');
+  } else {
+    document.body.classList.remove('dramatic-mode');
+    showToast('🎭 Dramatic mode disabled');
+  }
+}
+
+// Useless Chart
+let chartInterval = null;
+let isChartModalOpen = false;
+
+function initUselessChart() {
+  const container = document.getElementById('useless-chart-container');
+  if (!container) return;
+
+  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const colors = ['from-purple-500 to-pink-500', 'from-blue-500 to-cyan-500', 'from-green-500 to-emerald-500', 'from-yellow-500 to-orange-500', 'from-red-500 to-pink-500', 'from-indigo-500 to-purple-500', 'from-pink-500 to-rose-500'];
+
+  function updateChart() {
+    container.innerHTML = '';
+    days.forEach((day, i) => {
+      const height = Math.floor(Math.random() * 80) + 20;
+      const bar = document.createElement('div');
+      bar.className = 'flex flex-col items-center gap-2';
+      bar.innerHTML = `
+        <div class="w-10 bg-gradient-to-t ${colors[i]} rounded-t-lg chart-bar" style="height: ${height}%; transform-origin: bottom;"></div>
+        <span class="text-xs text-gray-500">${day}</span>
+      `;
+      container.appendChild(bar);
+    });
+  }
+
+  updateChart();
+
+  if (isChartModalOpen) {
+    chartInterval = setInterval(updateChart, 2000);
+  }
+}
+
+function toggleUselessChart() {
+  const modal = document.getElementById('useless-chart-modal');
+  isChartModalOpen = !isChartModalOpen;
+
+  if (isChartModalOpen) {
+    modal.classList.remove('hidden');
+    initUselessChart();
+    unlockAchievement('chart_watcher');
+
+    // Start updating chart
+    if (chartInterval) clearInterval(chartInterval);
+    chartInterval = setInterval(initUselessChart, 2000);
+  } else {
+    modal.classList.add('hidden');
+    if (chartInterval) clearInterval(chartInterval);
+  }
+}
+
+// Settings Modal with Useless Toggles
+function initSettingsModal() {
+  const toggles = ['blurple', '3d', 'timetravel', 'gravity', 'darker-dark', 'more-useless'];
+
+  toggles.forEach(toggleId => {
+    const toggle = document.getElementById(`toggle-${toggleId}`);
+    if (!toggle) return;
+
+    toggle.addEventListener('click', () => {
+      toggle.classList.toggle('active');
+      const isActive = toggle.classList.contains('active');
+      toggle.setAttribute('aria-checked', isActive);
+
+      // Show a toast for each toggle
+      const messages = {
+        'blurple': isActive ? '💜 Blurple enabled (it still doesn\'t exist)' : '💜 Blurple disabled',
+        '3d': isActive ? '🔺 3D mode enabled (site is still 2D)' : '🔺 3D mode disabled',
+        'timetravel': isActive ? '⏰ Time travel enabled (nothing changed)' : '⏰ Time travel disabled',
+        'gravity': isActive ? '🍎 Gravity enabled (things fell 1px)' : '🍎 Gravity disabled',
+        'darker-dark': isActive ? '🌑 Darker dark mode enabled (it\'s the same)' : '🌑 Darker dark mode disabled',
+        'more-useless': isActive ? '🤷 More useless buttons enabled (check the feature bar!)' : '🤷 More useless buttons disabled'
+      };
+
+      showToast(messages[toggleId]);
+      playSound('click');
+    });
+
+    // Keyboard support
+    toggle.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggle.click();
+      }
+    });
+  });
+}
+
+function toggleSettingsModal() {
+  const modal = document.getElementById('settings-modal');
+  const isHidden = modal.classList.contains('hidden');
+
+  if (isHidden) {
+    modal.classList.remove('hidden');
+  } else {
+    modal.classList.add('hidden');
+  }
+}
+
+// Useless Button
+function initUselessButton() {
+  const button = document.getElementById('the-useless-button');
+  const loadingContainer = document.getElementById('useless-loading-container');
+
+  if (!button) return;
+
+  button.addEventListener('click', () => {
+    uselessClickCount++;
+    playSound('click');
+
+    if (uselessClickCount >= 5) {
+      unlockAchievement('uselessly_curious');
+    }
+
+    // Show loading bar that stays at 99%
+    loadingContainer.classList.remove('hidden');
+    button.classList.add('hidden');
+
+    // Never complete loading
+    setTimeout(() => {
+      loadingContainer.classList.add('hidden');
+      button.classList.remove('hidden');
+      showToast('🤷 Loading failed. Try again?');
+    }, 10000);
+  });
+}
+
+function toggleUselessButtonModal() {
+  const modal = document.getElementById('useless-button-modal');
+  const isHidden = modal.classList.contains('hidden');
+
+  if (isHidden) {
+    modal.classList.remove('hidden');
+  } else {
+    modal.classList.add('hidden');
+    // Reset the useless button
+    const button = document.getElementById('the-useless-button');
+    const loadingContainer = document.getElementById('useless-loading-container');
+    if (button) button.classList.remove('hidden');
+    if (loadingContainer) loadingContainer.classList.add('hidden');
+  }
+}
+
+// Scroll counter for anti-achievement
+function updateScrollCount() {
+  scrollCount++;
+  localStorage.setItem('slop_scroll_count', scrollCount);
+
+  if (scrollCount >= 100) {
+    unlockAchievement('professional_scroller');
+  }
+}
+
+// Tab hoarder achievement (10 minutes)
+function initTabHoarder() {
+  setTimeout(() => {
+    unlockAchievement('tab_hoarder');
+  }, 600000); // 10 minutes
+}
+
 // Confetti Cannon
 function spawnConfetti() {
   const colors = ['#a855f7', '#ec4899', '#3b82f6', '#22d3ee', '#4ade80', '#fbbf24'];
@@ -475,12 +836,19 @@ unlockAchievement = function(id) {
 
 // Scroll Tracker
 function initScrollTracker() {
+  let lastScrollTop = 0;
   window.addEventListener('scroll', () => {
     const scrollTop = window.scrollY;
     const docHeight = document.documentElement.scrollHeight - window.innerHeight;
     scrollProgress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
     document.getElementById('scroll-progress').style.width = `${scrollProgress}%`;
-    
+
+    // Count scroll events (only when actually scrolling)
+    if (Math.abs(scrollTop - lastScrollTop) > 10) {
+      updateScrollCount();
+      lastScrollTop = scrollTop;
+    }
+
     if (scrollProgress >= 10) unlockAchievement('first_scroll');
     if (scrollProgress >= 50) unlockAchievement('scroll_halfway');
   });
@@ -512,6 +880,7 @@ function initHoverTracking() {
   document.querySelectorAll('#repo-grid article').forEach(card => {
     card.addEventListener('mouseenter', () => {
       hoverCount++;
+      playSound('hover');
       if (hoverCount >= 10) unlockAchievement('hover_master');
     });
 
@@ -545,27 +914,63 @@ function initModals() {
     document.getElementById('achievement-modal').classList.remove('hidden');
     renderAchievementsModal();
   });
-  
+
   document.getElementById('close-achievements').addEventListener('click', () => {
     document.getElementById('achievement-modal').classList.add('hidden');
+    modalCloseCount++;
+    localStorage.setItem('slop_modal_close_count', modalCloseCount);
+    if (modalCloseCount >= 5) {
+      unlockAchievement('commitment_issues');
+    }
   });
-  
+
   // Slop Scores modal
   document.getElementById('slop-scores-btn').addEventListener('click', () => {
     document.getElementById('slop-scores-modal').classList.remove('hidden');
     renderSlopScores();
     unlockAchievement('slop_critic');
   });
-  
+
   document.getElementById('close-slop-scores').addEventListener('click', () => {
     document.getElementById('slop-scores-modal').classList.add('hidden');
+    modalCloseCount++;
+    localStorage.setItem('slop_modal_close_count', modalCloseCount);
+    if (modalCloseCount >= 5) {
+      unlockAchievement('commitment_issues');
+    }
   });
-  
+
+  // Useless Chart modal
+  document.getElementById('useless-chart-btn').addEventListener('click', toggleUselessChart);
+  document.getElementById('close-useless-chart').addEventListener('click', () => {
+    document.getElementById('useless-chart-modal').classList.add('hidden');
+    isChartModalOpen = false;
+    if (chartInterval) clearInterval(chartInterval);
+  });
+
+  // Settings modal
+  document.getElementById('settings-btn').addEventListener('click', toggleSettingsModal);
+  document.getElementById('close-settings').addEventListener('click', () => {
+    document.getElementById('settings-modal').classList.add('hidden');
+  });
+
+  // Useless Button modal
+  document.getElementById('dramatic-mode-btn').addEventListener('click', toggleDramaticMode);
+  document.getElementById('useless-button-modal-btn')?.addEventListener('click', toggleUselessButtonModal);
+  document.getElementById('close-useless-button').addEventListener('click', () => {
+    document.getElementById('useless-button-modal').classList.add('hidden');
+  });
+
   // Close modals on backdrop click
-  document.querySelectorAll('#achievement-modal, #slop-scores-modal, #repo-detail-modal').forEach(modal => {
+  document.querySelectorAll('#achievement-modal, #slop-scores-modal, #repo-detail-modal, #useless-chart-modal, #settings-modal, #useless-button-modal').forEach(modal => {
     modal.addEventListener('click', (e) => {
       if (e.target === modal.querySelector('.fixed.inset-0')) {
         modal.classList.add('hidden');
+        modalCloseCount++;
+        localStorage.setItem('slop_modal_close_count', modalCloseCount);
+        if (modalCloseCount >= 5) {
+          unlockAchievement('commitment_issues');
+        }
       }
     });
   });
@@ -573,17 +978,32 @@ function initModals() {
   // Repository detail modal
   document.getElementById('close-repo-detail').addEventListener('click', () => {
     document.getElementById('repo-detail-modal').classList.add('hidden');
+    modalCloseCount++;
+    localStorage.setItem('slop_modal_close_count', modalCloseCount);
+    if (modalCloseCount >= 5) {
+      unlockAchievement('commitment_issues');
+    }
   });
 
   document.getElementById('modal-repo-close').addEventListener('click', () => {
     document.getElementById('repo-detail-modal').classList.add('hidden');
+    modalCloseCount++;
+    localStorage.setItem('slop_modal_close_count', modalCloseCount);
+    if (modalCloseCount >= 5) {
+      unlockAchievement('commitment_issues');
+    }
   });
 
   // Close on Escape key
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
-      document.querySelectorAll('#repo-detail-modal').forEach(modal => {
+      document.querySelectorAll('#repo-detail-modal, #useless-chart-modal, #settings-modal, #useless-button-modal').forEach(modal => {
         modal.classList.add('hidden');
+        modalCloseCount++;
+        localStorage.setItem('slop_modal_close_count', modalCloseCount);
+        if (modalCloseCount >= 5) {
+          unlockAchievement('commitment_issues');
+        }
       });
     }
   });
@@ -731,11 +1151,25 @@ document.addEventListener('DOMContentLoaded', () => {
   initSecretCodes();
   initLogoClicker();
   initSlopMeter();
+  initPetTheSlop();
+  initSettingsModal();
+  initUselessButton();
+  initRandomCompliments();
+  initTabHoarder();
+
+  // Update sound toggle UI
+  if (isSoundEnabled) {
+    document.getElementById('sound-icon').textContent = '🔊';
+    document.getElementById('sound-text').textContent = 'Sound On';
+  }
 
   document.getElementById('theme-toggle').addEventListener('click', cycleTheme);
   document.getElementById('matrix-rain-btn').addEventListener('click', toggleMatrixRain);
   document.getElementById('comic-sans-btn').addEventListener('click', toggleComicSans);
   document.getElementById('cursor-trail-btn').addEventListener('click', toggleCursorTrail);
+  document.getElementById('sound-toggle-btn').addEventListener('click', toggleSound);
+  document.getElementById('useless-chart-btn').addEventListener('click', toggleUselessChart);
+  document.getElementById('settings-btn').addEventListener('click', toggleSettingsModal);
 
   // Add click handler for Join Us button (Rick Roll achievement)
   const joinBtn = document.querySelector('a[href="/watch"]');

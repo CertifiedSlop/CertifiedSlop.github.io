@@ -527,3 +527,154 @@ html[data-theme="darkest"] .bg-card:hover {
     scroll-behavior: auto;
   }
 }
+
+/* Dramatic Mode */
+.dramatic-mode * {
+  animation: dramatic-fade 2s ease-in-out infinite !important;
+}
+
+@keyframes dramatic-fade {
+  0%, 100% { opacity: 0.3; transform: scale(0.98); }
+  50% { opacity: 1; transform: scale(1.02); }
+}
+
+/* Gravity mode - things fall slightly */
+.gravity-mode .repo-card {
+  animation: gravity-fall 3s ease-in forwards;
+}
+
+@keyframes gravity-fall {
+  0% { transform: translateY(0) rotate(0deg); }
+  100% { transform: translateY(10px) rotate(1deg); }
+}
+
+/* Slop mascot animations */
+.slop-mascot {
+  animation: slop-bounce 1s ease-in-out infinite;
+  cursor: pointer;
+  user-select: none;
+}
+
+.slop-mascot:hover {
+  animation: slop-bounce 0.3s ease-in-out infinite;
+}
+
+.slop-mascot:active {
+  transform: scale(0.9);
+}
+
+.slop-mascot.happy {
+  animation: slop-spin 0.5s ease-in-out;
+}
+
+@keyframes slop-bounce {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-8px) scale(1.05); }
+}
+
+@keyframes slop-spin {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.2); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+/* Useless chart animations */
+.chart-bar {
+  animation: chart-grow 0.5s ease-out forwards;
+  transform-origin: bottom;
+}
+
+@keyframes chart-grow {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+
+/* Loading spinner */
+.useless-spinner {
+  animation: spinner-rotate 1s linear infinite;
+}
+
+@keyframes spinner-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Compliment popup */
+.compliment-popup {
+  animation: compliment-pop 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes compliment-pop {
+  0% { transform: scale(0) rotate(-10deg); opacity: 0; }
+  50% { transform: scale(1.2) rotate(5deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+/* Settings panel */
+.settings-panel {
+  backdrop-filter: blur(20px);
+  background: rgba(26, 26, 37, 0.95);
+}
+
+/* Toggle switch */
+.toggle-switch {
+  position: relative;
+  width: 50px;
+  height: 26px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 13px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.toggle-switch.active {
+  background: rgba(168, 85, 247, 0.5);
+}
+
+.toggle-switch::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+}
+
+.toggle-switch.active::after {
+  transform: translateX(24px);
+}
+
+/* Pet counter */
+.pet-counter {
+  animation: pet-bounce 0.2s ease-in-out;
+}
+
+@keyframes pet-bounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+}
+
+/* Useless progress bar */
+.useless-progress {
+  animation: useless-shake 0.5s ease-in-out infinite;
+}
+
+@keyframes useless-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  75% { transform: translateX(2px); }
+}
+
+/* Anti-achievement style */
+.anti-achievement {
+  filter: grayscale(100%) invert(100%);
+  opacity: 0.5;
+}
+
+.anti-achievement.unlocked {
+  filter: none;
+  opacity: 1;
+}
