@@ -35,7 +35,16 @@ const CONFIG = {
     sound_enjoyer: { id: 'sound_enjoyer', title: 'Sound Enjoyer', desc: 'Enabled sound effects', icon: '🔊' },
     dramatic_person: { id: 'dramatic_person', title: 'Dramatic Person', desc: 'Enabled dramatic mode', icon: '🎭' },
     chart_watcher: { id: 'chart_watcher', title: 'Chart Watcher', desc: 'Watched the useless chart for 30s', icon: '📊' },
-    uselessly_curious: { id: 'uselessly_curious', title: 'Uselessly Curious', desc: 'Clicked the useless button', icon: '🤷' }
+    uselessly_curious: { id: 'uselessly_curious', title: 'Uselessly Curious', desc: 'Clicked the useless button', icon: '🤷' },
+    weather_watcher: { id: 'weather_watcher', title: 'Weather Watcher', desc: 'Checked the weather in Reykjavik', icon: '🌤️' },
+    crypto_believer: { id: 'crypto_believer', title: 'Crypto Believer', desc: 'Viewed SlopCoin prices', icon: '💰' },
+    zen_master: { id: 'zen_master', title: 'Zen Master', desc: 'Entered zen mode', icon: '☯️' },
+    fact_collector: { id: 'fact_collector', title: 'Fact Collector', desc: 'Viewed 5 useless facts', icon: '🧠' },
+    slop_parent: { id: 'slop_parent', title: 'Slop Parent', desc: 'Took care of virtual slop pet', icon: '🥣' },
+    chaos_embracer: { id: 'chaos_embracer', title: 'Chaos Embracer', desc: 'Shook the screen 3 times', icon: '📳' },
+    mirror_mirror: { id: 'mirror_mirror', title: 'Mirror Mirror', desc: 'Enabled mirror mode', icon: '🪞' },
+    breathe_easy: { id: 'breathe_easy', title: 'Breathe Easy', desc: 'Completed breathing exercise', icon: '🧘' },
+    music_appreciator: { id: 'music_appreciator', title: 'Music Appreciator', desc: 'Listened to elevator music', icon: '🎵' }
   }
 };
 
@@ -339,6 +348,45 @@ const serializedConfig = JSON.stringify({
           <span class="text-sm font-medium text-gray-300 group-hover:text-white transition-colors" id="sound-text">Sound Off</span>
         </button>
       </div>
+      <!-- Second row of feature buttons -->
+      <div class="flex flex-wrap justify-center gap-4 mt-4">
+        <button id="weather-btn" class="group flex items-center gap-2.5 px-5 py-3 bg-gradient-to-r from-yellow-600/15 to-orange-600/15 hover:from-yellow-600/25 hover:to-orange-600/25 border border-yellow-500/25 hover:border-yellow-500/40 rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-yellow-500/10">
+          <span class="text-xl group-hover:scale-110 transition-transform">🌤️</span>
+          <span class="text-sm font-medium text-gray-300 group-hover:text-white transition-colors">Weather</span>
+        </button>
+        <button id="crypto-btn" class="group flex items-center gap-2.5 px-5 py-3 bg-gradient-to-r from-green-600/15 to-emerald-600/15 hover:from-green-600/25 hover:to-emerald-600/25 border border-green-500/25 hover:border-green-500/40 rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-green-500/10">
+          <span class="text-xl group-hover:scale-110 transition-transform">💰</span>
+          <span class="text-sm font-medium text-gray-300 group-hover:text-white transition-colors">SlopCoin</span>
+        </button>
+        <button id="facts-btn" class="group flex items-center gap-2.5 px-5 py-3 bg-gradient-to-r from-cyan-600/15 to-blue-600/15 hover:from-cyan-600/25 hover:to-blue-600/25 border border-cyan-500/25 hover:border-cyan-500/40 rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-cyan-500/10">
+          <span class="text-xl group-hover:scale-110 transition-transform">🧠</span>
+          <span class="text-sm font-medium text-gray-300 group-hover:text-white transition-colors">Useless Facts</span>
+        </button>
+        <button id="shake-btn" class="group flex items-center gap-2.5 px-5 py-3 bg-gradient-to-r from-red-600/15 to-pink-600/15 hover:from-red-600/25 hover:to-pink-600/25 border border-red-500/25 hover:border-red-500/40 rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-red-500/10">
+          <span class="text-xl group-hover:scale-110 transition-transform">📳</span>
+          <span class="text-sm font-medium text-gray-300 group-hover:text-white transition-colors">Shake</span>
+        </button>
+        <button id="mirror-btn" class="group flex items-center gap-2.5 px-5 py-3 bg-gradient-to-r from-purple-600/15 to-pink-600/15 hover:from-purple-600/25 hover:to-pink-600/25 border border-purple-500/25 hover:border-purple-500/40 rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/10">
+          <span class="text-xl group-hover:scale-110 transition-transform">🪞</span>
+          <span class="text-sm font-medium text-gray-300 group-hover:text-white transition-colors">Mirror</span>
+        </button>
+        <button id="zen-btn" class="group flex items-center gap-2.5 px-5 py-3 bg-gradient-to-r from-indigo-600/15 to-purple-600/15 hover:from-indigo-600/25 hover:to-purple-600/25 border border-indigo-500/25 hover:border-indigo-500/40 rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-indigo-500/10">
+          <span class="text-xl group-hover:scale-110 transition-transform">☯️</span>
+          <span class="text-sm font-medium text-gray-300 group-hover:text-white transition-colors">Zen</span>
+        </button>
+        <button id="breathing-btn" class="group flex items-center gap-2.5 px-5 py-3 bg-gradient-to-r from-teal-600/15 to-cyan-600/15 hover:from-teal-600/25 hover:to-cyan-600/25 border border-teal-500/25 hover:border-teal-500/40 rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-teal-500/10">
+          <span class="text-xl group-hover:scale-110 transition-transform">🧘</span>
+          <span class="text-sm font-medium text-gray-300 group-hover:text-white transition-colors">Breathe</span>
+        </button>
+        <button id="virtual-pet-btn" class="group flex items-center gap-2.5 px-5 py-3 bg-gradient-to-r from-pink-600/15 to-rose-600/15 hover:from-pink-600/25 hover:to-rose-600/25 border border-pink-500/25 hover:border-pink-500/40 rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-pink-500/10">
+          <span class="text-xl group-hover:scale-110 transition-transform">🥣</span>
+          <span class="text-sm font-medium text-gray-300 group-hover:text-white transition-colors">Virtual Pet</span>
+        </button>
+        <button id="music-btn" class="group flex items-center gap-2.5 px-5 py-3 bg-gradient-to-r from-amber-600/15 to-yellow-600/15 hover:from-amber-600/25 hover:to-yellow-600/25 border border-amber-500/25 hover:border-amber-500/40 rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-amber-500/10">
+          <span class="text-xl group-hover:scale-110 transition-transform">🎵</span>
+          <span class="text-sm font-medium text-gray-300 group-hover:text-white transition-colors">Elevator Music</span>
+        </button>
+      </div>
     </section>
 
     <!-- Search -->
@@ -572,6 +620,171 @@ const serializedConfig = JSON.stringify({
             </div>
             <p class="text-gray-500 text-xs mt-2">This will take a while...</p>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Weather Modal -->
+  <div id="weather-modal" class="hidden fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="weather-title">
+    <div class="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity animate-fade-in"></div>
+    <div class="relative min-h-screen flex items-center justify-center p-4">
+      <div class="relative bg-card rounded-3xl border border-white/10 shadow-2xl max-w-md w-full animate-scale-in">
+        <div class="sticky top-0 bg-card/95 backdrop-blur-sm border-b border-white/10 p-6 flex items-center justify-between">
+          <h2 id="weather-title" class="text-2xl font-bold text-white flex items-center gap-3">
+            <span class="text-3xl weather-icon">🌤️</span>
+            <div>
+              <span>Weather</span>
+              <span class="block text-sm font-normal text-gray-400">Where the slop is brewed</span>
+            </div>
+          </h2>
+          <button id="close-weather" class="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-xl transition-colors" aria-label="Close weather modal">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 16 16"><path d="M4.646 4.646a.5.5 0 01.708 0L8 7.293l2.646-2.647a.5.5 0 01.708.708L8.707 8l2.647 2.646a.5.5 0 01-.708.708L8 8.707l-2.646 2.647a.5.5 0 01-.708-.708L7.293 8 4.646 5.354a.5.5 0 010-.708z"/></svg>
+          </button>
+        </div>
+        <div class="p-6 text-center">
+          <p class="text-6xl mb-4 weather-icon">🌤️</p>
+          <p class="text-2xl font-bold text-white" id="weather-city">Reykjavik</p>
+          <p class="text-4xl font-bold text-purple-400 mt-2" id="weather-temp">-5°C</p>
+          <p class="text-gray-400 mt-2" id="weather-condition">☁️ Cloudy</p>
+          <p class="text-xs text-gray-500 mt-4 italic">Updates every minute with completely fake data</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Crypto Modal -->
+  <div id="crypto-modal" class="hidden fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="crypto-title">
+    <div class="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity animate-fade-in"></div>
+    <div class="relative min-h-screen flex items-center justify-center p-4">
+      <div class="relative bg-card rounded-3xl border border-white/10 shadow-2xl max-w-lg w-full animate-scale-in">
+        <div class="sticky top-0 bg-card/95 backdrop-blur-sm border-b border-white/10 p-6 flex items-center justify-between">
+          <h2 id="crypto-title" class="text-2xl font-bold text-white flex items-center gap-3">
+            <span class="text-3xl">💰</span>
+            <div>
+              <span>SlopCoin™</span>
+              <span class="block text-sm font-normal text-gray-400">Definitely not a scam</span>
+            </div>
+          </h2>
+          <button id="close-crypto" class="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-xl transition-colors" aria-label="Close crypto modal">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 16 16"><path d="M4.646 4.646a.5.5 0 01.708 0L8 7.293l2.646-2.647a.5.5 0 01.708.708L8.707 8l2.647 2.646a.5.5 0 01-.708.708L8 8.707l-2.646 2.647a.5.5 0 01-.708-.708L7.293 8 4.646 5.354a.5.5 0 010-.708z"/></svg>
+          </button>
+        </div>
+        <div class="p-6">
+          <div id="crypto-prices" class="grid grid-cols-3 gap-4">
+            <!-- Crypto prices will be dynamically inserted here -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Useless Facts Modal -->
+  <div id="facts-modal" class="hidden fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="facts-title">
+    <div class="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity animate-fade-in"></div>
+    <div class="relative min-h-screen flex items-center justify-center p-4">
+      <div class="relative bg-card rounded-3xl border border-white/10 shadow-2xl max-w-lg w-full animate-scale-in">
+        <div class="sticky top-0 bg-card/95 backdrop-blur-sm border-b border-white/10 p-6 flex items-center justify-between">
+          <h2 id="facts-title" class="text-2xl font-bold text-white flex items-center gap-3">
+            <span class="text-3xl">🧠</span>
+            <span>Useless Facts</span>
+          </h2>
+          <button id="close-facts" class="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-xl transition-colors" aria-label="Close facts modal">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 16 16"><path d="M4.646 4.646a.5.5 0 01.708 0L8 7.293l2.646-2.647a.5.5 0 01.708.708L8.707 8l2.647 2.646a.5.5 0 01-.708.708L8 8.707l-2.646 2.647a.5.5 0 01-.708-.708L7.293 8 4.646 5.354a.5.5 0 010-.708z"/></svg>
+          </button>
+        </div>
+        <div class="p-6 space-y-6">
+          <div class="text-center">
+            <p id="current-fact" class="text-lg text-gray-300 leading-relaxed fact-slide-in">
+              Click the button for a new fact!
+            </p>
+          </div>
+          <button onclick="showRandomFact()" class="w-full px-6 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-semibold rounded-2xl hover:scale-105 transition-transform">
+            🧠 Learn Something Useless
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Zen Mode Overlay -->
+  <div id="zen-overlay" class="hidden fixed inset-0 z-[9999] flex items-center justify-center">
+    <div class="absolute inset-0 bg-gradient-to-br from-purple-600/50 to-indigo-600/50 backdrop-blur-lg"></div>
+    <div class="relative z-10 text-center zen-content">
+      <p class="text-6xl mb-8">☯️</p>
+      <h2 class="text-4xl font-light text-white mb-4">be the slop</h2>
+      <p class="text-white/60 text-lg">the slop is within you</p>
+      <button id="exit-zen" class="mt-8 px-6 py-3 bg-white/10 text-white font-medium rounded-2xl hover:bg-white/20 transition-colors">
+        Return to Reality
+      </button>
+    </div>
+  </div>
+
+  <!-- Breathing Exercise Modal -->
+  <div id="breathing-modal" class="hidden fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="breathing-title">
+    <div class="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity animate-fade-in"></div>
+    <div class="relative min-h-screen flex items-center justify-center p-4">
+      <div class="relative bg-card rounded-3xl border border-white/10 shadow-2xl max-w-md w-full animate-scale-in">
+        <div class="sticky top-0 bg-card/95 backdrop-blur-sm border-b border-white/10 p-6 flex items-center justify-between">
+          <h2 id="breathing-title" class="text-2xl font-bold text-white flex items-center gap-3">
+            <span class="text-3xl">🧘</span>
+            <span>Breathing Exercise</span>
+          </h2>
+          <button id="close-breathing" class="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-xl transition-colors" aria-label="Close breathing modal">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 16 16"><path d="M4.646 4.646a.5.5 0 01.708 0L8 7.293l2.646-2.647a.5.5 0 01.708.708L8.707 8l2.647 2.646a.5.5 0 01-.708.708L8 8.707l-2.646 2.647a.5.5 0 01-.708-.708L7.293 8 4.646 5.354a.5.5 0 010-.708z"/></svg>
+          </button>
+        </div>
+        <div class="p-6 text-center">
+          <div class="w-48 h-48 mx-auto mb-6 rounded-full bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center">
+            <div id="breathing-circle" class="w-24 h-24 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 breathing-circle"></div>
+          </div>
+          <p id="breathing-instruction" class="text-xl text-white font-medium">Breathe in... you are slop</p>
+          <p class="text-gray-500 text-sm mt-4">Follow the circle. 4 seconds in, 7 seconds hold, 8 seconds out.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Virtual Pet Modal -->
+  <div id="virtual-pet-modal" class="hidden fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="virtual-pet-title">
+    <div class="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity animate-fade-in"></div>
+    <div class="relative min-h-screen flex items-center justify-center p-4">
+      <div class="relative bg-card rounded-3xl border border-white/10 shadow-2xl max-w-md w-full animate-scale-in">
+        <div class="sticky top-0 bg-card/95 backdrop-blur-sm border-b border-white/10 p-6 flex items-center justify-between">
+          <h2 id="virtual-pet-title" class="text-2xl font-bold text-white flex items-center gap-3">
+            <span class="text-3xl">🥣</span>
+            <span>Virtual Slop Pet</span>
+          </h2>
+          <button id="close-virtual-pet" class="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-xl transition-colors" aria-label="Close virtual pet modal">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 16 16"><path d="M4.646 4.646a.5.5 0 01.708 0L8 7.293l2.646-2.647a.5.5 0 01.708.708L8.707 8l2.647 2.646a.5.5 0 01-.708.708L8 8.707l-2.646 2.647a.5.5 0 01-.708-.708L7.293 8 4.646 5.354a.5.5 0 010-.708z"/></svg>
+          </button>
+        </div>
+        <div class="p-6 space-y-6">
+          <div class="text-center">
+            <div id="virtual-pet-emoji" class="text-7xl mb-4">🥣</div>
+            <div class="mb-4">
+              <p class="text-sm text-gray-400 mb-2">Happiness</p>
+              <div class="h-3 bg-gray-700 rounded-full overflow-hidden">
+                <div id="pet-happiness-bar" class="h-full bg-gradient-to-r from-pink-500 to-purple-500 transition-all duration-300" style="width: 50%"></div>
+              </div>
+            </div>
+            <div class="flex justify-center gap-4 text-sm">
+              <span>Fed: <span id="pet-fed-status">✅</span></span>
+              <span>Clean: <span id="pet-clean-status">✅</span></span>
+            </div>
+          </div>
+          <div class="flex gap-3">
+            <button id="pet-btn" class="flex-1 px-4 py-3 bg-gradient-to-r from-pink-600 to-purple-600 text-white font-semibold rounded-xl hover:scale-105 transition-transform">
+              💕 Pet
+            </button>
+            <button id="feed-btn" class="flex-1 px-4 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold rounded-xl hover:scale-105 transition-transform">
+              🍽️ Feed
+            </button>
+            <button id="clean-btn" class="flex-1 px-4 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold rounded-xl hover:scale-105 transition-transform">
+              🧹 Clean
+            </button>
+          </div>
+          <p class="text-xs text-gray-500 text-center">Your virtual slop pet decays over time. Take care of it!</p>
         </div>
       </div>
     </div>

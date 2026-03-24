@@ -13,6 +13,13 @@ let modalCloseCount = parseInt(localStorage.getItem('slop_modal_close_count') ||
 let isSoundEnabled = localStorage.getItem('slop_sound_enabled') === 'true';
 let isDramaticModeEnabled = false;
 let uselessClickCount = 0;
+let factViewCount = parseInt(localStorage.getItem('slop_fact_count') || '0');
+let screenShakeCount = 0;
+let isMirrorModeEnabled = false;
+let isZenModeEnabled = false;
+let virtualPetState = JSON.parse(localStorage.getItem('slop_virtual_pet') || '{"happiness": 50, "fed": true, "clean": true}');
+let musicInterval = null;
+let isMusicEnabled = false;
 
 // Achievement System
 function unlockAchievement(id) {
@@ -804,6 +811,398 @@ function initTabHoarder() {
   }, 600000); // 10 minutes
 }
 
+// Weather Widget - Shows weather in random cities
+const randomCities = ['Reykjavik', 'Ulaanbaatar', 'Vatican City', 'Nauru', 'Tuvalu', 'San Marino', 'Liechtenstein', 'Monaco'];
+const weatherConditions = ['☀️ Sunny', '🌧️ Rainy', '⛈️ Stormy', '🌨️ Snowy', '🌫️ Foggy', '☁️ Cloudy', '🌈 Rainbow', '🌪️ Tornado'];
+
+function initWeatherWidget() {
+  const city = randomCities[Math.floor(Math.random() * randomCities.length)];
+  const temp = Math.floor(Math.random() * 40) - 10;
+  const condition = weatherConditions[Math.floor(Math.random() * weatherConditions.length)];
+
+  return { city, temp, condition };
+}
+
+function toggleWeatherModal() {
+  const modal = document.getElementById('weather-modal');
+  const isHidden = modal.classList.contains('hidden');
+
+  if (isHidden) {
+    const weather = initWeatherWidget();
+    document.getElementById('weather-city').textContent = weather.city;
+    document.getElementById('weather-temp').textContent = `${weather.temp}°C`;
+    document.getElementById('weather-condition').textContent = weather.condition;
+    modal.classList.remove('hidden');
+    unlockAchievement('weather_watcher');
+  } else {
+    modal.classList.add('hidden');
+  }
+}
+
+// SlopCoin Crypto Ticker
+let cryptoPrices = {
+  SLP: { name: 'SlopCoin', price: 0.0042, change: 0 },
+  AIT: { name: 'AICoin', price: 69.42, change: 0 },
+  MOON: { name: 'MoonToken', price: 0.0001, change: 0 }
+};
+
+function updateCryptoPrices() {
+  Object.keys(cryptoPrices).forEach(symbol => {
+    const coin = cryptoPrices[symbol];
+    const oldPrice = coin.price;
+    const changePercent = (Math.random() - 0.5) * 20;
+    coin.price = Math.max(0.0001, coin.price * (1 + changePercent / 100));
+    coin.change = ((coin.price - oldPrice) / oldPrice) * 100;
+  });
+}
+
+function formatCryptoPrice(price) {
+  if (price < 0.01) return `$${price.toFixed(6)}`;
+  return `$${price.toFixed(2)}`;
+}
+
+function toggleCryptoModal() {
+  const modal = document.getElementById('crypto-modal');
+  const isHidden = modal.classList.contains('hidden');
+
+  if (isHidden) {
+    updateCryptoModalContent();
+    modal.classList.remove('hidden');
+    unlockAchievement('crypto_believer');
+
+    // Update prices every 3 seconds
+    if (window.cryptoInterval) clearInterval(window.cryptoInterval);
+    window.cryptoInterval = setInterval(() => {
+      updateCryptoPrices();
+      updateCryptoModalContent();
+    }, 3000);
+  } else {
+    modal.classList.add('hidden');
+    if (window.cryptoInterval) clearInterval(window.cryptoInterval);
+  }
+}
+
+function updateCryptoModalContent() {
+  const container = document.getElementById('crypto-prices');
+  if (!container) return;
+
+  container.innerHTML = '';
+  Object.entries(cryptoPrices).forEach(([symbol, coin]) => {
+    const isUp = coin.change >= 0;
+    const arrow = isUp ? '📈' : '📉';
+    const changeClass = isUp ? 'crypto-up' : 'crypto-down';
+    const changeSign = isUp ? '+' : '';
+
+    container.innerHTML += `
+      <div class="p-4 bg-white/5 rounded-2xl border border-white/10 flex items-center justify-between">
+        <div>
+          <p class="text-white font-bold">${coin.name}</p>
+          <p class="text-xs text-gray-500">${symbol}</p>
+        </div>
+        <div class="text-right">
+          <p class="text-white font-mono">${formatCryptoPrice(coin.price)}</p>
+          <p class="text-xs ${changeClass}">${arrow} ${changeSign}${coin.change.toFixed(2)}%</p>
+        </div>
+      </div>
+    `;
+  });
+
+  container.innerHTML += `
+    <div class="col-span-3 text-center mt-4">
+      <p class="text-xs text-gray-500 italic">🚨 Not financial advice, it's slop 🚨</p>
+    </div>
+  `;
+}
+
+// Useless Facts
+const uselessFacts = [
+  "A group of flamingos is called a 'flamboyance' 🦩",
+  "Honey never spoils (unlike this slop) 🍯",
+  "The slop was here before you 🍦",
+  "Bananas are berries, but strawberries aren't 🍌",
+  "Octopuses have three hearts 🐙",
+  "The inventor of Pringles is now buried in a Pringles can 🥔",
+  "Wombat poop is cube-shaped 💩",
+  "There are more fake flamingos in the world than real ones 🦩",
+  "You've been breathing this whole time 😮‍💨",
+  "This fact is as useless as this website 🤷",
+  "Slop makes up approximately 70% of the universe 🌌",
+  "Reading this fact wasted 3 seconds of your life ⏰",
+  "The word 'slop' has 4 letters... just like 'AI' ✨",
+  "Your tongue can't taste its own tip 👅",
+  "Every 60 seconds in Africa, a minute passes 🌍"
+];
+
+function toggleFactsModal() {
+  const modal = document.getElementById('facts-modal');
+  const isHidden = modal.classList.contains('hidden');
+
+  if (isHidden) {
+    showRandomFact();
+    modal.classList.remove('hidden');
+  } else {
+    modal.classList.add('hidden');
+  }
+}
+
+function showRandomFact() {
+  const factEl = document.getElementById('current-fact');
+  const fact = uselessFacts[Math.floor(Math.random() * uselessFacts.length)];
+
+  if (factEl) {
+    factEl.textContent = fact;
+    factEl.classList.remove('fact-slide-in');
+    void factEl.offsetWidth; // Trigger reflow
+    factEl.classList.add('fact-slide-in');
+  }
+
+  factViewCount++;
+  localStorage.setItem('slop_fact_count', factViewCount);
+
+  if (factViewCount >= 5) {
+    unlockAchievement('fact_collector');
+  }
+}
+
+// Screen Shake
+function toggleScreenShake() {
+  document.body.classList.add('screen-shake');
+  screenShakeCount++;
+  playSound('dramatic');
+
+  if (screenShakeCount >= 3) {
+    unlockAchievement('chaos_embracer');
+  }
+
+  setTimeout(() => {
+    document.body.classList.remove('screen-shake');
+  }, 500);
+
+  showToast('📳 Feel the slop!');
+}
+
+// Mirror Mode
+function toggleMirrorMode() {
+  isMirrorModeEnabled = !isMirrorModeEnabled;
+
+  if (isMirrorModeEnabled) {
+    document.body.classList.add('mirror-mode');
+    showToast('🪞 Mirror mode enabled!');
+    unlockAchievement('mirror_mirror');
+  } else {
+    document.body.classList.remove('mirror-mode');
+    showToast('🪞 Mirror mode disabled');
+  }
+}
+
+// Zen Mode
+function toggleZenMode() {
+  isZenModeEnabled = !isZenModeEnabled;
+
+  if (isZenModeEnabled) {
+    document.body.classList.add('zen-mode-active');
+    document.getElementById('zen-overlay').classList.remove('hidden');
+    unlockAchievement('zen_master');
+
+    // Auto-exit after 10 seconds
+    setTimeout(() => {
+      if (isZenModeEnabled) {
+        toggleZenMode();
+      }
+    }, 10000);
+  } else {
+    document.body.classList.remove('zen-mode-active');
+    document.getElementById('zen-overlay').classList.add('hidden');
+  }
+}
+
+function exitZenMode() {
+  toggleZenMode();
+  showToast('☯️ You are one with the slop');
+}
+
+// Breathing Exercise
+let breathingInterval = null;
+let breathingPhase = 0;
+
+function toggleBreathingModal() {
+  const modal = document.getElementById('breathing-modal');
+  const isHidden = modal.classList.contains('hidden');
+
+  if (isHidden) {
+    modal.classList.remove('hidden');
+    startBreathingExercise();
+  } else {
+    modal.classList.add('hidden');
+    if (breathingInterval) clearInterval(breathingInterval);
+  }
+}
+
+function startBreathingExercise() {
+  const circle = document.getElementById('breathing-circle');
+  const instruction = document.getElementById('breathing-instruction');
+  const phases = ['Breathe in... you are slop', 'Hold... you are one with slop', 'Breathe out... you are slop'];
+
+  breathingPhase = 0;
+  instruction.textContent = phases[0];
+
+  breathingInterval = setInterval(() => {
+    breathingPhase = (breathingPhase + 1) % 3;
+    instruction.textContent = phases[breathingPhase];
+
+    if (breathingPhase === 2) {
+      // Completed a full cycle
+      unlockAchievement('breathe_easy');
+    }
+  }, 4000);
+}
+
+// Virtual Slop Pet
+function initVirtualPet() {
+  updateVirtualPetDisplay();
+}
+
+function updateVirtualPetDisplay() {
+  const petEl = document.getElementById('virtual-pet-emoji');
+  const happinessEl = document.getElementById('pet-happiness-bar');
+
+  if (!petEl || !happinessEl) return;
+
+  const { happiness, fed, clean } = virtualPetState;
+
+  // Update emoji based on state
+  if (happiness >= 70) {
+    petEl.textContent = '🥣';
+    petEl.classList.add('virtual-pet-happy');
+    petEl.classList.remove('virtual-pet-sad');
+  } else if (happiness >= 30) {
+    petEl.textContent = '🥣';
+    petEl.classList.remove('virtual-pet-happy', 'virtual-pet-sad');
+  } else {
+    petEl.textContent = '🥣';
+    petEl.classList.add('virtual-pet-sad');
+    petEl.classList.remove('virtual-pet-happy');
+  }
+
+  // Update happiness bar
+  happinessEl.style.width = `${happiness}%`;
+
+  // Update status indicators
+  document.getElementById('pet-fed-status').textContent = fed ? '✅' : '❌';
+  document.getElementById('pet-clean-status').textContent = clean ? '✅' : '❌';
+}
+
+function toggleVirtualPetModal() {
+  const modal = document.getElementById('virtual-pet-modal');
+  const isHidden = modal.classList.contains('hidden');
+
+  if (isHidden) {
+    initVirtualPet();
+    modal.classList.remove('hidden');
+  } else {
+    modal.classList.add('hidden');
+  }
+}
+
+function petVirtualPet() {
+  virtualPetState.happiness = Math.min(100, virtualPetState.happiness + 10);
+  saveVirtualPetState();
+  updateVirtualPetDisplay();
+  showToast('💕 Virtual slop is happy!');
+}
+
+function feedVirtualPet() {
+  virtualPetState.fed = true;
+  virtualPetState.happiness = Math.min(100, virtualPetState.happiness + 5);
+  saveVirtualPetState();
+  updateVirtualPetDisplay();
+  showToast('🍽️ Virtual slop has been fed!');
+}
+
+function cleanVirtualPet() {
+  virtualPetState.clean = true;
+  virtualPetState.happiness = Math.min(100, virtualPetState.happiness + 5);
+  saveVirtualPetState();
+  updateVirtualPetDisplay();
+  showToast('🧹 Virtual slop is now clean!');
+}
+
+function saveVirtualPetState() {
+  localStorage.setItem('slop_virtual_pet', JSON.stringify(virtualPetState));
+
+  // Check for achievement
+  if (virtualPetState.happiness >= 100) {
+    unlockAchievement('slop_parent');
+  }
+}
+
+// Decay virtual pet over time
+function initVirtualPetDecay() {
+  setInterval(() => {
+    if (virtualPetState.happiness > 0) {
+      virtualPetState.happiness -= 1;
+    }
+    virtualPetState.fed = false;
+    virtualPetState.clean = false;
+    saveVirtualPetState();
+  }, 30000); // Every 30 seconds
+}
+
+// Elevator Music
+function toggleElevatorMusic() {
+  isMusicEnabled = !isMusicEnabled;
+
+  if (isMusicEnabled) {
+    playElevatorMusic();
+    showToast('🎵 Elevator music enabled!');
+    unlockAchievement('music_appreciator');
+  } else {
+    stopElevatorMusic();
+    showToast('🎵 Elevator music stopped');
+  }
+}
+
+function playElevatorMusic() {
+  // Procedurally generated ambient muzak
+  const notes = [261.63, 293.66, 329.63, 392.00, 440.00, 493.88, 523.25];
+  let noteIndex = 0;
+
+  function playNote() {
+    if (!isMusicEnabled) return;
+
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const oscillator = ctx.createOscillator();
+      const gainNode = ctx.createGain();
+
+      oscillator.connect(gainNode);
+      gainNode.connect(ctx.destination);
+
+      oscillator.frequency.value = notes[noteIndex];
+      oscillator.type = 'sine';
+
+      gainNode.gain.setValueAtTime(0.05, ctx.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 1);
+
+      oscillator.start(ctx.currentTime);
+      oscillator.stop(ctx.currentTime + 1);
+
+      noteIndex = (noteIndex + 1) % notes.length;
+      setTimeout(() => ctx.close(), 1500);
+    } catch (e) {
+      // Audio not supported
+    }
+  }
+
+  if (musicInterval) clearInterval(musicInterval);
+  musicInterval = setInterval(playNote, 1500);
+}
+
+function stopElevatorMusic() {
+  if (musicInterval) clearInterval(musicInterval);
+  musicInterval = null;
+}
+
 // Confetti Cannon
 function spawnConfetti() {
   const colors = ['#a855f7', '#ec4899', '#3b82f6', '#22d3ee', '#4ade80', '#fbbf24'];
@@ -961,8 +1360,55 @@ function initModals() {
     document.getElementById('useless-button-modal').classList.add('hidden');
   });
 
+  // Weather modal
+  document.getElementById('weather-btn').addEventListener('click', toggleWeatherModal);
+  document.getElementById('close-weather').addEventListener('click', () => {
+    document.getElementById('weather-modal').classList.add('hidden');
+  });
+
+  // Crypto modal
+  document.getElementById('crypto-btn').addEventListener('click', toggleCryptoModal);
+  document.getElementById('close-crypto').addEventListener('click', () => {
+    document.getElementById('crypto-modal').classList.add('hidden');
+  });
+
+  // Facts modal
+  document.getElementById('facts-btn').addEventListener('click', toggleFactsModal);
+  document.getElementById('close-facts').addEventListener('click', () => {
+    document.getElementById('facts-modal').classList.add('hidden');
+  });
+
+  // Screen shake button
+  document.getElementById('shake-btn').addEventListener('click', toggleScreenShake);
+
+  // Mirror mode button
+  document.getElementById('mirror-btn').addEventListener('click', toggleMirrorMode);
+
+  // Zen mode button
+  document.getElementById('zen-btn').addEventListener('click', toggleZenMode);
+  document.getElementById('exit-zen').addEventListener('click', exitZenMode);
+
+  // Breathing modal
+  document.getElementById('breathing-btn').addEventListener('click', toggleBreathingModal);
+  document.getElementById('close-breathing').addEventListener('click', () => {
+    document.getElementById('breathing-modal').classList.add('hidden');
+    if (breathingInterval) clearInterval(breathingInterval);
+  });
+
+  // Virtual pet modal
+  document.getElementById('virtual-pet-btn').addEventListener('click', toggleVirtualPetModal);
+  document.getElementById('close-virtual-pet').addEventListener('click', () => {
+    document.getElementById('virtual-pet-modal').classList.add('hidden');
+  });
+  document.getElementById('pet-btn').addEventListener('click', petVirtualPet);
+  document.getElementById('feed-btn').addEventListener('click', feedVirtualPet);
+  document.getElementById('clean-btn').addEventListener('click', cleanVirtualPet);
+
+  // Elevator music button
+  document.getElementById('music-btn').addEventListener('click', toggleElevatorMusic);
+
   // Close modals on backdrop click
-  document.querySelectorAll('#achievement-modal, #slop-scores-modal, #repo-detail-modal, #useless-chart-modal, #settings-modal, #useless-button-modal').forEach(modal => {
+  document.querySelectorAll('#achievement-modal, #slop-scores-modal, #repo-detail-modal, #useless-chart-modal, #settings-modal, #useless-button-modal, #weather-modal, #crypto-modal, #facts-modal, #breathing-modal, #virtual-pet-modal').forEach(modal => {
     modal.addEventListener('click', (e) => {
       if (e.target === modal.querySelector('.fixed.inset-0')) {
         modal.classList.add('hidden');
@@ -1156,6 +1602,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initUselessButton();
   initRandomCompliments();
   initTabHoarder();
+  initVirtualPetDecay();
 
   // Update sound toggle UI
   if (isSoundEnabled) {
