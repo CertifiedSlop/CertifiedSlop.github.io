@@ -152,15 +152,18 @@ function initTypingEffect() {
   type();
 }
 
-// Particle System
+// Particle System with Performance Optimization
+let particleAnimationId = null;
+let isParticleVisible = true;
+
 function initParticleSystem() {
   const canvas = document.getElementById('particle-canvas');
   if (!canvas) return;
-  
+
   const ctx = canvas.getContext('2d');
   canvas.width = window.innerWidth;
   canvas.height = 600;
-  
+
   const particles = Array.from({ length: 80 }, () => ({
     x: Math.random() * canvas.width,
     y: Math.random() * canvas.height,
@@ -169,22 +172,98 @@ function initParticleSystem() {
     size: Math.random() * 2 + 1,
     color: `rgba(${168 + Math.random() * 50}, ${85 + Math.random() * 50}, ${247 + Math.random() * 50}, ${0.3 + Math.random() * 0.3})`
   }));
-  
-  function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    particles.forEach(p => {
-      p.x += p.vx;
-      p.y += p.vy;
-      if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-      if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-      ctx.fillStyle = p.color;
-      ctx.fill();
-    });
-    requestAnimationFrame(animate);
+
+  let frameCount = 0;
+  const targetFPS = 30;
+  const fpsInterval = 1000 / targetFPS;
+  let lastTime = performance.now();
+
+  function animate(currentTime) {
+    particleAnimationId = requestAnimationFrame(animate);
+
+    const elapsed = currentTime - lastTime;
+
+    if (elapsed > fpsInterval && isParticleVisible) {
+      lastTime = currentTime - (elapsed % fpsInterval);
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.fill();
+      });
+    }
   }
-  animate();
+  animate(performance.now());
+
+  // Observe canvas visibility
+  observeElementVisibility(canvas, (isVisible) => {
+    isParticleVisible = isVisible;
+  });
+}
+
+// IntersectionObserver for Animation Performance
+function observeElementVisibility(element, callback) {
+  if (!('IntersectionObserver' in window)) {
+    callback(true);
+    return;
+  }
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        callback(entry.isIntersecting);
+      });
+    },
+    { threshold: 0.1 }
+  );
+
+  observer.observe(element);
+  return observer;
+}
+
+// Pause off-screen animations
+function initAnimationObserver() {
+  if (!('IntersectionObserver' in window)) return;
+
+  const animatedElements = document.querySelectorAll('.animate-float, .animate-gradient, .repo-card');
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.style.animationPlayState = 'running';
+        } else {
+          entry.target.style.animationPlayState = 'paused';
+        }
+      });
+    },
+    { threshold: 0.1 }
+  );
+
+  animatedElements.forEach((el) => {
+    observer.observe(el);
+    el.style.animationPlayState = 'running';
+  });
+
+  return observer;
+}
+
+// Throttle function for performance
+function throttle(func, limit) {
+  let inThrottle;
+  return function (...args) {
+    if (!inThrottle) {
+      func.apply(this, args);
+      inThrottle = true;
+      setTimeout(() => (inThrottle = false), limit);
+    }
+  };
 }
 
 // Mouse Trail - disabled due to performance issues
@@ -1748,6 +1827,113 @@ function initHoverTracking() {
   });
 }
 
+// Focus Trap for Modals - Accessibility
+const focusableSelectors = [
+  'button:not([disabled])',
+  'a[href]',
+  'input:not([disabled])',
+  'select:not([disabled])',
+  'textarea:not([disabled])',
+  '[tabindex]:not([tabindex="-1"])'
+];
+
+function getFocusableElements(container) {
+  return container.querySelectorAll(focusableSelectors.join(', '));
+}
+
+function trapFocus(container) {
+  const focusableElements = getFocusableElements(container);
+  const firstElement = focusableElements[0];
+  const lastElement = focusableElements[focusableElements.length - 1];
+
+  function handleKeyDown(e) {
+    if (e.key !== 'Tab') return;
+
+    if (e.shiftKey) {
+      if (document.activeElement === firstElement) {
+        e.preventDefault();
+        lastElement.focus();
+      }
+    } else {
+      if (document.activeElement === lastElement) {
+        e.preventDefault();
+        firstElement.focus();
+      }
+    }
+  }
+
+  container.addEventListener('keydown', handleKeyDown);
+
+  return function untrapFocus() {
+    container.removeEventListener('keydown', handleKeyDown);
+  };
+}
+
+// Modal Manager for Accessibility
+const activeModals = [];
+let lastFocusedElement = null;
+
+function openModal(modalId, triggerElement) {
+  const modal = document.getElementById(modalId);
+  if (!modal) return;
+
+  lastFocusedElement = triggerElement || document.activeElement;
+
+  modal.classList.remove('hidden');
+  modal.setAttribute('aria-hidden', 'false');
+
+  const modalContainer = modal.querySelector('.modal-container') || modal.querySelector('[role="dialog"]');
+  if (modalContainer) {
+    const untrap = trapFocus(modalContainer);
+    activeModals.push({ modal, untrap, trigger: triggerElement });
+
+    setTimeout(() => {
+      const firstFocusable = getFocusableElements(modalContainer)[0];
+      if (firstFocusable) firstFocusable.focus();
+    }, 100);
+  }
+
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(modalId) {
+  const modalIndex = activeModals.findIndex(m => m.modal.id === modalId);
+  if (modalIndex === -1) return;
+
+  const { modal, untrap, trigger } = activeModals[modalIndex];
+  modal.classList.add('hidden');
+  modal.setAttribute('aria-hidden', 'true');
+
+  untrap();
+  activeModals.splice(modalIndex, 1);
+
+  if (activeModals.length === 0) {
+    document.body.style.overflow = '';
+  }
+
+  if (trigger) {
+    trigger.focus();
+  } else if (lastFocusedElement) {
+    lastFocusedElement.focus();
+  }
+}
+
+function closeAllModals() {
+  while (activeModals.length > 0) {
+    closeModal(activeModals[0].modal.id);
+  }
+}
+
+// Enhanced Escape Key Handler for Modals
+function initModalKeyboardHandler() {
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && activeModals.length > 0) {
+      const topModal = activeModals[activeModals.length - 1];
+      closeModal(topModal.modal.id);
+    }
+  });
+}
+
 // Modals
 function initModals() {
   // Achievements modal
@@ -2070,7 +2256,8 @@ document.addEventListener('DOMContentLoaded', () => {
   updateAchievementProgress();
   initTypingEffect();
   initParticleSystem();
-  // initMouseTrail() - disabled due to lag
+  initAnimationObserver();
+  initModalKeyboardHandler();
   initKonamiCode();
   initScrollTracker();
   initSearch();
