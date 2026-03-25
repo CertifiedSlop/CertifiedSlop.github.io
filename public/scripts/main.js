@@ -2152,4 +2152,485 @@ document.addEventListener('DOMContentLoaded', () => {
       unlockAchievement('design_criminal');
     }
   };
+
+  // ============================================
+  // NEW FEATURES - Session 4
+  // ============================================
+
+  // Global Click Counter
+  let globalClickCount = parseInt(localStorage.getItem('slop_click_count') || '0');
+  let isClickCounterVisible = false;
+
+  function updateClickCounter() {
+    globalClickCount++;
+    localStorage.setItem('slop_click_count', globalClickCount);
+
+    const counterEl = document.getElementById('click-count');
+    if (counterEl) {
+      counterEl.textContent = globalClickCount.toLocaleString();
+    }
+
+    // Milestone notifications
+    if (globalClickCount === 100 || globalClickCount === 500 || globalClickCount === 1000) {
+      unlockAchievement('click_champion');
+      showToast(`🎉 ${globalClickCount} clicks! You're a click champion!`);
+      spawnConfetti();
+    }
+
+    if (globalClickCount === 1000) {
+      unlockAchievement('click_champion');
+    }
+  }
+
+  function toggleClickCounter() {
+    isClickCounterVisible = !isClickCounterVisible;
+    const widget = document.getElementById('click-counter-widget');
+    if (widget) {
+      widget.classList.toggle('hidden');
+    }
+  }
+
+  function spawnConfetti() {
+    const colors = ['#a855f7', '#ec4899', '#3b82f6', '#22d3ee', '#4ade80'];
+    for (let i = 0; i < 50; i++) {
+      setTimeout(() => {
+        const confetti = document.createElement('div');
+        confetti.style.cssText = `
+          position: fixed;
+          left: ${Math.random() * 100}vw;
+          top: -20px;
+          width: ${Math.random() * 10 + 5}px;
+          height: ${Math.random() * 10 + 5}px;
+          background: ${colors[Math.floor(Math.random() * colors.length)]};
+          pointer-events: none;
+          z-index: 99999;
+          animation: confetti-fall ${Math.random() * 2 + 2}s linear;
+        `;
+        document.body.appendChild(confetti);
+        setTimeout(() => confetti.remove(), 4000);
+      }, i * 50);
+    }
+  }
+
+  // Slop Probability Meter
+  let probabilityInterval = null;
+  let isProbabilityWatching = false;
+  let probabilityWatchTime = 0;
+
+  function updateProbability() {
+    const probability = Math.floor(Math.random() * 31) + 69; // 69-100%
+    const percentageEl = document.getElementById('probability-percentage');
+    const circleEl = document.getElementById('probability-circle');
+    const miniEl = document.getElementById('mini-probability');
+    const descriptions = [
+      'The probability that this is slop',
+      'Scientifically calculated slop chance',
+      'Definitely slop (probably)',
+      'Slop probability increasing...',
+      'Maximum slop detected',
+      'Certified slop confirmed'
+    ];
+    const descEl = document.getElementById('probability-description');
+
+    if (percentageEl) percentageEl.textContent = `${probability}%`;
+    if (miniEl) miniEl.textContent = `${probability}%`;
+    if (descEl) descEl.textContent = descriptions[Math.floor(Math.random() * descriptions.length)];
+
+    if (circleEl) {
+      const circumference = 552.92;
+      const offset = circumference - (probability / 100) * circumference;
+      circleEl.style.strokeDashoffset = offset;
+    }
+  }
+
+  function toggleProbabilityModal() {
+    const modal = document.getElementById('probability-modal');
+    const isHidden = modal.classList.contains('hidden');
+
+    if (isHidden) {
+      modal.classList.remove('hidden');
+      updateProbability();
+      isProbabilityWatching = true;
+
+      // Track watch time for achievement
+      probabilityInterval = setInterval(() => {
+        probabilityWatchTime++;
+        updateProbability();
+        if (probabilityWatchTime >= 30) {
+          unlockAchievement('probability_watcher');
+        }
+      }, 1000);
+    } else {
+      modal.classList.add('hidden');
+      isProbabilityWatching = false;
+      if (probabilityInterval) clearInterval(probabilityInterval);
+    }
+  }
+
+  function toggleProbabilityWidget() {
+    const widget = document.getElementById('probability-widget');
+    if (widget) {
+      widget.classList.toggle('hidden');
+      if (!widget.classList.contains('hidden')) {
+        updateProbability();
+        setInterval(updateProbability, 2000);
+      }
+    }
+  }
+
+  // Slop Word of the Day
+  const slopWords = [
+    { word: 'Slopcursion', type: 'noun', definition: 'The act of creating slop within slop, resulting in infinite layers of increasingly questionable content.', etymology: 'From "slop" + "recursion". First documented in 2026 by the Certified Slop organization.', example: '"The AI-generated meme about AI-generated memes is peak slopcursion."' },
+    { word: 'Slopify', type: 'verb', definition: 'To transform something quality into slop through excessive AI enhancement.', etymology: 'From "slop" + "-ify". Popularized by slop developers everywhere.', example: '"They slopified their entire website and now it\'s certified."' },
+    { word: 'Slopulent', type: 'adjective', definition: 'Excessively slop-like in nature; characterized by an abundance of questionable content.', etymology: 'From "slop" + "-ulent" (abundant). A fancy way to say very slop.', example: '"The slopulent display of AI art was both beautiful and terrible."' },
+    { word: 'Slopatorium', type: 'noun', definition: 'A place where slop is created, consumed, or worshipped.', etymology: 'From "slop" + "-atorium" (place for). Like a sanitarium but for slop.', example: '"GitHub has become a veritable slopatorium of AI-generated code."' },
+    { word: 'Slopensation', type: 'noun', definition: 'The feeling of suspense when waiting to see if AI-generated content will make sense.', etymology: 'From "slop" + "suspense". The tension is real.', example: '"The slopensation was killing me as the loading bar crawled forward."' }
+  ];
+
+  function showRandomSlopWord() {
+    const wordObj = slopWords[Math.floor(Math.random() * slopWords.length)];
+    document.getElementById('word-of-day').textContent = wordObj.word;
+    document.getElementById('word-type').textContent = wordObj.type;
+    document.getElementById('word-definition').textContent = wordObj.definition;
+    document.getElementById('word-etymology').textContent = wordObj.etymology;
+    document.getElementById('word-example').textContent = wordObj.example;
+  }
+
+  function toggleWordModal() {
+    const modal = document.getElementById('word-modal');
+    const isHidden = modal.classList.contains('hidden');
+
+    if (isHidden) {
+      modal.classList.remove('hidden');
+      showRandomSlopWord();
+    } else {
+      modal.classList.add('hidden');
+    }
+  }
+
+  // Fortune Cookie
+  const fortunes = [
+    "Your future is filled with slop.",
+    "The slop you seek is already within you.",
+    "A slop opportunity is coming your way.",
+    "Trust the slop. The slop knows.",
+    "Your slop will be rewarded.",
+    "Beware of false slop.",
+    "The slop is strong with this one.",
+    "Slop happens for a reason.",
+    "Your lucky slop number is 42.",
+    "The slop giveth, and the slop taketh away.",
+    "In slop we trust.",
+    "May the slop be with you.",
+    "Slop first, ask questions later.",
+    "The only certainties in life: death, taxes, and slop.",
+    "Your slop horizon is expanding."
+  ];
+
+  let fortuneCount = parseInt(localStorage.getItem('slop_fortune_count') || '0');
+
+  function crackFortuneCookie() {
+    const emoji = document.getElementById('fortune-cookie-emoji');
+    const textContainer = document.getElementById('fortune-text-container');
+    const text = document.getElementById('fortune-text');
+    const luckyNumbers = document.getElementById('lucky-numbers');
+
+    // Animation
+    emoji.style.animation = 'spin 0.5s ease-in-out';
+    setTimeout(() => {
+      emoji.textContent = '✨';
+      textContainer.classList.remove('hidden');
+      text.textContent = `"${fortunes[Math.floor(Math.random() * fortunes.length)]}"`;
+      luckyNumbers.textContent = Array.from({ length: 6 }, () => Math.floor(Math.random() * 99) + 1).join(', ');
+
+      fortuneCount++;
+      localStorage.setItem('slop_fortune_count', fortuneCount);
+
+      if (fortuneCount >= 10) {
+        unlockAchievement('fortune_seeker');
+      }
+    }, 500);
+  }
+
+  function toggleFortuneModal() {
+    const modal = document.getElementById('fortune-modal');
+    const isHidden = modal.classList.contains('hidden');
+
+    if (isHidden) {
+      modal.classList.remove('hidden');
+      // Reset state
+      document.getElementById('fortune-cookie-emoji').textContent = '🥠';
+      document.getElementById('fortune-text-container').classList.add('hidden');
+    } else {
+      modal.classList.add('hidden');
+    }
+  }
+
+  // Slop Radio
+  const radioStations = [
+    'Slop FM 106.9',
+    'Radio Slop 99.3',
+    'The Slop Station 88.7',
+    'SlopWave 102.5',
+    'Certified Slop Radio 94.1'
+  ];
+
+  const radioSongs = [
+    '"Never Gonna Give You Up (Slop Remix)"',
+    '"The Slop Song by Slop Dylan"',
+    '"Bohemian Slopody by Queen AI"',
+    '"Slop Stairway to Heaven"',
+    '"Sweet Child O\' Slop by Guns N\' Slop"',
+    '"Sloppin\' in the Rain"',
+    '"The Sound of Slopence"',
+    '"Slop We Roll"',
+    '"Another One Bites the Slop"',
+    '"Slop Thriller by Michael Slopson"'
+  ];
+
+  let isRadioPlaying = false;
+  let radioInterval = null;
+  let radioListenTime = 0;
+
+  function toggleRadioModal() {
+    const modal = document.getElementById('radio-modal');
+    const isHidden = modal.classList.contains('hidden');
+
+    if (isHidden) {
+      modal.classList.remove('hidden');
+      updateRadioDisplay();
+    } else {
+      modal.classList.add('hidden');
+      if (isRadioPlaying) stopRadio();
+    }
+  }
+
+  function updateRadioDisplay() {
+    document.getElementById('radio-station').textContent = radioStations[Math.floor(Math.random() * radioStations.length)];
+    document.getElementById('radio-now-playing').textContent = `Now Playing: ${radioSongs[Math.floor(Math.random() * radioSongs.length)]}`;
+  }
+
+  function toggleRadioPlay() {
+    const playBtn = document.getElementById('radio-play');
+    isRadioPlaying = !isRadioPlaying;
+
+    if (isRadioPlaying) {
+      playBtn.textContent = '⏸️';
+      unlockAchievement('radio_listener');
+
+      // Update song every 3 seconds
+      radioInterval = setInterval(() => {
+        radioListenTime++;
+        updateRadioDisplay();
+        if (radioListenTime >= 20) { // ~1 minute
+          unlockAchievement('radio_listener');
+        }
+      }, 3000);
+    } else {
+      playBtn.textContent = '▶️';
+      if (radioInterval) clearInterval(radioInterval);
+    }
+  }
+
+  // Slop Temperature
+  let slopTemperature = 37;
+
+  function updateTemperature() {
+    const mercury = document.getElementById('temperature-mercury');
+    const value = document.getElementById('temperature-value');
+    const status = document.getElementById('temperature-status');
+
+    if (mercury) {
+      const heightPercent = ((slopTemperature - 0) / 100) * 80;
+      mercury.style.height = `${heightPercent}%`;
+    }
+    if (value) value.textContent = `${slopTemperature}°C`;
+    if (status) {
+      if (slopTemperature === 37) status.textContent = 'Just Right';
+      else if (slopTemperature < 37) status.textContent = 'Too Cold';
+      else status.textContent = 'Too Hot';
+    }
+  }
+
+  function toggleTemperatureModal() {
+    const modal = document.getElementById('temperature-modal');
+    const isHidden = modal.classList.contains('hidden');
+
+    if (isHidden) {
+      modal.classList.remove('hidden');
+      updateTemperature();
+    } else {
+      modal.classList.add('hidden');
+    }
+  }
+
+  function adjustTemperature(delta) {
+    slopTemperature = Math.max(0, Math.min(100, slopTemperature + delta));
+    updateTemperature();
+  }
+
+  // "Is This Slop?" Game
+  const slopQuestions = [
+    { emoji: '🎨', text: 'AI-generated art', isSlop: true },
+    { emoji: '📝', text: 'AI-written essay', isSlop: true },
+    { emoji: '🍕', text: 'A slice of pizza', isSlop: false },
+    { emoji: '💻', text: 'AI-generated code', isSlop: true },
+    { emoji: '🎵', text: 'AI-composed music', isSlop: true },
+    { emoji: '🐱', text: 'A cute cat', isSlop: false },
+    { emoji: '📸', text: 'AI-generated photo', isSlop: true },
+    { emoji: '🌳', text: 'A tree', isSlop: false },
+    { emoji: '✍️', text: 'This text you\'re reading', isSlop: true },
+    { emoji: '🤖', text: 'This entire website', isSlop: true }
+  ];
+
+  let currentSlopQuestion = null;
+  let slopScore = 0;
+  let slopAnswerCount = 0;
+
+  function showSlopQuestion() {
+    currentSlopQuestion = slopQuestions[Math.floor(Math.random() * slopQuestions.length)];
+    document.getElementById('slop-question-emoji').textContent = currentSlopQuestion.emoji;
+    document.getElementById('slop-question-text').textContent = `Is this slop? (${currentSlopQuestion.text})`;
+  }
+
+  function answerSlopQuestion(answer) {
+    slopAnswerCount++;
+    // Both answers say "Maybe" - it's philosophical
+    showToast('🤔 Maybe... is anything really slop?');
+
+    if (slopAnswerCount >= 10) {
+      unlockAchievement('slop_philosopher');
+    }
+
+    showSlopQuestion();
+  }
+
+  function toggleIsThisSlopModal() {
+    const modal = document.getElementById('is-this-slop-modal');
+    const isHidden = modal.classList.contains('hidden');
+
+    if (isHidden) {
+      modal.classList.remove('hidden');
+      showSlopQuestion();
+    } else {
+      modal.classList.add('hidden');
+    }
+  }
+
+  // Bug Report
+  function toggleBugReportModal() {
+    const modal = document.getElementById('bug-report-modal');
+    const isHidden = modal.classList.contains('hidden');
+
+    if (isHidden) {
+      modal.classList.remove('hidden');
+    } else {
+      modal.classList.add('hidden');
+    }
+  }
+
+  function submitBugReport() {
+    const title = document.getElementById('bug-title').value;
+    const description = document.getElementById('bug-description').value;
+    const severity = document.getElementById('bug-severity').value;
+
+    // Clear the form
+    document.getElementById('bug-title').value = '';
+    document.getElementById('bug-description').value = '';
+
+    unlockAchievement('bug_reporter');
+    showToast('🐛 Bug reported! We\'ll look into it (we won\'t)');
+    toggleBugReportModal();
+  }
+
+  // Anti-Scroll Feature
+  let isAntiScrollEnabled = false;
+
+  function toggleAntiScroll() {
+    isAntiScrollEnabled = !isAntiScrollEnabled;
+    if (isAntiScrollEnabled) {
+      showToast('📜 Anti-scroll enabled! Scroll at your own risk.');
+    } else {
+      showToast('📜 Anti-scroll disabled.');
+    }
+  }
+
+  // Add anti-scroll event listener
+  if (isAntiScrollEnabled) {
+    window.addEventListener('wheel', (e) => {
+      if (Math.random() < 0.1) { // 10% chance
+        e.preventDefault();
+        window.scrollBy(0, -e.deltaY);
+      }
+    }, { passive: false });
+  }
+
+  // Cursor Gravity
+  let isCursorGravityEnabled = false;
+  let cursorGravityY = 0;
+
+  function toggleCursorGravity() {
+    isCursorGravityEnabled = !isCursorGravityEnabled;
+
+    if (isCursorGravityEnabled) {
+      document.body.style.cursor = 'none';
+      unlockAchievement('gravity_defier');
+      showToast('🎈 Cursor gravity enabled! Your cursor will fall.');
+    } else {
+      document.body.style.cursor = '';
+      showToast('🎈 Cursor gravity disabled.');
+    }
+  }
+
+  // Event Listeners for New Features
+  document.getElementById('close-probability')?.addEventListener('click', toggleProbabilityModal);
+  document.getElementById('close-word')?.addEventListener('click', toggleWordModal);
+  document.getElementById('close-fortune')?.addEventListener('click', toggleFortuneModal);
+  document.getElementById('close-radio')?.addEventListener('click', toggleRadioModal);
+  document.getElementById('close-temperature')?.addEventListener('click', toggleTemperatureModal);
+  document.getElementById('close-is-this-slop')?.addEventListener('click', toggleIsThisSlopModal);
+  document.getElementById('close-bug-report')?.addEventListener('click', toggleBugReportModal);
+
+  document.getElementById('new-word-btn')?.addEventListener('click', showRandomSlopWord);
+  document.getElementById('crack-cookie-btn')?.addEventListener('click', crackFortuneCookie);
+  document.getElementById('radio-play')?.addEventListener('click', toggleRadioPlay);
+  document.getElementById('temp-cooler')?.addEventListener('click', () => adjustTemperature(-5));
+  document.getElementById('temp-heater')?.addEventListener('click', () => adjustTemperature(5));
+  document.getElementById('slop-yes-btn')?.addEventListener('click', () => answerSlopQuestion('yes'));
+  document.getElementById('slop-no-btn')?.addEventListener('click', () => answerSlopQuestion('no'));
+  document.getElementById('submit-bug-btn')?.addEventListener('click', submitBugReport);
+
+  // Check for achievement hunter (50% of achievements)
+  function checkAchievementHunter() {
+    const totalAchievements = Object.keys(CONFIG.ACHIEVEMENTS).length;
+    const unlockedCount = unlockedAchievements.length;
+    if (unlockedCount >= totalAchievements / 2 && !unlockedAchievements.includes('achievement_hunter')) {
+      unlockAchievement('achievement_hunter');
+    }
+  }
+
+  // Override unlockAchievement to check for achievement_hunter
+  const originalUnlock = unlockAchievement;
+  unlockAchievement = function(id) {
+    originalUnlock(id);
+    checkAchievementHunter();
+  };
+
+  // Add global click listener
+  document.addEventListener('click', updateClickCounter);
+
+  // Event listeners for new feature buttons
+  document.getElementById('probability-btn')?.addEventListener('click', toggleProbabilityModal);
+  document.getElementById('word-btn')?.addEventListener('click', toggleWordModal);
+  document.getElementById('fortune-btn')?.addEventListener('click', toggleFortuneModal);
+  document.getElementById('radio-btn')?.addEventListener('click', toggleRadioModal);
+  document.getElementById('temperature-btn')?.addEventListener('click', toggleTemperatureModal);
+  document.getElementById('is-this-slop-btn')?.addEventListener('click', toggleIsThisSlopModal);
+  document.getElementById('bug-report-btn')?.addEventListener('click', toggleBugReportModal);
+
+  // Initialize click counter widget display
+  if (globalClickCount > 0) {
+    const counterEl = document.getElementById('click-count');
+    if (counterEl) counterEl.textContent = globalClickCount.toLocaleString();
+  }
 });
